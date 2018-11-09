@@ -1,17 +1,22 @@
 package cn.ehai.javadb.config;
 
 import cn.ehai.javadb.generator.CodeGenerator;
+import cn.ehai.javautils.utils.ProjectInfoUtils;
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -24,7 +29,7 @@ public class MybatisConfigurer {
     public SqlSessionFactory sqlSessionFactoryBean(DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
         factory.setDataSource(dataSource);
-        factory.setTypeAliasesPackage(CodeGenerator.MODEL_PACKAGE);
+        factory.setTypeAliasesPackage(CodeGenerator.MODEL_PACKAGE + ",cn.ehai.javalog.entity");
 
         //配置分页插件，详情请查阅官方文档
         PageHelper pageHelper = new PageHelper();
@@ -39,7 +44,9 @@ public class MybatisConfigurer {
 
         //添加XML目录
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        factory.setMapperLocations(resolver.getResources("classpath:mybatis/mapper/*.xml"));
+        factory.setMapperLocations(ArrayUtils.addAll(resolver.getResources("file:" + Class.forName(ProjectInfoUtils
+                .getStackTopClassName()).getResource("/").getPath() + "mybatis/mapper/*.xml"), resolver.getResources
+                ("classpath:mybatis/mapper/*.xml")));
         return factory.getObject();
     }
 
@@ -47,7 +54,7 @@ public class MybatisConfigurer {
     public MapperScannerConfigurer mapperScannerConfigurer() {
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactoryBean");
-        mapperScannerConfigurer.setBasePackage(CodeGenerator.MAPPER_PACKAGE);
+        mapperScannerConfigurer.setBasePackage(CodeGenerator.MAPPER_PACKAGE + ",cn.ehai.javalog.dao");
         return mapperScannerConfigurer;
     }
 

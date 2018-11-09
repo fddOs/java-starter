@@ -10,7 +10,6 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -20,7 +19,6 @@ import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 
-import cn.ehai.online.common.util.LoggerUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -35,54 +33,6 @@ public class ApolloBaseConfig {
     @ApolloConfig("application")
     private static Config application;
     private LoggingSystem loggingSystem;
-
-    /**
-     * @Description:获取SocketIP
-     * @params:[]
-     * @return:java.lang.String
-     * @exception:
-     * @author: 方典典
-     * @time:2018/7/17 11:06
-     */
-    public static String getSocketIP() {
-        return aesDecrypt("online-service.socketIP", "");
-    }
-
-    /**
-     * @Description:获取reportApiUrl
-     * @params:[]
-     * @return:java.lang.String
-     * @exception:
-     * @author: 方典典
-     * @time:2018/7/17 11:06
-     */
-    public static String getReportApiUrl() {
-        return aesDecrypt("reportApiUrl", "");
-    }
-
-    /**
-     * @Description:获取reportApiToken
-     * @params:[]
-     * @return:java.lang.String
-     * @exception:
-     * @author: 方典典
-     * @time:2018/7/17 11:06
-     */
-    public static String getReportApiToken() {
-        return aesDecrypt("reportApiToken", "");
-    }
-
-    /**
-     * @Description:获取SocketPort
-     * @params:[]
-     * @return:java.lang.Integer
-     * @exception:
-     * @author: 方典典
-     * @time:2018/7/17 11:06
-     */
-    public static Integer getSocketPort() {
-        return Integer.valueOf(aesDecrypt("online-service.socketPort", null));
-    }
 
     /**
      * @return String
@@ -115,17 +65,6 @@ public class ApolloBaseConfig {
      */
     public static String getServiceLogLevel() {
         return aesDecrypt("serviceLogLevel", "info");
-    }
-
-    /**
-     * @return String
-     * @Description:资源文件地址
-     * @exception:
-     * @author: 方典典
-     * @time:2018年5月30日 上午10:52:33
-     */
-    public static List<String> getResourcesUrl() {
-        return (List<String>) JSONObject.parse(aesDecrypt("resourcesUrl ", "[]"));
     }
 
     private ApolloBaseConfig(LoggingSystem loggingSystem) {
@@ -163,7 +102,7 @@ public class ApolloBaseConfig {
         }
     }
 
-    private static String aesDecrypt(String key, String defaultValue) {
+    public static String aesDecrypt(String key, String defaultValue) {
         if (StringUtils.isEmpty(key)) {
             throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请求失败:获取配置key为空，请稍后重试");
         }

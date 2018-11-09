@@ -1,6 +1,6 @@
 package cn.ehai.javadb.generator;
 
-import cn.ehai.javautils.utils.CommonUtils;
+import cn.ehai.javautils.utils.ProjectInfoUtils;
 import com.google.common.base.CaseFormat;
 
 import freemarker.template.TemplateExceptionHandler;
@@ -19,11 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static cn.ehai.javadb.generator.ProjectConstant.CONTROLLER_PACKAGE;
-import static cn.ehai.javadb.generator.ProjectConstant.SERVICE_IMPL_PACKAGE;
-import static cn.ehai.javadb.generator.ProjectConstant.SERVICE_PACKAGE;
-import static cn.ehai.online.core.ProjectConstant.*;
-
 /**
  * 代码生成器，根据数据表名称生成对应的Model、Mapper、Service、Controller简化开发。
  */
@@ -38,8 +33,10 @@ public class CodeGenerator {
     private static String JDBC_PASSWORD = "Es@4mF^XmzEjouhvrn8*";
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 
-    public static final String MODEL_PACKAGE = CommonUtils.getProjectPackage() + ".entity";// Model所在包
-    public static final String MAPPER_PACKAGE = CommonUtils.getProjectPackage() + ".dao";// Mapper所在包
+    public static final String BASE_PACKAGE = ProjectInfoUtils.getProjectPackage();// Model所在包
+    public static String BUSINESS_NAME;// Model所在包
+    public static final String MODEL_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".entity";// Model所在包
+    public static final String MAPPER_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".dao";// Mapper所在包
 //    public static final String SERVICE_PACKAGE = BASE_PACKAGE + "." + BUSINESS_NAME + ".service";// Service所在包
 //    public static final String SERVICE_IMPL_PACKAGE = SERVICE_PACKAGE + ".impl";// ServiceImpl所在包
 //    public static final String CONTROLLER_PACKAGE = BASE_PACKAGE + "." + BUSINESS_NAME + ".controller";//
@@ -50,8 +47,7 @@ public class CodeGenerator {
 
     private static final String JAVA_PATH = "/src/main/java"; // java文件路径
     private static final String RESOURCES_PATH = "/src/main/resources";// 资源文件路径
-
-    //    private static final String PACKAGE_PATH_SERVICE = packageConvertPath(SERVICE_PACKAGE);// 生成的Service存放路径
+    private static String PACKAGE_PATH_SERVICE;// 生成的Service存放路径
     private static String PACKAGE_PATH_SERVICE_IMPL;// 生成的Service实现存放路径
     private static String PACKAGE_PATH_CONTROLLER;// 生成的Controller存放路径
 
@@ -115,8 +111,9 @@ public class CodeGenerator {
         JDBC_URL = "jdbc:mysql://192.168.9.82:3306/" + dbBase + "?useInformationSchema=true";
         JDBC_USERNAME = dbUsername;
         JDBC_PASSWORD = dbPassword;
-        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(packageConvertPath(BASE_PACKAGE + "." + businessName +
-                ".service"));
+        BUSINESS_NAME = businessName;
+        PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
+        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE);
         PACKAGE_PATH_CONTROLLER = packageConvertPath(BASE_PACKAGE + "." + businessName + ".controller");
         genModelAndMapper(tableName, modelName);
         genService(tableName, modelName);

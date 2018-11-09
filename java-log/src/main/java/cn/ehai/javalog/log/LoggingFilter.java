@@ -2,7 +2,7 @@ package cn.ehai.javalog.log;
 
 import cn.ehai.javalog.entity.LogELK;
 import cn.ehai.javautils.core.*;
-import cn.ehai.javautils.utils.CommonUtils;
+import cn.ehai.javautils.utils.ProjectInfoUtils;
 import cn.ehai.javautils.utils.HeaderUtils;
 import cn.ehai.javautils.utils.LoggerUtils;
 import cn.ehai.javautils.utils.UuidUtils;
@@ -67,14 +67,14 @@ public class LoggingFilter extends OncePerRequestFilter {
                 requestId = "0X" + Long.toHexString(new Date().getTime()).toUpperCase()
                         + (RANDOM.nextInt(900) + 100);
                 errorMsg = ExceptionUtils.getStackTrace(e);
-                wrapperResponse.setStatus(5001);
+                wrapperResponse.setStatus(506);
                 responseResult(wrapperResponse, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR,
                         "程序发生异常，错误代码:" + requestId));
             }
         } finally {
             boolean isClose = "none".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch());
             boolean isBool = !"ALL".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch()) && "GET".equalsIgnoreCase(wrapperRequest.getMethod());
-            if (isClose || isBool) {
+            if ((isClose || isBool) && StringUtils.isEmpty(errorMsg)) {
                 wrapperResponse.copyBodyToResponse();
                 return;
             }
@@ -97,7 +97,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             }
             String responseTime = SIMPLE_FORMAT.format(new Date());
             LogELK logELK = new LogELK(requestId, requestTime, responseTime, stopWatch.getTotalTimeMillis(), true,
-                    CommonUtils.getProjectContext(), httpStatus, requestUrl, errorMsg, getRequestBody
+                    ProjectInfoUtils.getProjectContext(), httpStatus, requestUrl, errorMsg, getRequestBody
                     (wrapperRequest),
                     responseBody, HeaderUtils.headerHandler(request));
             LOGGER.info(new EHILogstashMarker(logELK), null);

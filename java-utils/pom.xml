@@ -4,21 +4,22 @@
     <parent>
         <groupId>cn.ehai</groupId>
         <artifactId>java-starter</artifactId>
-        <version>0.0.1</version>
+        <version>0.1.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cn.ehai.java</groupId>
     <artifactId>java-utils</artifactId>
     <packaging>jar</packaging>
-
     <name>java-utils</name>
     <description>Java Utils for Java Starter</description>
     <dependencies>
         <dependency>
-            <groupId>cn.ehai</groupId>
-            <artifactId>java-log</artifactId>
-            <version>0.0.1</version>
-            <scope>compile</scope>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
         </dependency>
     </dependencies>
 </project>

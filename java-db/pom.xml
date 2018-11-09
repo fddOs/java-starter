@@ -4,13 +4,11 @@
     <parent>
         <groupId>cn.ehai</groupId>
         <artifactId>java-starter</artifactId>
-        <version>0.0.1</version>
+        <version>0.1.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>cn.ehai</groupId>
     <artifactId>java-db</artifactId>
-    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>java-db</name>
@@ -46,16 +44,14 @@
             <artifactId>druid-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.ehai.java</groupId>
+            <groupId>cn.ehai</groupId>
             <artifactId>java-utils</artifactId>
-            <version>0.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>cn.ehai.java</groupId>
-            <artifactId>java-utils</artifactId>
-            <version>0.0.1</version>
-            <scope>compile</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
