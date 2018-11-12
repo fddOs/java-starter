@@ -26,7 +26,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -73,7 +72,8 @@ public class LoggingFilter extends OncePerRequestFilter {
             }
         } finally {
             boolean isClose = "none".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch());
-            boolean isBool = !"ALL".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch()) && "GET".equalsIgnoreCase(wrapperRequest.getMethod());
+            boolean isBool = !"ALL".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch()) && "GET".equalsIgnoreCase
+                    (wrapperRequest.getMethod());
             if ((isClose || isBool) && StringUtils.isEmpty(errorMsg)) {
                 wrapperResponse.copyBodyToResponse();
                 return;
@@ -167,13 +167,12 @@ public class LoggingFilter extends OncePerRequestFilter {
         }
         byte[] buf = request.getContentAsByteArray();
         if (buf.length > 0) {
-            String payload;
             try {
-                payload = new String(buf, 0, buf.length, request.getCharacterEncoding());
-            } catch (UnsupportedEncodingException e) {
-                payload = "{\"unknown\":\"" + ExceptionUtils.getStackTrace(e) + "\"}";
+                return JSON.parseObject(new String(buf, 0, buf.length, "utf-8"));
+            } catch (Exception e) {
+                return JSON.parseObject("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
+                        request.getContentType() + "\"}");
             }
-            return JSON.parseObject(payload.replaceAll("\\n", ""));
         }
         return new JSONObject();
     }
@@ -189,13 +188,12 @@ public class LoggingFilter extends OncePerRequestFilter {
     private JSON getResponseBody(ContentCachingResponseWrapper response) {
         byte[] buf = response.getContentAsByteArray();
         if (buf.length > 0) {
-            String payload;
             try {
-                payload = new String(buf, 0, buf.length, response.getCharacterEncoding());
-            } catch (UnsupportedEncodingException e) {
-                payload = "{\"unknown\":\"" + ExceptionUtils.getStackTrace(e) + "\"}";
+                return JSON.parseObject(new String(buf, 0, buf.length, "utf-8"));
+            } catch (Exception e) {
+                return JSON.parseObject("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
+                        response.getContentType() + "\"}");
             }
-            return JSON.parseObject(payload);
         }
         return new JSONObject();
     }

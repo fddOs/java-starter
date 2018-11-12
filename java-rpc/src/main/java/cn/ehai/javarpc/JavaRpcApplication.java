@@ -1,10 +1,9 @@
-package cn.ehai.javalog;
+package cn.ehai.javarpc;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackageClasses = JavaLogApplication.class)
-public class JavaLogApplication {
-
+@ComponentScan(basePackageClasses = JavaRpcApplication.class)
+public class JavaRpcApplication {
 }

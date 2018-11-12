@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.ehai</groupId>
     <artifactId>java-starter</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.5</version>
     <packaging>pom</packaging>
 
     <name>java-starter</name>
@@ -14,6 +14,7 @@
         <module>java-log</module>
         <module>java-db</module>
         <module>java-web</module>
+        <module>java-rpc</module>
     </modules>
 
     <properties>
@@ -21,6 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <spring-boot.version>1.5.6.RELEASE</spring-boot.version>
+        <feign.version>9.6.0</feign.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -147,6 +149,41 @@
                 <groupId>cn.ehai</groupId>
                 <artifactId>java-web</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-core</artifactId>
+                <version>9.5.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-jackson</artifactId>
+                <version>${feign.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-okhttp</artifactId>
+                <version>${feign.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-slf4j</artifactId>
+                <version>${feign.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentracing.brave</groupId>
+                <artifactId>brave-opentracing</artifactId>
+                <version>0.31.3</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openfeign.opentracing</groupId>
+                <artifactId>feign-opentracing</artifactId>
+                <version>0.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentracing.contrib</groupId>
+                <artifactId>opentracing-spring-web-starter</artifactId>
+                <version>0.3.3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -3,6 +3,7 @@ package cn.ehai.javadb.generator;
 import cn.ehai.javautils.utils.ProjectInfoUtils;
 import com.google.common.base.CaseFormat;
 
+import com.sun.tools.javac.jvm.Code;
 import freemarker.template.TemplateExceptionHandler;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +44,8 @@ public class CodeGenerator {
 // Controller所在包
 
     private static final String PROJECT_PATH = System.getProperty("user.dir");// 项目在硬盘上的基础路径
-    private static final String TEMPLATE_FILE_PATH = PROJECT_PATH + "/src/test/resources/generator/template";// 模板位置
+    private static final String TEMPLATE_FILE_PATH = CodeGenerator.class.getResource("").getPath().replace
+            ("/generator/", "") + "/src/main/resources/generator/template";// 模板位置
 
     private static final String JAVA_PATH = "/src/main/java"; // java文件路径
     private static final String RESOURCES_PATH = "/src/main/resources";// 资源文件路径
@@ -56,8 +58,10 @@ public class CodeGenerator {
 
     public static void main(String[] args) {
         // genCode("City", "District", "Stock", "WorkStation", "Province");
-        genCode("label_config", "LabelConfig", "会话标签");
+//        genCode("label_config", "LabelConfig", "会话标签");
 //		Map<String, String> tables = new HashMap<>();
+        CodeGenerator.genCode("label_config", "LabelConfig", "会话标签", "yd_onlineservice", "app_yd_onlineservice",
+                "Es@4mF^XmzEjouhvrn8*", "test");
         // map 表明 :备注（swagger）
         // tables.put("City", "城市");
         // tables.put("District", "区域");
@@ -160,7 +164,7 @@ public class CodeGenerator {
          * <property name="suppressDate" value="true"/>
          */
         CommentGeneratorConfiguration commentGeneratorConfiguration = new CommentGeneratorConfiguration();
-        commentGeneratorConfiguration.setConfigurationType("generator.MybatisGenerarionConfigurer");
+        commentGeneratorConfiguration.setConfigurationType("cn.ehai.javadb.generator.MybatisGenerarionConfigurer");
         // commentGeneratorConfiguration.addProperty("suppressAllComments", "true");
         commentGeneratorConfiguration.addProperty("suppressDate", "true");
         commentGeneratorConfiguration.addProperty("addRemarkComments", "true");
@@ -267,7 +271,8 @@ public class CodeGenerator {
     private static freemarker.template.Configuration getConfiguration() throws IOException {
         freemarker.template.Configuration cfg = new freemarker.template.Configuration(
                 freemarker.template.Configuration.VERSION_2_3_23);
-        cfg.setDirectoryForTemplateLoading(new File(TEMPLATE_FILE_PATH));
+//        cfg.setDirectoryForTemplateLoading(new File(TEMPLATE_FILE_PATH));
+        cfg.setClassLoaderForTemplateLoading(CodeGenerator.class.getClassLoader(), "generator/template");
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
         return cfg;

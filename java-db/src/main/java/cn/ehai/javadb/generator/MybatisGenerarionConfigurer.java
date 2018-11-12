@@ -1,26 +1,21 @@
 package cn.ehai.javadb.generator;
 
 import java.sql.Types;
-import java.text.MessageFormat;
 import java.util.Properties;
-import java.util.Set;
 
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.CompilationUnit;
 import org.mybatis.generator.api.dom.java.Field;
-import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.InnerClass;
 import org.mybatis.generator.api.dom.java.InnerEnum;
 import org.mybatis.generator.api.dom.java.JavaElement;
 import org.mybatis.generator.api.dom.java.Method;
-import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.config.MergeConstants;
-import org.mybatis.generator.internal.db.DatabaseIntrospector;
 import org.mybatis.generator.internal.util.StringUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
