@@ -5,9 +5,9 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.ehai.javautils.core.Result;
-import cn.ehai.javautils.core.ResultCode;
-import cn.ehai.javautils.core.ResultGenerator;
+import cn.ehai.common.core.Result;
+import cn.ehai.common.core.ResultCode;
+import cn.ehai.common.core.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;

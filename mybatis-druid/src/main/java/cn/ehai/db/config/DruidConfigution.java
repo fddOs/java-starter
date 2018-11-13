@@ -9,7 +9,6 @@ import javax.sql.DataSource;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.LoggerUtils;
-import cn.ehai.common.utils.SqlHelperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,9 +36,6 @@ public class DruidConfigution {
 	@Primary
 	@ConfigurationProperties("spring.datasource.druid")
 	public DataSource getDataSource() {
-		if(!SqlHelperUtils.connectTest(dbInfo)){
-			return null;
-		}
 		dataSource = DruidDataSourceBuilder.create().build();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
 		dataSource.setUrl(dbInfo.getDbConfigUrl());
@@ -56,9 +52,6 @@ public class DruidConfigution {
 	 *            1433;DatabaseName=
 	 */
 	public void resetDataBase(DBInfo dbInfo) {
-		if(!SqlHelperUtils.connectTest(dbInfo)){
-			return;
-		}
 		try {
 			dataSource.restart();
 			dataSource.setDriverClassName("com.mysql.jdbc.Driver");

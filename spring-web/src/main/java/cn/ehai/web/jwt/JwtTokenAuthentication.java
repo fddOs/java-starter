@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
-import cn.ehai.javautils.utils.ProjectInfoUtils;
+import cn.ehai.common.utils.ProjectInfoUtils;
 import io.jsonwebtoken.*;
 import org.springframework.util.StringUtils;
 
