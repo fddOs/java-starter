@@ -4,17 +4,19 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.ehai</groupId>
     <artifactId>java-starter</artifactId>
-    <version>0.2.5</version>
+    <version>0.2.7</version>
     <packaging>pom</packaging>
 
     <name>java-starter</name>
     <description>java project for Spring Boot</description>
     <modules>
-        <module>java-utils</module>
-        <module>java-log</module>
-        <module>java-db</module>
-        <module>java-web</module>
-        <module>java-rpc</module>
+        <module>common-utils</module>
+        <module>common-core</module>
+        <module>log-service</module>
+        <module>log-elk</module>
+        <module>mybatis-druid</module>
+        <module>spring-web</module>
+        <module>rpc-feign</module>
     </modules>
 
     <properties>
@@ -132,17 +134,22 @@
             </dependency>
             <dependency>
                 <groupId>cn.ehai</groupId>
-                <artifactId>java-utils</artifactId>
+                <artifactId>common-utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.ehai</groupId>
-                <artifactId>java-db</artifactId>
+                <artifactId>mybatis-druid</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.ehai</groupId>
-                <artifactId>java-log</artifactId>
+                <artifactId>log-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ehai</groupId>
+                <artifactId>log-elk</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

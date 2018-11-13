@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>cn.ehai</groupId>
+        <artifactId>java-starter</artifactId>
+        <version>0.2.7</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>rpc-feign</artifactId>
+    <packaging>jar</packaging>
+    <name>rpc-feign</name>
+    <description>Java Feign for java rpc</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.openfeign.opentracing</groupId>
+            <artifactId>feign-opentracing</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>cn.ehai</groupId>
+            <artifactId>common-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.ehai</groupId>
+            <artifactId>common-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.ehai</groupId>
+            <artifactId>common-core</artifactId>
+            <version>0.2.7</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.ehai</groupId>
+            <artifactId>log-elk</artifactId>
+        </dependency>
+    </dependencies>
+</project>
