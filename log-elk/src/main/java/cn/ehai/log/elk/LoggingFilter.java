@@ -81,7 +81,7 @@ public class LoggingFilter extends OncePerRequestFilter {
                 requestId = UuidUtils.getRandomUUID();
             }
             String queryString = request.getQueryString();
-            String requestUrl = request.getServletPath();
+            String requestUrl = request.getRequestURL().toString();
             if (!StringUtils.isEmpty(queryString)) {
                 requestUrl = requestUrl + "?" + queryString;
             }
