@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.ehai</groupId>
     <artifactId>java-starter</artifactId>
-    <version>0.2.8</version>
+    <version>0.3.2</version>
     <packaging>pom</packaging>
 
     <name>java-starter</name>
@@ -154,7 +154,7 @@
             </dependency>
             <dependency>
                 <groupId>cn.ehai</groupId>
-                <artifactId>java-web</artifactId>
+                <artifactId>spring-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

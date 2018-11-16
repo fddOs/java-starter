@@ -95,11 +95,11 @@ public class LoggingFilter extends OncePerRequestFilter {
                 request.removeAttribute(ATTRIBUTE_STOP_WATCH);
             }
             String responseTime = SIMPLE_FORMAT.format(new Date());
-            LogELK logELK = new LogELK(requestId, requestTime, responseTime, stopWatch.getTotalTimeMillis(), true,
-                    ProjectInfoUtils.getProjectContext(), httpStatus, requestUrl, errorMsg, getRequestBody
-                    (wrapperRequest),
-                    responseBody, HeaderUtils.headerHandler(request));
-            LOGGER.info(new EHILogstashMarker(logELK), null);
+            RequestLog requestLog = new RequestLog(requestId, requestTime, true, ProjectInfoUtils.getProjectContext()
+                    , requestUrl, getRequestBody(wrapperRequest), HeaderUtils.requestHeaderHandler(request));
+            ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
+                    .getTotalTimeMillis(), responseBody, HeaderUtils.responseHeaderHandler(response));
+            LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
         }
     }
 

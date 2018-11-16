@@ -13,12 +13,10 @@ import java.util.concurrent.TimeUnit;
 import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
-import cn.ehai.common.utils.LoggerUtils;
-import cn.ehai.common.utils.ProjectInfoUtils;
-import cn.ehai.common.utils.SignUtils;
-import cn.ehai.common.utils.UuidUtils;
+import cn.ehai.common.utils.*;
 import cn.ehai.log.elk.EHILogstashMarker;
-import cn.ehai.log.elk.LogELK;
+import cn.ehai.log.elk.RequestLog;
+import cn.ehai.log.elk.ResponseLog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -175,13 +173,24 @@ public class EhiOkHttpClient {
         RequestBody requestBody = request.body();
         ResponseBody responseBody = response.body();
         String requestUrlQuery = request.url().encodedQuery();
-        Headers headers = request.headers();
-        Map<String, String> headerMap = new HashMap<>();
-        for (String headerName : headers.names()) {
+        Headers requestHeaders = request.headers();
+        Map<String, String> requestHeaderMap = new HashMap<>();
+        for (String headerName : requestHeaders.names()) {
             try {
-                headerMap.put(headerName, new String(request.header(headerName).getBytes("iso-8859-1"), "utf-8"));
+                requestHeaderMap.put(headerName, new String(request.header(headerName).getBytes("iso-8859-1"),
+                        "utf-8"));
             } catch (UnsupportedEncodingException e) {
-                headerMap.put(headerName, request.header(headerName));
+                requestHeaderMap.put(headerName, request.header(headerName));
+            }
+        }
+        Headers responseHeaders = response.headers();
+        Map<String, String> responseHeaderMap = new HashMap<>();
+        for (String headerName : responseHeaders.names()) {
+            try {
+                responseHeaderMap.put(headerName, new String(response.header(headerName).getBytes("iso-8859-1"),
+                        "utf-8"));
+            } catch (UnsupportedEncodingException e) {
+                responseHeaderMap.put(headerName, response.header(headerName));
             }
         }
         if (requestUrlQuery != null) {
@@ -217,11 +226,13 @@ public class EhiOkHttpClient {
         } finally {
             responseBody.close();
         }
-        LogELK logELK = new LogELK(UuidUtils.getRandomUUID(), requestTime, responseTime, totalTime,
-                false, ProjectInfoUtils.getProjectContext(), response.code(), requestUrl + "?" + requestUrlQuery,
-                exceptionMsg, requestBodyJSON, responseBodyJSON, headerMap);
+        RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
+                .getProjectContext()
+                , requestUrl + "?" + requestUrlQuery, requestBodyJSON, requestHeaderMap);
+        ResponseLog responseLog = new ResponseLog(responseTime, response.code(), exceptionMsg, totalTime,
+                responseBodyJSON, responseHeaderMap);
         // 发送日志信息
-        LOGGER.info(new EHILogstashMarker(logELK), null);
+        LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
         return response;
     }
 }

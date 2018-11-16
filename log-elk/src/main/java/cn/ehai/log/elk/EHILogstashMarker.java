@@ -11,17 +11,21 @@ import java.io.IOException;
  * @time:2018/11/2 10:50
  */
 public class EHILogstashMarker extends LogstashMarker {
-    private LogELK logELK;
+    private RequestLog requestLog;
+    private ResponseLog responseLog;
 
-    public EHILogstashMarker(LogELK logELK) {
+    public EHILogstashMarker(RequestLog requestLog, ResponseLog responseLog) {
         super("ELK");
-        this.logELK = logELK;
+        this.requestLog = requestLog;
+        this.responseLog = responseLog;
     }
 
     @Override
     public void writeTo(JsonGenerator generator) throws IOException {
-        generator.writeFieldName("json_message");
-        generator.writeObject(logELK);
+        generator.writeFieldName("request");
+        generator.writeObject(requestLog);
+        generator.writeFieldName("response");
+        generator.writeObject(responseLog);
     }
 
 }

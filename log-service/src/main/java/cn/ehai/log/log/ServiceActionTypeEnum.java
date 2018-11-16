@@ -5,17 +5,10 @@ package cn.ehai.log.log;
  */
 public enum ServiceActionTypeEnum {
     /**
-     * 用户注册
-     */
-    REGISTERUSER(1),
-    /**
-     * 取消订单
-     */
-    CANCELORDER(2),
-    /**
      * 没有登记的业务日志异常都是其他记录
      */
     OTHER_RECORD(7);
+
 
     private int actionType;
 
@@ -26,5 +19,4 @@ public enum ServiceActionTypeEnum {
     public int getActionType() {
         return actionType;
     }
-
 }
