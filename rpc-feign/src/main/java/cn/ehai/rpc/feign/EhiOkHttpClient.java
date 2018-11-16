@@ -227,8 +227,8 @@ public class EhiOkHttpClient {
             responseBody.close();
         }
         RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
-                .getProjectContext()
-                , requestUrl + "?" + requestUrlQuery, requestBodyJSON, requestHeaderMap);
+                .getProjectContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
+                requestHeaderMap);
         ResponseLog responseLog = new ResponseLog(responseTime, response.code(), exceptionMsg, totalTime,
                 responseBodyJSON, responseHeaderMap);
         // 发送日志信息

@@ -96,7 +96,8 @@ public class LoggingFilter extends OncePerRequestFilter {
             }
             String responseTime = SIMPLE_FORMAT.format(new Date());
             RequestLog requestLog = new RequestLog(requestId, requestTime, true, ProjectInfoUtils.getProjectContext()
-                    , requestUrl, getRequestBody(wrapperRequest), HeaderUtils.requestHeaderHandler(request));
+                    , requestUrl, getRequestBody(wrapperRequest), request.getMethod(), HeaderUtils
+                    .requestHeaderHandler(request));
             ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
                     .getTotalTimeMillis(), responseBody, HeaderUtils.responseHeaderHandler(response));
             LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);

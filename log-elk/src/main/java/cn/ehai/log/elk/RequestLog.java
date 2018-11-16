@@ -34,6 +34,7 @@ public class RequestLog {
      */
     private Object requestBody;
 
+    private String requestMethod;
 
     private Map<String, String> requestHeader;
 
@@ -41,11 +42,12 @@ public class RequestLog {
     }
 
     public RequestLog(String requestId, String requestTime, Boolean isReceivedRequest, String projectContext, String
-            requestUrl, Object requestBody, Map<String, String> requestHeader) {
+            requestUrl, Object requestBody, String requestMethod, Map<String, String> requestHeader) {
         this.requestId = requestId;
         this.requestTime = requestTime;
         this.isReceivedRequest = isReceivedRequest;
         this.projectContext = projectContext;
+        this.requestMethod = requestMethod;
         this.requestUrl = requestUrl;
         this.requestBody = requestBody;
         this.requestHeader = requestHeader;
@@ -97,6 +99,14 @@ public class RequestLog {
 
     public void setRequestBody(Object requestBody) {
         this.requestBody = requestBody;
+    }
+
+    public String getRequestMethod() {
+        return requestMethod;
+    }
+
+    public void setRequestMethod(String requestMethod) {
+        this.requestMethod = requestMethod;
     }
 
     public Map<String, String> getRequestHeader() {
