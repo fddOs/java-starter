@@ -139,6 +139,9 @@ public class EhiOkHttpClient {
                 responseBody.close();
             }
         }
+//        if (res.code() != 200) {
+//            return res.newBuilder().body(responseBodyNew).code(500000 + res.code()).build();
+//        }
         return res.newBuilder().body(responseBodyNew).build();
     }
 
@@ -192,6 +195,7 @@ public class EhiOkHttpClient {
             } catch (UnsupportedEncodingException e) {
                 responseHeaderMap.put(headerName, response.header(headerName));
             }
+            responseHeaderMap.put("response.code", String.valueOf(response.code() == 200 ? 200 : 507));
         }
         if (requestUrlQuery != null) {
             try {
@@ -229,7 +233,8 @@ public class EhiOkHttpClient {
         RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
                 .getProjectContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
                 requestHeaderMap);
-        ResponseLog responseLog = new ResponseLog(responseTime, response.code(), exceptionMsg, totalTime,
+        int httpStatus = response.code();
+        ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, exceptionMsg, totalTime,
                 responseBodyJSON, responseHeaderMap);
         // 发送日志信息
         LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);

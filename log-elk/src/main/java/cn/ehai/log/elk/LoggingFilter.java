@@ -1,9 +1,11 @@
 package cn.ehai.log.elk;
 
-import cn.ehai.common.core.*;
+import cn.ehai.common.core.ApolloBaseConfig;
+import cn.ehai.common.core.Result;
+import cn.ehai.common.core.ResultCode;
+import cn.ehai.common.core.ResultGenerator;
 import cn.ehai.common.utils.HeaderUtils;
 import cn.ehai.common.utils.LoggerUtils;
-import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.common.utils.UuidUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -13,11 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
@@ -27,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -37,7 +34,6 @@ import java.util.Random;
  */
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
-    private static final Random RANDOM = new Random();
     private static final SimpleDateFormat SIMPLE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
     private static final String ATTRIBUTE_STOP_WATCH = LoggingFilter.class.getName()
@@ -59,16 +55,12 @@ public class LoggingFilter extends OncePerRequestFilter {
             if (e.getCause() != null) {
                 e = (Exception) e.getCause();
             }
-            LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
-            if (!exceptionHandler(e, wrapperResponse)) {
-                // 异常码:0X + 时间戳 + 100~999随机数
-                requestId = "0X" + Long.toHexString(new Date().getTime()).toUpperCase()
-                        + (RANDOM.nextInt(900) + 100);
-                errorMsg = ExceptionUtils.getStackTrace(e);
-                wrapperResponse.setStatus(506);
-                responseResult(wrapperResponse, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR,
-                        "程序发生异常，错误代码:" + requestId));
-            }
+            errorMsg = ExceptionUtils.getStackTrace(e);
+            LoggerUtils.error(getClass(), errorMsg);
+            String exceptionCode = "0X" + Long.toHexString(new Date().getTime()).toUpperCase()
+                    + (new Random().nextInt(900) + 100);
+            responseResult(response, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR, "程序发生异常，错误代码:" +
+                    exceptionCode));
         } finally {
             boolean isClose = "none".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch());
             boolean isBool = !"ALL".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch()) && "GET".equalsIgnoreCase
@@ -95,52 +87,13 @@ public class LoggingFilter extends OncePerRequestFilter {
                 request.removeAttribute(ATTRIBUTE_STOP_WATCH);
             }
             String responseTime = SIMPLE_FORMAT.format(new Date());
-            RequestLog requestLog = new RequestLog(requestId, requestTime, true, ProjectInfoUtils.getProjectContext()
+            RequestLog requestLog = new RequestLog(requestId, requestTime, true, "privilege-external"
                     , requestUrl, getRequestBody(wrapperRequest), request.getMethod(), HeaderUtils
                     .requestHeaderHandler(request));
             ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
                     .getTotalTimeMillis(), responseBody, HeaderUtils.responseHeaderHandler(response));
             LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
         }
-    }
-
-    /**
-     * @param e
-     * @param response
-     * @return boolean
-     * @Description:异常处理
-     * @exception:
-     * @author: 方典典
-     * @time:2018/11/6 16:44
-     */
-    private boolean exceptionHandler(Throwable e, HttpServletResponse response) throws IOException {
-        if (e instanceof ServiceException) {
-            ServiceException serviceException = (ServiceException) e;
-            responseResult(response, ResultGenerator.genFailResult(serviceException.getCode(), serviceException
-                    .getMessage()));
-            return true;
-        }
-        if (e instanceof BindException) {
-            BindException bindException = (BindException) e;
-            List<FieldError> fieldErrors = bindException.getBindingResult().getFieldErrors();
-            responseResult(response, ResultGenerator.genFailResult(ResultCode.BAD_REQUEST, fieldErrors.get(0)
-                    .getDefaultMessage()));
-            return true;
-        }
-        if (e instanceof MethodArgumentNotValidException) {
-            MethodArgumentNotValidException methodArgumentNotValidException = (MethodArgumentNotValidException) e;
-            List<FieldError> fieldErrors = methodArgumentNotValidException.getBindingResult().getFieldErrors();
-            responseResult(response, ResultGenerator.genFailResult(ResultCode.BAD_REQUEST, fieldErrors.get(0)
-                    .getDefaultMessage()));
-            return true;
-        }
-        if (e instanceof NoHandlerFoundException) {
-            NoHandlerFoundException noHandlerFoundException = (NoHandlerFoundException) e;
-            responseResult(response, ResultGenerator.genFailResult(ResultCode.NOT_FOUND, noHandlerFoundException
-                    .getMessage()));
-            return true;
-        }
-        return false;
     }
 
     private StopWatch createStopWatchIfNecessary(HttpServletRequest request) {

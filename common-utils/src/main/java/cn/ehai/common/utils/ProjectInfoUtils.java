@@ -47,6 +47,12 @@ public class ProjectInfoUtils {
      */
     public static String getStackTopClassName() {
         StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-        return elements[elements.length - 1].getClassName();
+        for (int i = elements.length - 1; i >= 0; i--) {
+            String className = elements[i].getClassName();
+            if (className.startsWith("cn.ehai")) {
+                return className;
+            }
+        }
+        throw new RuntimeException("获取栈顶类名失败，请联系管理员");
     }
 }

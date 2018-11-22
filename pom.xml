@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.ehai</groupId>
     <artifactId>java-starter</artifactId>
-    <version>0.3.3</version>
+    <version>0.4.2</version>
     <packaging>pom</packaging>
 
     <name>java-starter</name>
@@ -135,6 +135,11 @@
             <dependency>
                 <groupId>cn.ehai</groupId>
                 <artifactId>common-utils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ehai</groupId>
+                <artifactId>common-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
