@@ -3,10 +3,20 @@ package cn.ehai.log.elk;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
+import cn.ehai.common.core.SpringContext;
+import cn.ehai.common.utils.LoggerUtils;
+import cn.ehai.email.domain.EmailKeyValue;
+import cn.ehai.email.service.EmailService;
+import cn.ehai.email.utils.EmailUtils;
+import cn.ehai.rpc.elk.EHILogstashMarker;
+import com.alibaba.fastjson.JSONObject;
 import net.logstash.logback.appender.listener.TcpAppenderListener;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Description:EHITcpAppenderListener
@@ -22,9 +32,23 @@ public class EHITcpAppenderListener implements TcpAppenderListener {
 
     @Override
     public void eventSendFailure(Appender appender, DeferredProcessingAware deferredProcessingAware, Throwable reason) {
-        LoggingEvent event = (LoggingEvent) deferredProcessingAware;
-        EHILogstashMarker marker = (EHILogstashMarker)event.getMarker();
-        // TODO
+        LoggingEvent event;
+        EHILogstashMarker marker = null;
+        try {
+            event = (LoggingEvent) deferredProcessingAware;
+            marker = (EHILogstashMarker) event.getMarker();
+        } catch (Exception e) {
+            LoggerUtils.error(getClass(), "获取日志信息失败:" + ExceptionUtils.getStackTrace(e));
+        }
+        EmailService emailService = SpringContext.getApplicationContext().getBean(EmailService.class);
+        EmailKeyValue request = new EmailKeyValue("request", JSONObject.toJSONString(marker.getRequestLog()));
+        EmailKeyValue response = new EmailKeyValue("response", JSONObject.toJSONString(marker.getResponseLog()));
+        EmailKeyValue failReason = new EmailKeyValue("failReason", ExceptionUtils.getMessage(reason));
+        List<EmailKeyValue> emailKeyValues = new ArrayList<>();
+        emailKeyValues.add(request);
+        emailKeyValues.add(response);
+        emailKeyValues.add(failReason);
+        emailService.send(EmailUtils.generateEmail(300053, "", emailKeyValues));
     }
 
     @Override
@@ -33,7 +57,6 @@ public class EHITcpAppenderListener implements TcpAppenderListener {
 
     @Override
     public void connectionFailed(Appender appender, InetSocketAddress address, Throwable reason) {
-        // TODO
     }
 
     @Override

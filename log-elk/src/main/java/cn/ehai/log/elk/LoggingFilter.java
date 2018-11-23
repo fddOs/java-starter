@@ -7,6 +7,9 @@ import cn.ehai.common.core.ResultGenerator;
 import cn.ehai.common.utils.HeaderUtils;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.UuidUtils;
+import cn.ehai.rpc.elk.EHILogstashMarker;
+import cn.ehai.rpc.elk.RequestLog;
+import cn.ehai.rpc.elk.ResponseLog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -59,7 +62,8 @@ public class LoggingFilter extends OncePerRequestFilter {
             LoggerUtils.error(getClass(), errorMsg);
             String exceptionCode = "0X" + Long.toHexString(new Date().getTime()).toUpperCase()
                     + (new Random().nextInt(900) + 100);
-            responseResult(response, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR, "程序发生异常，错误代码:" +
+            wrapperResponse.setStatus(506);
+            responseResult(wrapperResponse, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR, "程序发生异常，错误代码:" +
                     exceptionCode));
         } finally {
             boolean isClose = "none".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch());
