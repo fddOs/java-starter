@@ -50,7 +50,6 @@ public class HeaderUtils {
             } catch (UnsupportedEncodingException e) {
                 headers.put(headerName, response.getHeader(headerName));
             }
-            headers.put("response.code", String.valueOf(response.getStatus() == 200 ? 200 : 506));
         });
         return headers;
     }

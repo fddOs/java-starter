@@ -57,9 +57,9 @@ public class LogAspect {
      */
     @Around(value = "execution(* (cn.ehai.*.*.service.impl.* && !cn.ehai.*.actionlog.service.impl.*).*(..)))")
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
-        ActionLog actionLog = new ActionLog();
-        actionLogMap.put(Thread.currentThread().getId(), actionLog);
-        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+        Long key = Thread.currentThread().getId();
+        ActionLog actionLog = actionLogMap.get(key);
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String actionDateTime = simpleFormat.format(new Date());
         // 获取方法
         MethodInvocationProceedingJoinPoint mjp = (MethodInvocationProceedingJoinPoint) pjp;
@@ -71,12 +71,6 @@ public class LogAspect {
         methodName.append(method.getName());
         methodName.append("(");
         methodName.append(")");
-        actionLog.setActionType(ServiceActionTypeEnum.OTHER_RECORD.getActionType());
-        if (actionLogAnnotation != null) {
-            actionLog.setActionType(actionLogAnnotation.value().getActionType());
-        }
-        actionLog.setMethodName(methodName.toString());
-        actionLog.setActionDatetime(actionDateTime);
         // 获取Request
         HttpServletRequest request = null;
         try {
@@ -91,10 +85,21 @@ public class LogAspect {
         String oprNo = request.getParameter("oprNo");
         String referId = request.getParameter("referId");
         String userId = request.getParameter("userId");
+        if (actionLog != null && url.equals(actionLog.getUrl())) {
+            return pjp.proceed();
+        }
+        actionLog = new ActionLog();
         actionLog.setOprNo(oprNo == null ? "" : oprNo);
         actionLog.setReferId(referId == null ? "" : referId);
         actionLog.setUrl(url);
         actionLog.setUserId(userId == null ? "" : userId);
+        actionLog.setActionType(ServiceActionTypeEnum.OTHER_RECORD.getActionType());
+        if (actionLogAnnotation != null) {
+            actionLog.setActionType(actionLogAnnotation.value().getActionType());
+        }
+        actionLog.setMethodName(methodName.toString());
+        actionLog.setActionDatetime(actionDateTime);
+        actionLogMap.put(Thread.currentThread().getId(), actionLog);
         return pjp.proceed();
     }
 
@@ -165,12 +170,12 @@ public class LogAspect {
         Map<String, Object> map = convertSQL(sql);
         boolean isReplace = (boolean) map.get("replace");
         if (StringUtils.isEmpty((String) map.get("where")) && !isReplace) {
-            actionLogMap.remove(key);
+//            actionLogMap.remove(key);
             return pjp.proceed();
         }
         ActionLog actionLog = actionLogMap.get(key);
         if (null == actionLog) {
-            actionLogMap.remove(key);
+//            actionLogMap.remove(key);
             return pjp.proceed();
         }
         boolean bool = "info".equalsIgnoreCase(ApolloBaseConfig.getServiceLogLevel())
@@ -183,7 +188,7 @@ public class LogAspect {
         String tables = (String) map.get("tables");
         // 对业务日志表的更新操作不进行拦截
         if (tables.contains("action_log")) {
-            actionLogMap.remove(key);
+//            actionLogMap.remove(key);
             return pjp.proceed();
         }
         Object result;

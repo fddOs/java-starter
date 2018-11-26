@@ -19,6 +19,7 @@ import cn.ehai.rpc.elk.RequestLog;
 import cn.ehai.rpc.elk.ResponseLog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import okhttp3.Headers;
@@ -162,7 +163,8 @@ public class EhiOkHttpClient {
         boolean isClose = "none".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch());
         boolean isBool = !"ALL".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch()) && "GET".equalsIgnoreCase(request
                 .method());
-        if (isClose || isBool) {
+        if ((isClose || isBool) && StringUtils.isEmpty(exceptionMsg) && response.code() == HttpCodeEnum
+                .CODE_200.getCode()) {
             return response;
         }
         long totalTime = 0l;
@@ -177,6 +179,8 @@ public class EhiOkHttpClient {
         ResponseBody responseBody = response.body();
         String requestUrlQuery = request.url().encodedQuery();
         Headers requestHeaders = request.headers();
+        int httpStatus = response.code() == HttpCodeEnum.CODE_200.getCode() ? HttpCodeEnum.CODE_200.getCode() :
+                HttpCodeEnum.CODE_517.getCode();
         Map<String, String> requestHeaderMap = new HashMap<>();
         for (String headerName : requestHeaders.names()) {
             try {
@@ -195,7 +199,7 @@ public class EhiOkHttpClient {
             } catch (UnsupportedEncodingException e) {
                 responseHeaderMap.put(headerName, response.header(headerName));
             }
-            responseHeaderMap.put("response.code", String.valueOf(response.code() == 200 ? 200 : 507));
+            responseHeaderMap.put("response.code", String.valueOf(httpStatus));
         }
         if (requestUrlQuery != null) {
             try {
@@ -225,15 +229,15 @@ public class EhiOkHttpClient {
             responseBodyJSON = JSON.parseObject(responseBody.string());
             response = response.newBuilder().body(ResponseBody.create(MediaType.parse("application/json; " +
                     "charset=UTF-8"), responseBodyJSON.toJSONString())).build();
-        } catch (IOException e) {
-            responseBodyJSON = JSON.parseObject("{\"unknown\":\"" + ExceptionUtils.getStackTrace(e) + "\"}");
+        } catch (Exception e) {
+            responseBodyJSON = JSON.parseObject("{\"unknown\":\"" + e.getClass().getName() + "\"}");
         } finally {
             responseBody.close();
         }
         RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
                 .getProjectContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
                 requestHeaderMap);
-        int httpStatus = response.code();
+
         ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, exceptionMsg, totalTime,
                 responseBodyJSON, responseHeaderMap);
         // 发送日志信息

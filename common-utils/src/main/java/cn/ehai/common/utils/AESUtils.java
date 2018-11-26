@@ -1,5 +1,7 @@
 package cn.ehai.common.utils;
 
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -130,6 +132,13 @@ public class AESUtils {
     public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, UnsupportedEncodingException, ParseException {
+        try {
+            throw new RuntimeException("123");
+        } catch (Exception e) {
+            System.err.println(JSON.parseObject("{\"unknown\":\"" + ExceptionUtils.getStackTrace(e) + "\"}"));
+        }finally {
+            System.err.println(456);
+        }
         SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
         System.err.println(simpleFormat.format(new Date()));
         System.err.println(aesEncryptString(null));

@@ -10,6 +10,9 @@ import cn.ehai.common.utils.UuidUtils;
 import cn.ehai.rpc.elk.EHILogstashMarker;
 import cn.ehai.rpc.elk.RequestLog;
 import cn.ehai.rpc.elk.ResponseLog;
+import cn.ehai.rpc.feign.ErrorExceptionDecoder;
+import cn.ehai.rpc.feign.ExternalException;
+import cn.ehai.rpc.feign.HttpCodeEnum;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -28,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -51,7 +55,7 @@ public class LoggingFilter extends OncePerRequestFilter {
         ContentCachingResponseWrapper wrapperResponse = new ContentCachingResponseWrapper(response);
         String requestId = null;
         String errorMsg = "";
-        Integer httpStatus = 200;
+        int httpStatus = HttpCodeEnum.CODE_200.getCode();
         try {
             filterChain.doFilter(wrapperRequest, wrapperResponse);
         } catch (Exception e) {
@@ -60,11 +64,15 @@ public class LoggingFilter extends OncePerRequestFilter {
             }
             errorMsg = ExceptionUtils.getStackTrace(e);
             LoggerUtils.error(getClass(), errorMsg);
-            String exceptionCode = "0X" + Long.toHexString(new Date().getTime()).toUpperCase()
+            String exceptionMsg = "程序发生异常，错误代码:0X" + Long.toHexString(new Date().getTime()).toUpperCase()
                     + (new Random().nextInt(900) + 100);
-            wrapperResponse.setStatus(506);
-            responseResult(wrapperResponse, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR, "程序发生异常，错误代码:" +
-                    exceptionCode));
+            wrapperResponse.setStatus(HttpCodeEnum.CODE_516.getCode());
+            if (e instanceof ExternalException) {
+                wrapperResponse.setStatus(HttpCodeEnum.CODE_518.getCode());
+                exceptionMsg = e.getMessage();
+            }
+            responseResult(wrapperResponse, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR,
+                    exceptionMsg));
         } finally {
             boolean isClose = "none".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch());
             boolean isBool = !"ALL".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch()) && "GET".equalsIgnoreCase
@@ -94,8 +102,10 @@ public class LoggingFilter extends OncePerRequestFilter {
             RequestLog requestLog = new RequestLog(requestId, requestTime, true, "privilege-external"
                     , requestUrl, getRequestBody(wrapperRequest), request.getMethod(), HeaderUtils
                     .requestHeaderHandler(request));
+            Map<String,String> responseHeaderMap = HeaderUtils.responseHeaderHandler(response);
+            responseHeaderMap.put("response.code", String.valueOf(httpStatus));
             ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
-                    .getTotalTimeMillis(), responseBody, HeaderUtils.responseHeaderHandler(response));
+                    .getTotalTimeMillis(), responseBody, responseHeaderMap);
             LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
         }
     }
@@ -182,6 +192,7 @@ public class LoggingFilter extends OncePerRequestFilter {
     private boolean isMultipart(final HttpServletRequest request) {
         return request.getContentType() != null && request.getContentType().startsWith("multipart/form-data");
     }
+
 
     /**
      * @param response
