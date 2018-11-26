@@ -224,15 +224,18 @@ public class EhiOkHttpClient {
         if (requestBodyJSON == null) {
             requestBodyJSON = new JSONObject();
         }
-        JSON responseBodyJSON;
+        JSON responseBodyJSON = new JSONObject();
+        String bodyString = "";
         try {
-            responseBodyJSON = JSON.parseObject(responseBody.string());
-            response = response.newBuilder().body(ResponseBody.create(MediaType.parse("application/json; " +
-                    "charset=UTF-8"), responseBodyJSON.toJSONString())).build();
+            bodyString = responseBody.string();
+            responseBodyJSON = JSON.parseObject(bodyString);
         } catch (Exception e) {
-            responseBodyJSON = JSON.parseObject("{\"unknown\":\"" + e.getClass().getName() + "\"}");
+            exceptionMsg = "ResponseBody:" + bodyString + "\r\n Exception:" + exceptionMsg;
         } finally {
+            response = response.newBuilder().body(ResponseBody.create(MediaType.parse("application/json; " +
+                    "charset=UTF-8"), bodyString)).build();
             responseBody.close();
+            responseBody = null;
         }
         RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
                 .getProjectContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
@@ -244,4 +247,5 @@ public class EhiOkHttpClient {
         LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
         return response;
     }
+
 }

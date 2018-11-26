@@ -10,7 +10,6 @@ import cn.ehai.common.utils.UuidUtils;
 import cn.ehai.rpc.elk.EHILogstashMarker;
 import cn.ehai.rpc.elk.RequestLog;
 import cn.ehai.rpc.elk.ResponseLog;
-import cn.ehai.rpc.feign.ErrorExceptionDecoder;
 import cn.ehai.rpc.feign.ExternalException;
 import cn.ehai.rpc.feign.HttpCodeEnum;
 import com.alibaba.fastjson.JSON;
@@ -69,7 +68,11 @@ public class LoggingFilter extends OncePerRequestFilter {
             wrapperResponse.setStatus(HttpCodeEnum.CODE_516.getCode());
             if (e instanceof ExternalException) {
                 wrapperResponse.setStatus(HttpCodeEnum.CODE_518.getCode());
-                exceptionMsg = e.getMessage();
+                String message = e.getMessage();
+                int i = message.indexOf("---");
+                if (i != -1) {
+                    exceptionMsg = message.substring(i + 3);
+                }
             }
             responseResult(wrapperResponse, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR,
                     exceptionMsg));
@@ -102,7 +105,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             RequestLog requestLog = new RequestLog(requestId, requestTime, true, "privilege-external"
                     , requestUrl, getRequestBody(wrapperRequest), request.getMethod(), HeaderUtils
                     .requestHeaderHandler(request));
-            Map<String,String> responseHeaderMap = HeaderUtils.responseHeaderHandler(response);
+            Map<String, String> responseHeaderMap = HeaderUtils.responseHeaderHandler(response);
             responseHeaderMap.put("response.code", String.valueOf(httpStatus));
             ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
                     .getTotalTimeMillis(), responseBody, responseHeaderMap);
@@ -154,12 +157,14 @@ public class LoggingFilter extends OncePerRequestFilter {
      */
     private JSON getResponseBody(ContentCachingResponseWrapper response) {
         byte[] buf = response.getContentAsByteArray();
+        String bodyString = "";
         if (buf.length > 0) {
             try {
-                return JSON.parseObject(new String(buf, 0, buf.length, "utf-8"));
+                bodyString = new String(buf, 0, buf.length, "utf-8");
+                return JSON.parseObject(bodyString);
             } catch (Exception e) {
                 return JSON.parseObject("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
-                        response.getContentType() + "\"}");
+                        response.getContentType() + "ResponseBody:" + bodyString + "\"}");
             }
         }
         return new JSONObject();

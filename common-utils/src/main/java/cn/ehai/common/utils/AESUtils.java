@@ -132,6 +132,12 @@ public class AESUtils {
     public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, UnsupportedEncodingException, ParseException {
+        String message ="外部服务器异常：调用错误信息---123";
+        int i = message.indexOf("---");
+        if (i != -1) {
+            message = message.substring(i+3);
+        }
+        System.err.println(message);
         try {
             throw new RuntimeException("123");
         } catch (Exception e) {

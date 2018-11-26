@@ -4,7 +4,7 @@
     <parent>
         <groupId>cn.ehai</groupId>
         <artifactId>java-starter</artifactId>
-        <version>0.4.9</version>
+        <version>0.5.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -55,6 +55,10 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.ehai</groupId>
+            <artifactId>common-core</artifactId>
         </dependency>
     </dependencies>
 </project>
