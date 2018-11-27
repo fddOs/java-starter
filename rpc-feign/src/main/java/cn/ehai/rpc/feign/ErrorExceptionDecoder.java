@@ -33,7 +33,7 @@ public class ErrorExceptionDecoder implements ErrorDecoder {
                 errorMessage = result.getMessage();
             }
         } catch (JSONException e) {
-            parseError = "ResponseBody:" + bodyString + "Exception:" + ExceptionUtils.getStackTrace(e);
+            parseError = "ResponseBody:" + bodyString + " Exception:" + ExceptionUtils.getStackTrace(e);
         } catch (Exception e) {
             // TODO
             LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
