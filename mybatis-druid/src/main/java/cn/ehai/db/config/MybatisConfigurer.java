@@ -1,5 +1,6 @@
 package cn.ehai.db.config;
 
+import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.db.generator.CodeGenerator;
 import com.github.pagehelper.PageHelper;
@@ -51,6 +52,7 @@ public class MybatisConfigurer {
     public MapperScannerConfigurer mapperScannerConfigurer() {
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactoryBean");
+        LoggerUtils.info(getClass(), "Mapper Package:" + CodeGenerator.MAPPER_PACKAGE);
         mapperScannerConfigurer.setBasePackage(CodeGenerator.MAPPER_PACKAGE + ",cn.ehai.log.dao");
         return mapperScannerConfigurer;
     }

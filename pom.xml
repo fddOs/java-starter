@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.ehai</groupId>
     <artifactId>java-starter</artifactId>
-    <version>0.3.3</version>
+    <version>0.5.4</version>
     <packaging>pom</packaging>
 
     <name>java-starter</name>
@@ -18,6 +18,7 @@
         <module>spring-web</module>
         <module>rpc-feign</module>
         <module>util-redis-lock</module>
+        <module>ehi-email</module>
     </modules>
 
     <properties>
@@ -140,6 +141,11 @@
             </dependency>
             <dependency>
                 <groupId>cn.ehai</groupId>
+                <artifactId>common-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ehai</groupId>
                 <artifactId>mybatis-druid</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -155,7 +161,17 @@
             </dependency>
             <dependency>
                 <groupId>cn.ehai</groupId>
+                <artifactId>rpc-feign</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ehai</groupId>
                 <artifactId>spring-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ehai</groupId>
+                <artifactId>ehi-email</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -192,6 +208,11 @@
                 <groupId>io.opentracing.contrib</groupId>
                 <artifactId>opentracing-spring-web-starter</artifactId>
                 <version>0.3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>5.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

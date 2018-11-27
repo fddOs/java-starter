@@ -14,11 +14,12 @@ import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.*;
-import cn.ehai.log.elk.EHILogstashMarker;
-import cn.ehai.log.elk.RequestLog;
-import cn.ehai.log.elk.ResponseLog;
+import cn.ehai.rpc.elk.EHILogstashMarker;
+import cn.ehai.rpc.elk.RequestLog;
+import cn.ehai.rpc.elk.ResponseLog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import okhttp3.Headers;
@@ -139,6 +140,9 @@ public class EhiOkHttpClient {
                 responseBody.close();
             }
         }
+//        if (res.code() != 200) {
+//            return res.newBuilder().body(responseBodyNew).code(500000 + res.code()).build();
+//        }
         return res.newBuilder().body(responseBodyNew).build();
     }
 
@@ -159,7 +163,8 @@ public class EhiOkHttpClient {
         boolean isClose = "none".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch());
         boolean isBool = !"ALL".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch()) && "GET".equalsIgnoreCase(request
                 .method());
-        if (isClose || isBool) {
+        if ((isClose || isBool) && StringUtils.isEmpty(exceptionMsg) && response.code() == HttpCodeEnum
+                .CODE_200.getCode()) {
             return response;
         }
         long totalTime = 0l;
@@ -174,6 +179,8 @@ public class EhiOkHttpClient {
         ResponseBody responseBody = response.body();
         String requestUrlQuery = request.url().encodedQuery();
         Headers requestHeaders = request.headers();
+        int httpStatus = response.code() == HttpCodeEnum.CODE_200.getCode() ? HttpCodeEnum.CODE_200.getCode() :
+                HttpCodeEnum.CODE_517.getCode();
         Map<String, String> requestHeaderMap = new HashMap<>();
         for (String headerName : requestHeaders.names()) {
             try {
@@ -192,6 +199,7 @@ public class EhiOkHttpClient {
             } catch (UnsupportedEncodingException e) {
                 responseHeaderMap.put(headerName, response.header(headerName));
             }
+            responseHeaderMap.put("response.code", String.valueOf(httpStatus));
         }
         if (requestUrlQuery != null) {
             try {
@@ -216,23 +224,28 @@ public class EhiOkHttpClient {
         if (requestBodyJSON == null) {
             requestBodyJSON = new JSONObject();
         }
-        JSON responseBodyJSON;
+        JSON responseBodyJSON = new JSONObject();
+        String bodyString = "";
         try {
-            responseBodyJSON = JSON.parseObject(responseBody.string());
-            response = response.newBuilder().body(ResponseBody.create(MediaType.parse("application/json; " +
-                    "charset=UTF-8"), responseBodyJSON.toJSONString())).build();
-        } catch (IOException e) {
-            responseBodyJSON = JSON.parseObject("{\"unknown\":\"" + ExceptionUtils.getStackTrace(e) + "\"}");
+            bodyString = responseBody.string();
+            responseBodyJSON = JSON.parseObject(bodyString);
+        } catch (Exception e) {
+            exceptionMsg = "ResponseBody:" + bodyString + "\r\n Exception:" + exceptionMsg;
         } finally {
+            response = response.newBuilder().body(ResponseBody.create(MediaType.parse("application/json; " +
+                    "charset=UTF-8"), bodyString)).build();
             responseBody.close();
+            responseBody = null;
         }
         RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
                 .getProjectContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
                 requestHeaderMap);
-        ResponseLog responseLog = new ResponseLog(responseTime, response.code(), exceptionMsg, totalTime,
+
+        ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, exceptionMsg, totalTime,
                 responseBodyJSON, responseHeaderMap);
         // 发送日志信息
         LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
         return response;
     }
+
 }

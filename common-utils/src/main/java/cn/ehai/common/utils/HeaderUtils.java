@@ -35,7 +35,7 @@ public class HeaderUtils {
 
     /**
      * @param response
-     * @return java.util.Map<java.lang.String   ,   java.lang.String>
+     * @return java.util.Map<java.lang.String       ,       java.lang.String>
      * @Description:header转码 iso8859-1转utf-8
      * @exception:
      * @author: 方典典

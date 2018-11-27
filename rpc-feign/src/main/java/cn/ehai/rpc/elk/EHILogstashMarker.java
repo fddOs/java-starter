@@ -1,4 +1,4 @@
-package cn.ehai.log.elk;
+package cn.ehai.rpc.elk;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import net.logstash.logback.marker.LogstashMarker;
@@ -28,4 +28,19 @@ public class EHILogstashMarker extends LogstashMarker {
         generator.writeObject(responseLog);
     }
 
+    public RequestLog getRequestLog() {
+        return requestLog;
+    }
+
+    public void setRequestLog(RequestLog requestLog) {
+        this.requestLog = requestLog;
+    }
+
+    public ResponseLog getResponseLog() {
+        return responseLog;
+    }
+
+    public void setResponseLog(ResponseLog responseLog) {
+        this.responseLog = responseLog;
+    }
 }
