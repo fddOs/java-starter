@@ -17,6 +17,7 @@
         <module>mybatis-druid</module>
         <module>spring-web</module>
         <module>rpc-feign</module>
+        <module>util-redis-lock</module>
     </modules>
 
     <properties>
