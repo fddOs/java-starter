@@ -212,7 +212,7 @@ else
     if [ "$MVNW_VERBOSE" = true ]; then
       echo "Couldn't find .mvn/wrapper/maven-wrapper.jar, downloading it ..."
     fi
-    jarUrl="https://repo.maven.apache.org/maven2/io/takari/maven-wrapper/0.5.4/maven-wrapper-0.5.4.jar"
+    jarUrl="https://repo.maven.apache.org/maven2/io/takari/maven-wrapper/0.5.9/maven-wrapper-0.5.9.jar"
     while IFS="=" read key value; do
       case "$key" in (wrapperUrl) jarUrl="$value"; break ;;
       esac
