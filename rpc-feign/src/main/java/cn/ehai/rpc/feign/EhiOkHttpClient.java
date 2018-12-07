@@ -74,7 +74,7 @@ public class EhiOkHttpClient {
                 return response;
             }
         }).writeTimeout(feignProperties.getConnectTimeoutMillis(), TimeUnit.MILLISECONDS).pingInterval(1, TimeUnit
-                .SECONDS).retryOnConnectionFailure(true);
+                .SECONDS).retryOnConnectionFailure(false);
         return builder.build();
     }
 

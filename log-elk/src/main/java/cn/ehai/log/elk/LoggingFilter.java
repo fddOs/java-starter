@@ -9,6 +9,7 @@ import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ResultGenerator;
 import cn.ehai.common.utils.HeaderUtils;
 import cn.ehai.common.utils.LoggerUtils;
+import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.common.utils.UuidUtils;
 import cn.ehai.rpc.elk.EHILogstashMarker;
 import cn.ehai.rpc.elk.RequestLog;
@@ -73,7 +74,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             }
             errorMsg = ExceptionUtils.getStackTrace(e);
             LoggerUtils.error(getClass(), errorMsg);
-            String exceptionMsg = "程序发生异常，错误代码:0X" + Long.toHexString(new Date().getTime()).toUpperCase()
+            String exceptionMsg = "程序发生异常，错误代码:0X" + Long.toHexString(System.currentTimeMillis()).toUpperCase()
                     + (new Random().nextInt(900) + 100);
             wrapperResponse.setStatus(HttpCodeEnum.CODE_516.getCode());
             if (e instanceof ExternalException) {
@@ -112,8 +113,9 @@ public class LoggingFilter extends OncePerRequestFilter {
                 request.removeAttribute(ATTRIBUTE_STOP_WATCH);
             }
             String responseTime = SIMPLE_FORMAT.format(new Date());
-            RequestLog requestLog = new RequestLog(requestId, requestTime, true, "privilege-external"
-                    , requestUrl, getRequestBody(wrapperRequest), request.getMethod(), headerMap);
+            RequestLog requestLog = new RequestLog(requestId, requestTime, true,
+                    ProjectInfoUtils.getProjectContext(), requestUrl, getRequestBody(wrapperRequest),
+                    request.getMethod(), headerMap);
             Map<String, String> responseHeaderMap = HeaderUtils.responseHeaderHandler(response);
             responseHeaderMap.put("response.code", String.valueOf(httpStatus));
             ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch

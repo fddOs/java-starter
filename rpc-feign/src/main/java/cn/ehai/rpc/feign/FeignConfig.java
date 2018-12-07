@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import feign.Feign;
 import feign.Request.Options;
+import feign.Retryer;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.okhttp.OkHttpClient;
@@ -31,7 +32,7 @@ public class FeignConfig {
     public Feign.Builder create(okhttp3.OkHttpClient okHttpClient, Tracer tracer) {
         TracingClient tracingClient = new TracingClient(new OkHttpClient(okHttpClient), tracer);
         return Feign.builder()
-                .client(tracingClient)
+                .client(tracingClient).retryer(Retryer.NEVER_RETRY)
                 .errorDecoder(new ErrorExceptionDecoder())
                 .encoder(new JacksonEncoder(new ObjectMapper().setSerializationInclusion(JsonInclude.Include
                         .NON_NULL).configure(SerializationFeature.INDENT_OUTPUT, false)))
