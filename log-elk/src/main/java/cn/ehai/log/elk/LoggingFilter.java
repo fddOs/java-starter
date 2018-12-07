@@ -1,11 +1,15 @@
 package cn.ehai.log.elk;
 
+import brave.internal.HexCodec;
+import brave.opentracing.BraveSpanContext;
+import brave.propagation.TraceContext;
 import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.Result;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ResultGenerator;
 import cn.ehai.common.utils.HeaderUtils;
 import cn.ehai.common.utils.LoggerUtils;
+import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.common.utils.UuidUtils;
 import cn.ehai.rpc.elk.EHILogstashMarker;
 import cn.ehai.rpc.elk.RequestLog;
@@ -14,9 +18,13 @@ import cn.ehai.rpc.feign.ExternalException;
 import cn.ehai.rpc.feign.HttpCodeEnum;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import io.opentracing.Scope;
+import io.opentracing.SpanContext;
+import io.opentracing.Tracer;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
@@ -40,6 +48,8 @@ import java.util.Random;
  */
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
+    @Autowired
+    private Tracer tracer;
     private static final SimpleDateFormat SIMPLE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
     private static final String ATTRIBUTE_STOP_WATCH = LoggingFilter.class.getName()
@@ -55,6 +65,7 @@ public class LoggingFilter extends OncePerRequestFilter {
         String requestId = null;
         String errorMsg = "";
         int httpStatus = HttpCodeEnum.CODE_200.getCode();
+        Map<String, String> headerMap = getRequestHeaderMap(request);
         try {
             filterChain.doFilter(wrapperRequest, wrapperResponse);
         } catch (Exception e) {
@@ -63,7 +74,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             }
             errorMsg = ExceptionUtils.getStackTrace(e);
             LoggerUtils.error(getClass(), errorMsg);
-            String exceptionMsg = "程序发生异常，错误代码:0X" + Long.toHexString(new Date().getTime()).toUpperCase()
+            String exceptionMsg = "程序发生异常，错误代码:0X" + Long.toHexString(System.currentTimeMillis()).toUpperCase()
                     + (new Random().nextInt(900) + 100);
             wrapperResponse.setStatus(HttpCodeEnum.CODE_516.getCode());
             if (e instanceof ExternalException) {
@@ -102,15 +113,35 @@ public class LoggingFilter extends OncePerRequestFilter {
                 request.removeAttribute(ATTRIBUTE_STOP_WATCH);
             }
             String responseTime = SIMPLE_FORMAT.format(new Date());
-            RequestLog requestLog = new RequestLog(requestId, requestTime, true, "privilege-external"
-                    , requestUrl, getRequestBody(wrapperRequest), request.getMethod(), HeaderUtils
-                    .requestHeaderHandler(request));
+            RequestLog requestLog = new RequestLog(requestId, requestTime, true,
+                    ProjectInfoUtils.getProjectContext(), requestUrl, getRequestBody(wrapperRequest),
+                    request.getMethod(), headerMap);
             Map<String, String> responseHeaderMap = HeaderUtils.responseHeaderHandler(response);
             responseHeaderMap.put("response.code", String.valueOf(httpStatus));
             ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
                     .getTotalTimeMillis(), responseBody, responseHeaderMap);
             LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
         }
+    }
+
+    private Map<String, String> getRequestHeaderMap(HttpServletRequest request) {
+        Map<String, String> headerMap = HeaderUtils.requestHeaderHandler(request);
+        Scope serverSpan = tracer.scopeManager().active();
+        if (serverSpan != null) {
+            SpanContext spanContext = serverSpan.span().context();
+            if (spanContext instanceof BraveSpanContext) {
+                TraceContext traceContext = ((BraveSpanContext) spanContext).unwrap();
+                String traceId = HexCodec.toLowerHex(traceContext.traceId());
+                String spanId = HexCodec.toLowerHex(traceContext.spanId());
+                headerMap.put("parentId", "0");
+                if (traceContext.parentId() != null) {
+                    headerMap.put("parentId", HexCodec.toLowerHex(traceContext.parentId()));
+                }
+                headerMap.put("traceId", traceId);
+                headerMap.put("spanId", spanId);
+            }
+        }
+        return headerMap;
     }
 
     private StopWatch createStopWatchIfNecessary(HttpServletRequest request) {
