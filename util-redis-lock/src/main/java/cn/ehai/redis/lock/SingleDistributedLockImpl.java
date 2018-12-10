@@ -1,5 +1,7 @@
 package cn.ehai.redis.lock;
 
+import cn.ehai.common.utils.LoggerUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
@@ -60,9 +62,11 @@ public class SingleDistributedLockImpl implements DistributedLockService {
     RLock lock = getLock(redisson, lockName, true);
     try {
         return lock.tryLock(DEFAULT_WAIT_TIME,DEFAULT_TIMEOUT,DEFAULT_TIME_UNIT);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+    } catch (Exception e) {
+      LoggerUtils.error(SingleDistributedLockImpl.class,"tryLock--操作失败"+
+          ExceptionUtils.getStackTrace(e));
     }
+    return true;
   }
 
   @Override public void unLock(String lockName) {
