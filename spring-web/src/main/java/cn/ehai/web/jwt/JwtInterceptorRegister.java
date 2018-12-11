@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * Spring MVC 配置
  */
 @Configuration
-@ConditionalOnProperty(value = "jwt.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = "jwt.enabled", havingValue = "true")
 public class JwtInterceptorRegister extends WebMvcConfigurerAdapter {
 
     // 添加拦截器

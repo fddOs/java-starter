@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.ehai.online.dao.ActionLogMapper">
-    <resultMap id="BaseResultMap" type="cn.ehai.online.entity.ActionLog">
+<mapper namespace="cn.ehai.log.dao.ActionLogMapper">
+    <resultMap id="BaseResultMap" type="cn.ehai.log.entity.ActionLog">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="action_datetime" jdbcType="TIMESTAMP" property="actionDatetime"/>
         <result column="action_type" jdbcType="INTEGER" property="actionType"/>
@@ -15,7 +15,7 @@
         <result column="url" jdbcType="VARCHAR" property="url"/>
         <result column="method_name" jdbcType="VARCHAR" property="methodName"/>
     </resultMap>
-    <insert id="insert" parameterType="cn.ehai.online.entity.ActionLog">
+    <insert id="insert" parameterType="cn.ehai.log.entity.ActionLog">
         <!--
           WARNING - @mbg.generated
         -->
@@ -31,7 +31,7 @@
         #{referId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{isSuccess,jdbcType=BIT},
         #{url,jdbcType=VARCHAR}, #{methodName,jdbcType=VARCHAR})
     </insert>
-    <update id="updateByPrimaryKey" parameterType="cn.ehai.online.entity.ActionLog">
+    <update id="updateByPrimaryKey" parameterType="cn.ehai.log.entity.ActionLog">
         <!--
           WARNING - @mbg.generated
         -->
