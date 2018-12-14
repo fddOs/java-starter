@@ -1,5 +1,6 @@
 package cn.ehai.rpc.feign;
 
+import cn.ehai.common.core.ExternalException;
 import cn.ehai.common.core.Result;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.utils.LoggerUtils;

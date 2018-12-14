@@ -4,7 +4,7 @@
     <parent>
         <groupId>cn.ehai</groupId>
         <artifactId>java-starter</artifactId>
-        <version>0.6.2</version>
+        <version>0.6.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,11 +13,5 @@
     <packaging>jar</packaging>
     <name>ehi-email</name>
     <description>EHI Email for Spring Boot</description>
-    <dependencies>
-        <dependency>
-            <groupId>cn.ehai</groupId>
-            <artifactId>rpc-feign</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>

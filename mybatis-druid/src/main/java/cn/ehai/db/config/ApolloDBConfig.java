@@ -94,7 +94,7 @@ public class ApolloDBConfig {
             throw new ServiceException(ResultCode.FAIL, "jdbcURL用户名或密码为空--" + jdbcUrl);
         }
         jdbcUrl = jdbcUrl.replace(password, "*");
-        jdbcUrl = jdbcUrl.replace(separator, "&");
+        jdbcUrl = jdbcUrl.replace("|", "&");
         return new DBInfo(jdbcUrl, userName, password);
     }
 

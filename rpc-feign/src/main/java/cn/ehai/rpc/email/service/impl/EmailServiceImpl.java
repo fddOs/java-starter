@@ -1,12 +1,12 @@
-package cn.ehai.email.service.impl;
+package cn.ehai.rpc.email.service.impl;
 
 import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
-import cn.ehai.email.api.EmailApi;
 import cn.ehai.email.domain.EmailModel;
 import cn.ehai.email.domain.EmailResult;
 import cn.ehai.email.service.EmailService;
+import cn.ehai.rpc.email.api.EmailApi;
 import feign.Feign;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
