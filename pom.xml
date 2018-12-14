@@ -264,13 +264,15 @@
         </plugins>
     </build>
     <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <url>${releases.repo}</url>
-        </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <url>${snapshots.repo}</url>
+            <id>mobile-group-snapshots</id>
+            <name>mobile-group</name>
+            <url>http://192.168.9.230:8081/repository/java-snapshots/</url>
         </snapshotRepository>
+        <repository>
+            <id>mobile-group-releases</id>
+            <name>mobile-group</name>
+            <url>http://192.168.9.230:8081/repository/java-releases/</url>
+        </repository>
     </distributionManagement>
 </project>
