@@ -1,0 +1,3 @@
+project:
+  basePackage: cn.ehai
+  context: java-starter

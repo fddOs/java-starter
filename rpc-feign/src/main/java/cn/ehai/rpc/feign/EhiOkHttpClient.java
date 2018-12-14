@@ -10,10 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import cn.ehai.common.core.ApolloBaseConfig;
-import cn.ehai.common.core.HttpCodeEnum;
-import cn.ehai.common.core.ResultCode;
-import cn.ehai.common.core.ServiceException;
+import cn.ehai.common.core.*;
 import cn.ehai.common.utils.*;
 import cn.ehai.log.elk.EHILogstashMarker;
 import cn.ehai.log.elk.RequestLog;
@@ -43,13 +40,15 @@ import org.springframework.context.annotation.Configuration;
  * okhtt工具类
  */
 @Configuration
-@EnableConfigurationProperties(FeignProperties.class)
+@EnableConfigurationProperties({FeignProperties.class, ProjectInfoProperties.class})
 public class EhiOkHttpClient {
     private static Logger LOGGER = LoggerFactory.getLogger(EhiOkHttpClient.class);
     private SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
     @Autowired
     private FeignProperties feignProperties;
+    @Autowired
+    private ProjectInfoProperties projectInfoProperties;
 
     @Bean
     public OkHttpClient getOkHttpClient() {
@@ -238,8 +237,8 @@ public class EhiOkHttpClient {
             responseBody.close();
             responseBody = null;
         }
-        RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
-                .getProjectContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
+        RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, projectInfoProperties
+                .getContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
                 requestHeaderMap);
 
         ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, exceptionMsg, totalTime,

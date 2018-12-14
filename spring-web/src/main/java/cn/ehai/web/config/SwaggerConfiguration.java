@@ -1,6 +1,8 @@
 package cn.ehai.web.config;
 
-import cn.ehai.common.utils.ProjectInfoUtils;
+import cn.ehai.common.core.ProjectInfoProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -16,12 +18,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
+@EnableConfigurationProperties(ProjectInfoProperties.class)
 public class SwaggerConfiguration extends WebMvcConfigurerAdapter {
+    @Autowired
+    private ProjectInfoProperties projectInfoProperties;
+
     @Bean
     public Docket createApi() {
         return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
-                .apis(RequestHandlerSelectors.basePackage(ProjectInfoUtils.getProjectPackage())).paths(PathSelectors
-                        .any()).build();
+                .apis(RequestHandlerSelectors.basePackage(projectInfoProperties.getBasePackage())).paths
+                        (PathSelectors.any()).build();
     }
 
     @Override
@@ -33,7 +39,7 @@ public class SwaggerConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private ApiInfo apiInfo() {
-        String basePackage = ProjectInfoUtils.getProjectPackage();
+        String basePackage = projectInfoProperties.getBasePackage();
         String service = basePackage.substring(basePackage.indexOf(".", 3) + 1) + "-service-api";
         return new ApiInfoBuilder().title(service).description(service).contact(basePackage).version("1.0").build();
     }
