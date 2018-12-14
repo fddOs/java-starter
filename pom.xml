@@ -251,6 +251,16 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <!--统一版本管理-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <!--无需备份之前 POM 文件-->
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <distributionManagement>
