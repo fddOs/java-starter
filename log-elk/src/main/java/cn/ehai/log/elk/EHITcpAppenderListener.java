@@ -8,7 +8,6 @@ import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.email.domain.EmailKeyValue;
 import cn.ehai.email.service.EmailService;
 import cn.ehai.email.utils.EmailUtils;
-import cn.ehai.rpc.elk.EHILogstashMarker;
 import com.alibaba.fastjson.JSONObject;
 import net.logstash.logback.appender.listener.TcpAppenderListener;
 import org.apache.commons.lang3.exception.ExceptionUtils;

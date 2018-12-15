@@ -1,4 +1,4 @@
-package cn.ehai.rpc.elk;
+package cn.ehai.log.elk;
 
 import java.util.Map;
 

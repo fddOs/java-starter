@@ -1,4 +1,4 @@
-package cn.ehai.rpc.elk;
+package cn.ehai.log.elk;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import net.logstash.logback.marker.LogstashMarker;

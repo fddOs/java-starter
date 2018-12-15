@@ -1,4 +1,4 @@
-package cn.ehai.email.api;
+package cn.ehai.rpc.email.api;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package cn.ehai.rpc.feign;
+package cn.ehai.common.core;
 
 /**
  * @Description:HttpCodeEnum
