@@ -1,7 +1,9 @@
 package cn.ehai.web.jwt;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -12,9 +14,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @ConditionalOnProperty(value = "jwt.enabled", havingValue = "true")
 public class JwtInterceptorRegister extends WebMvcConfigurerAdapter {
 
+    @Value("${jwt.exclude.path}")
+    private String excludePath;
+
     // 添加拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        //if(){
+        //
+        //}
         registry.addInterceptor(new JwtHandlerInterceptorAdapter()).excludePathPatterns("/druid/**")
                 .excludePathPatterns("/swagger-resources/**").excludePathPatterns(
                 "/v2/**").excludePathPatterns("/login");
