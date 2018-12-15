@@ -15,6 +15,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import static cn.ehai.web.common.SignConfig.SIGN_HEADER;
+
 /**
  * 请求签名验证
  *
@@ -23,8 +25,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  */
 public class RequestSignInterceptor  extends HandlerInterceptorAdapter {
 
-    private String signHeader = "x-ehi-sign";
-    private String http_x_forwarded_for;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -58,7 +58,7 @@ public class RequestSignInterceptor  extends HandlerInterceptorAdapter {
         if(StringUtils.isEmpty(requestBody) && query == null ){
             return true;
         }
-        String md5 = request.getHeader(signHeader);
+        String md5 = request.getHeader(SIGN_HEADER);
         if(StringUtils.isEmpty(md5)  || StringUtils.isEmpty(resMd5) ){
             return false;
         }
