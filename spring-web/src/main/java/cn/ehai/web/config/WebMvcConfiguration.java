@@ -38,18 +38,20 @@ import java.util.List;
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
-    private final Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
 
-    // 使用阿里 FastJson 作为JSON MessageConverter
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
         //
         FastJsonConfig config = new FastJsonConfig();
-        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue, // 保留空的字段
-                SerializerFeature.WriteNullStringAsEmpty, // String null -> ""
-                SerializerFeature.WriteNullNumberAsZero, // Number null -> 0
-                SerializerFeature.WriteNullBooleanAsFalse, // boolean null
+        // 保留空的字段
+        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue,
+            // String null -> ""
+                SerializerFeature.WriteNullStringAsEmpty,
+            // Number null -> 0
+                SerializerFeature.WriteNullNumberAsZero,
+            // boolean null
+                SerializerFeature.WriteNullBooleanAsFalse,
                 // ->false
                 SerializerFeature.WriteDateUseDateFormat);
         converter.setFastJsonConfig(config);
@@ -68,95 +70,15 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                 .allowedOrigins("*");
     }
 
-    // 添加拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        if (!"dev".equals(ApolloBaseConfig.getPlatForm())) { // 开发环境忽略签名认证
-            registry.addInterceptor(new HandlerInterceptorAdapter() {
-                @Override
-                public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-                        throws Exception {
-                    // 验证签名
-                    EhiHttpServletRequestWrapper ehiHttpServletRequestWrapper = new EhiHttpServletRequestWrapper(
-                            request);
-                    if (validateSign(ehiHttpServletRequestWrapper)) {
-                        return true;
-                    } else {
-                        logger.warn("签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}", request.getRequestURI(), getIpAddress(request),
-                                JSON.toJSONString(request.getParameterMap()));
-                        responseResult(response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "签名认证失败"));
-                        return false;
-                    }
-                }
-            }).excludePathPatterns("/druid/*").excludePathPatterns("/heart");
-        }
+        //签名拦截器
+        registry.addInterceptor(new RequestSignInterceptor())
+            .excludePathPatterns("/druid/*")
+            .excludePathPatterns("/heartbeat")
+            .excludePathPatterns("/swagger-resources/**")
+            .excludePathPatterns("/v2/api-docs/**");
     }
-
-    private void responseResult(HttpServletResponse response, Result result) {
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-type", "application/json;charset=UTF-8");
-        response.setStatus(200);
-        try {
-            response.getWriter().write(JSON.toJSONString(result));
-        } catch (IOException ex) {
-            logger.error(ex.getMessage());
-        }
-    }
-
-    /**
-     * 一个简单的签名认证，规则： 1. 将请求参数按ascii码排序 2. 拼接为a=value&b=value...这样的字符串（不包含sign）
-     * 3. 混合密钥（secret）进行md5获得签名，与请求的签名进行比较
-     */
-    private boolean validateSign(EhiHttpServletRequestWrapper request) {
-        String requestSign = request.getHeader("Content-MD5");// 获得请求签名，如sign=19e907700db7ad91318424a97c54ed57
-
-        BufferedReader br;
-        String bodyStr = "";
-        try {
-            br = request.getReader();
-            String str;
-            while ((str = br.readLine()) != null) {
-                bodyStr += str;
-            }
-
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-        String query = request.getQueryString();
-        if (StringUtils.isEmpty(requestSign) && StringUtils.isEmpty(query) && StringUtils.isEmpty(bodyStr)) {
-            return false;
-        }
-        String sign = SignUtils.sign(query, bodyStr);
-        logger.info(sign);
-        logger.info(requestSign);
-        return StringUtils.equals(sign.toLowerCase(), requestSign.toLowerCase());// 比较
-    }
-
-    private String getIpAddress(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        // 如果是多级代理，那么取第一个ip为客户端ip
-        if (ip != null && ip.indexOf(",") != -1) {
-            ip = ip.substring(0, ip.indexOf(",")).trim();
-        }
-
-        return ip;
-    }
-
     /**
      * @param builder
      * @return ObjectMapper
