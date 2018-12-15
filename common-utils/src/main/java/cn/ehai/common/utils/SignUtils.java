@@ -42,7 +42,7 @@ public class SignUtils {
 				}
 			}
 		}
-		if (!StringUtils.isEmpty(query)) {
+		if (!StringUtils.isEmpty(body)) {
 			signMap.put(BODY_KEY, body);
 		}
 
