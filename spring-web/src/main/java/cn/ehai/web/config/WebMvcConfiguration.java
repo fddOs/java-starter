@@ -72,12 +72,14 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //签名拦截器
-        registry.addInterceptor(new RequestSignInterceptor())
-            .excludePathPatterns("/druid/*")
-            .excludePathPatterns("/heartbeat")
-            .excludePathPatterns("/swagger-resources/**")
-            .excludePathPatterns("/v2/api-docs/**");
+        if(!"dev".equalsIgnoreCase(ApolloBaseConfig.getPlatForm())){
+            //签名拦截器
+            registry.addInterceptor(new RequestSignInterceptor())
+                .excludePathPatterns("/druid/*")
+                .excludePathPatterns("/heartbeat")
+                .excludePathPatterns("/swagger-resources/**")
+                .excludePathPatterns("/v2/api-docs/**");
+        }
     }
     /**
      * @param builder
