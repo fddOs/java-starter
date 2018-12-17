@@ -31,4 +31,17 @@ public class IOUtils {
         return body;
     }
 
+    public static  String getResponseBody(byte[] buf) {
+        String bodyString;
+        if (buf.length > 0) {
+            try {
+                bodyString = new String(buf, 0, buf.length, "utf-8");
+                return bodyString;
+            } catch (Exception e) {
+                return "unknown";
+            }
+        }
+        return "unknown";
+    }
+
 }

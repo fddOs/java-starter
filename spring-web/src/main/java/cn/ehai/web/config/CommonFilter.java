@@ -2,6 +2,7 @@ package cn.ehai.web.config;
 
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.AESUtils;
+import cn.ehai.common.utils.IOUtils;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.SignUtils;
 import com.alibaba.fastjson.JSON;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -37,9 +40,15 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
  * @time:2017年11月10日 下午4:46:07
  */
 @Order(1)
-@Component
+@Configuration
 @WebFilter(filterName = "CommonFilter", urlPatterns = "/**")
+@ConditionalOnProperty(
+	prefix = "project",
+	value= "signFilter",
+	havingValue = "true"
+)
 public class CommonFilter  implements Filter{
+
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -69,14 +78,17 @@ public class CommonFilter  implements Filter{
 
 				ServletOutputStream out;
 				try {
-					String respStr = getResponseBody(contentCachingResponseWrapper);
+					String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
+
+
+					byte[] aesResp = AESUtils.aesEncryptString(respStr).getBytes("UTF-8");
 
 					String resSign = SignUtils.signResponse(respStr);
 					contentCachingResponseWrapper.setHeader("x-ehi-sign",resSign);
-
-					respStr="{\"errorCode\":15000403,\"message\":\"验证码接口错误，请稍后再试。\",\"result\":null}";
+					contentCachingResponseWrapper.setHeader("content-type","text");
+					contentCachingResponseWrapper.setHeader("content-length",String.valueOf(aesResp.length));
 					out= response.getOutputStream();
-					out.write(AESUtils.aesEncryptString(respStr).getBytes("UTF-8"));
+					out.write(aesResp);
 					out.flush();
 
 				} catch (Exception e){
@@ -88,28 +100,6 @@ public class CommonFilter  implements Filter{
 		}
 
 
-	}
-
-	/**
-	 * @param response
-	 * @return com.alibaba.fastjson.JSON
-	 * @Description:获取响应Body
-	 * @exception:
-	 * @author: 方典典
-	 * @time:2018/11/6 16:50
-	 */
-	private String getResponseBody(EhiHttpServletResponseWrapper response) throws IOException {
-		byte[] buf = response.getContent();
-		String bodyString;
-		if (buf.length > 0) {
-			try {
-				bodyString = new String(buf, 0, buf.length, "utf-8");
-				return bodyString;
-			} catch (Exception e) {
-				return "unknown";
-			}
-		}
-		return "unknown";
 	}
 
 	@Override

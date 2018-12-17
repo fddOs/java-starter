@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import static cn.ehai.web.common.SignConfig.SIGN_HEADER;
 
@@ -31,16 +33,15 @@ public class RequestSignInterceptor  extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 验证签名
-        return true;
-        //EhiHttpServletRequestWrapper ehiHttpServletRequestWrapper =  (EhiHttpServletRequestWrapper)request;
-        //if (validateSign(ehiHttpServletRequestWrapper)) {
-        //    return true;
-        //} else {
-        //    LoggerUtils.fmtError(RequestSignInterceptor.class,"签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}", request.getRequestURI(), getIpAddress(request),
-        //        JSON.toJSONString(request.getParameterMap()));
-        //    responseResult(response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "签名认证失败"));
-        //    return false;
-        //}
+        ContentCachingRequestWrapper ehiHttpServletRequestWrapper = new ContentCachingRequestWrapper(request);
+        if (validateSign(ehiHttpServletRequestWrapper)) {
+            return true;
+        } else {
+            LoggerUtils.fmtError(RequestSignInterceptor.class,"签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}", request.getRequestURI(), getIpAddress(request),
+                JSON.toJSONString(request.getParameterMap()));
+            responseResult(response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "签名认证失败"));
+            return false;
+        }
     }
 
 
@@ -52,9 +53,8 @@ public class RequestSignInterceptor  extends HandlerInterceptorAdapter {
      * @author:　minhau
      * @time: 上午11:16 18-8-8
      */
-    private boolean validateSign(EhiHttpServletRequestWrapper request) {
-
-        String requestBody = IOUtils.readerToString(request);
+    private boolean validateSign(ContentCachingRequestWrapper request) {
+        String requestBody = IOUtils.getResponseBody(request.getContentAsByteArray());
         String query = request.getQueryString();
         String resMd5 = SignUtils.sign(query,requestBody);
 

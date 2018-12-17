@@ -41,6 +41,8 @@ import org.springframework.web.servlet.resource.VersionResourceResolver;
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
+    private String signPlat= "dev";
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
@@ -81,7 +83,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        if(!"dev".equalsIgnoreCase(ApolloBaseConfig.getPlatForm())){
+        if(!signPlat.equalsIgnoreCase(ApolloBaseConfig.getPlatForm())){
             //签名拦截器
             registry.addInterceptor(new RequestSignInterceptor())
                 .addPathPatterns("/**")
