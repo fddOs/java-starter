@@ -3,9 +3,11 @@ package cn.ehai.web.config;
 import cn.ehai.common.core.Result;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ResultGenerator;
+import cn.ehai.common.utils.IOUtils;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.SignUtils;
 import com.alibaba.fastjson.JSON;
+import com.google.common.io.CharStreams;
 import java.io.IOException;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -29,15 +31,16 @@ public class RequestSignInterceptor  extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 验证签名
-        EhiHttpServletRequestWrapper ehiHttpServletRequestWrapper = new EhiHttpServletRequestWrapper(request);
-        if (validateSign(ehiHttpServletRequestWrapper)) {
-            return true;
-        } else {
-            LoggerUtils.fmtError(RequestSignInterceptor.class,"签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}", request.getRequestURI(), getIpAddress(request),
-                JSON.toJSONString(request.getParameterMap()));
-            responseResult(response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "签名认证失败"));
-            return false;
-        }
+        return true;
+        //EhiHttpServletRequestWrapper ehiHttpServletRequestWrapper =  (EhiHttpServletRequestWrapper)request;
+        //if (validateSign(ehiHttpServletRequestWrapper)) {
+        //    return true;
+        //} else {
+        //    LoggerUtils.fmtError(RequestSignInterceptor.class,"签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}", request.getRequestURI(), getIpAddress(request),
+        //        JSON.toJSONString(request.getParameterMap()));
+        //    responseResult(response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "签名认证失败"));
+        //    return false;
+        //}
     }
 
 
@@ -51,7 +54,7 @@ public class RequestSignInterceptor  extends HandlerInterceptorAdapter {
      */
     private boolean validateSign(EhiHttpServletRequestWrapper request) {
 
-        String requestBody = getRequestBody(request);
+        String requestBody = IOUtils.readerToString(request);
         String query = request.getQueryString();
         String resMd5 = SignUtils.sign(query,requestBody);
 
@@ -66,23 +69,7 @@ public class RequestSignInterceptor  extends HandlerInterceptorAdapter {
         return md5.equalsIgnoreCase(resMd5);
     }
 
-    /**
-     * @Description:　获取requestBody
-     * @param: [request]
-     * @return: java.lang.String
-     * @exception:
-     * @author:　minhau
-     * @time: 下午3:11 18-8-7
-     */
-    public static String getRequestBody(HttpServletRequest request){
-        String body=null;
-            try {
-                body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-            } catch (IOException e) {
-                LoggerUtils.error(RequestSignInterceptor.class, ExceptionUtils.getStackTrace(e));
-            }
-        return body;
-    }
+
 
     private String getIpAddress(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");

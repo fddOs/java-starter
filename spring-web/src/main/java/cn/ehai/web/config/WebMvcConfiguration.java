@@ -15,12 +15,14 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -31,6 +33,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import org.springframework.web.servlet.resource.VersionResourceResolver;
 
 /**
  * Spring MVC 配置
@@ -38,7 +41,13 @@ import java.util.List;
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
-
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+            .addResourceLocations("classpath:/static/")
+            .resourceChain(true)
+            .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
+    }
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
@@ -75,6 +84,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         if(!"dev".equalsIgnoreCase(ApolloBaseConfig.getPlatForm())){
             //签名拦截器
             registry.addInterceptor(new RequestSignInterceptor())
+                .addPathPatterns("/**")
                 .excludePathPatterns("/druid/*")
                 .excludePathPatterns("/heartbeat")
                 .excludePathPatterns("/swagger-resources/**")
@@ -90,7 +100,6 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
      * @time:2017年11月9日 下午4:44:54
      */
     @Bean
-//    @Primary
     public ObjectMapper xssObjectMapper(Jackson2ObjectMapperBuilder builder) {
         // 解析器
         ObjectMapper objectMapper = builder.createXmlMapper(false).build();
@@ -101,4 +110,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         // 返回
         return objectMapper;
     }
+
+
+
 }

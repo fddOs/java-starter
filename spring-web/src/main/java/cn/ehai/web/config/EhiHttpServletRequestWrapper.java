@@ -1,18 +1,37 @@
 package cn.ehai.web.config;
 
+import cn.ehai.common.core.ResultCode;
+import cn.ehai.common.core.ServiceException;
+import cn.ehai.common.utils.AESUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import cn.ehai.common.utils.LoggerUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.owasp.encoder.Encode;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * 重写HttpServletRequestWrapper方法
@@ -20,18 +39,24 @@ import org.springframework.util.StreamUtils;
  * @version 
  */
 public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
+
 	private byte[] requestBody = null;
+
+	private Map<String, String[]> parameterMap;
+
+	private String charse = "UTF-8";
 
 	public EhiHttpServletRequestWrapper (HttpServletRequest request) {
 
 		super(request);
-
+		parameterMap = handlerQuestString(request.getQueryString());
 		//缓存请求body
 		try {
-			requestBody = StreamUtils.copyToByteArray(request.getInputStream());
+			requestBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(), Charset.forName(charse))).getBytes(charse);
 		} catch (IOException e) {
 			LoggerUtils.error(EhiHttpServletRequestWrapper.class,e.fillInStackTrace().toString());
 		}
+
 	}
 
 	/**
@@ -70,6 +95,22 @@ public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
 	}
 
 	/**
+	 * AES解密
+	 * @param string
+	 * @return java.lang.String
+	 * @author lixiao
+	 * @date 2018/12/15 15:49
+	 */
+	private String aesDecrypt(String string){
+		try {
+			return AESUtils.aesDecryptString(string);
+		} catch (Exception e){
+			LoggerUtils.error(EhiHttpServletRequestWrapper.class,ExceptionUtils.getStackTrace(e));
+			throw new ServiceException(ResultCode.FAIL,"解密失败");
+		}
+	}
+
+	/**
 	 * 重写 getReader()
 	 */
 	@Override
@@ -77,19 +118,78 @@ public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
 		return new BufferedReader(new InputStreamReader(getInputStream()));
 	}
 
+
+	private Map<String, String[]> handlerQuestString(String questSting){
+		Map<String, String[]> paramsMap = new HashMap();
+		if(StringUtils.isEmpty(questSting)){
+			return paramsMap;
+		}
+		try {
+			questSting= URLDecoder.decode(questSting,charse);
+		} catch (UnsupportedEncodingException e) {
+			throw new ServiceException(ResultCode.FAIL,"URLDecoder解码失败");
+		}
+		try {
+			String params = aesDecrypt(questSting);
+			if (!StringUtils.isEmpty(params)) {
+				String[] paramList = params.split("&");
+				for (String param : paramList) {
+					String[] string = param.split("=");
+					if (string.length == 2 && !StringUtils.isEmpty(string[1])) {
+						paramsMap.put(string[0], new String[]{string[1]});
+					}
+				}
+			}
+		} catch (Exception e){
+			LoggerUtils.error(EhiHttpServletRequestWrapper.class,"加密失败"+ ExceptionUtils.getStackTrace(e));
+		}
+		return paramsMap;
+	}
+
+	// 重写几个HttpServletRequestWrapper中的方法
+	/**
+	 * 获取所有参数名
+	 *
+	 * @return 返回所有参数名
+	 */
+	@Override
+	public Enumeration<String> getParameterNames() {
+		Vector<String> vector = new Vector<String>(parameterMap.keySet());
+		return vector.elements();
+	}
+
+	/**
+	 * 获取指定参数名的值，如果有重复的参数名，则返回第一个的值 接收一般变量 ，如text类型
+	 *
+	 * @param name
+	 *            指定参数名
+	 * @return 指定参数名的值
+	 */
+	@Override
+	public String getParameter(String name) {
+		String[] results = parameterMap.get(name);
+		if (results == null || results.length <= 0)
+			return null;
+		else {
+			return results[0];
+		}
+	}
+
+	/**
+	 * 获取指定参数名的所有值的数组，如：checkbox的所有数据
+	 * 接收数组变量 ，如checkobx类型
+	 */
 	@Override
 	public String[] getParameterValues(String name) {
-		
-		String[] values = super.getParameterValues(name);
-		if (values != null) {
-			int length = values.length;
-			String[] escapseValues = new String[length];
+		String[] results = parameterMap.get(name);
+		if (results == null || results.length <= 0)
+			return null;
+		else {
+			int length = results.length;
 			for (int i = 0; i < length; i++) {
-				escapseValues[i] = Encode.forHtmlContent(values[i]);
+				results[i] = results[i];
 			}
-			return escapseValues;
+			return results;
 		}
-		
-		return  super.getParameterValues(name);
 	}
 }
