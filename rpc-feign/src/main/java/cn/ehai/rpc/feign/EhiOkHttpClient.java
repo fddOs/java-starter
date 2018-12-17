@@ -125,7 +125,7 @@ public class EhiOkHttpClient {
                 String temp = responseBody.string();
                 if (md5 != null) {
                     if (temp != null) {
-                        String resMd5 = SignUtils.signResponse("", temp);
+                        String resMd5 = SignUtils.signResponse( temp);
                         if (!md5.equalsIgnoreCase(resMd5)) {
                             throw new ServiceException(ResultCode.UNAUTHORIZED, "接口签名失败");
                         }

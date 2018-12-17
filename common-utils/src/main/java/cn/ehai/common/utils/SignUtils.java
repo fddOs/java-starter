@@ -42,7 +42,7 @@ public class SignUtils {
 				}
 			}
 		}
-		if (!StringUtils.isEmpty(query)) {
+		if (!StringUtils.isEmpty(body)) {
 			signMap.put(BODY_KEY, body);
 		}
 
@@ -51,7 +51,14 @@ public class SignUtils {
 		return result;
 	}
 
-	public static String signResponse(String query, String body) {
+	/**
+	 * 返回值 body 加密  HMAC256
+	 * @param body
+	 * @return java.lang.String
+	 * @author lixiao
+	 * @date 2018/12/15 11:02
+	 */
+	public static String signResponse(String body) {
 		String second = EncryptUtils.HMACSHA256(SECRET + body + SECRET, SECRET);
 		String result = Base64Utils.encryptBASE64(second);
 		return result;
