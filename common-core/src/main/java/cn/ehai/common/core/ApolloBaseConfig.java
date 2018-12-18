@@ -111,4 +111,15 @@ public class ApolloBaseConfig {
         }
         return str;
     }
+
+    /**
+     * 根据key获取配置
+     *
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public static String get(String key, String defaultValue) {
+        return aesDecrypt(key, defaultValue);
+    }
 }

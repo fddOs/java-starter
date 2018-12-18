@@ -6,6 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -52,15 +53,5 @@ public class MybatisConfigurer {
                 resolver.getResources("classpath:mybatis/mapper/*.xml")));
         return factory.getObject();
     }
-
-//    @Bean
-//    public MapperScannerConfigurer mapperScannerConfigurer() {
-//        MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
-//        mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactoryBean");
-////        LoggerUtils.info(getClass(), "base Package:" + projectInfoProperties.getBasePackage());
-////        mapperScannerConfigurer.setBasePackage(projectInfoProperties.getBasePackage() + ".dao,cn.ehai.log.dao");
-//        return mapperScannerConfigurer;
-//    }
-
 }
 
