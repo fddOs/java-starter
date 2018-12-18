@@ -1,5 +1,6 @@
 package cn.ehai.common.utils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.stream.Collectors;
@@ -22,13 +23,19 @@ public class IOUtils {
      * @date 2018/12/15 15:16
      */
     public static String readerToString(HttpServletRequest reader){
-        String body=null;
+        BufferedReader br;
+        StringBuilder builder=new StringBuilder();
         try {
-            body =reader.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            br = reader.getReader();
+            String str;
+            while ((str = br.readLine()) != null) {
+                builder.append(str);
+            }
+
         } catch (IOException e) {
             LoggerUtils.error(IOUtils.class, ExceptionUtils.getStackTrace(e));
         }
-        return body;
+        return builder.toString();
     }
 
     public static  String getResponseBody(byte[] buf) {

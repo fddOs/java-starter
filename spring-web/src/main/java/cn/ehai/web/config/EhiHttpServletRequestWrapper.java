@@ -3,6 +3,8 @@ package cn.ehai.web.config;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.AESUtils;
+import cn.ehai.common.utils.IOUtils;
+import cn.ehai.common.utils.SignUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -33,6 +35,8 @@ import org.owasp.encoder.Encode;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
+import static cn.ehai.web.common.SignConfig.SIGN_HEADER;
+
 /**
  * 重写HttpServletRequestWrapper方法
  * @author 
@@ -50,13 +54,35 @@ public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
 		super(request);
 		parameterMap = handlerQuestString(request.getQueryString());
+		String reqBody="";
 		//缓存请求body
 		try {
-			requestBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(), Charset.forName(charse))).getBytes(charse);
+			reqBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(), Charset.forName(charse)));
+			requestBody = reqBody.getBytes(charse);
 		} catch (IOException e) {
 			LoggerUtils.error(EhiHttpServletRequestWrapper.class,e.fillInStackTrace().toString());
 		}
+		if(!signRequest(request,reqBody,getQueryString())){
+			throw new ServiceException(ResultCode.UNAUTHORIZED,"签名错误");
+		}
 
+	}
+
+
+	private boolean signRequest(HttpServletRequest request,String requestBody,String query){
+
+		String resMd5 = SignUtils.sign(query,requestBody);
+
+		if(org.apache.commons.lang3.StringUtils.isEmpty(requestBody) && query == null ){
+			return true;
+		}
+		String md5 = request.getHeader(SIGN_HEADER);
+		if(org.apache.commons.lang3.StringUtils.isEmpty(md5)  || org.apache.commons.lang3.StringUtils
+			.isEmpty(resMd5) ){
+			return false;
+		}
+
+		return md5.equalsIgnoreCase(resMd5);
 	}
 
 	/**
