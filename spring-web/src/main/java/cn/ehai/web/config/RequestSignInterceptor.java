@@ -33,7 +33,7 @@ public class RequestSignInterceptor  extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 验证签名
-        ContentCachingRequestWrapper ehiHttpServletRequestWrapper = new ContentCachingRequestWrapper(request);
+        EhiSignServletRequestWrapper ehiHttpServletRequestWrapper = new EhiSignServletRequestWrapper(request);
         if (validateSign(ehiHttpServletRequestWrapper)) {
             return true;
         } else {
@@ -53,8 +53,8 @@ public class RequestSignInterceptor  extends HandlerInterceptorAdapter {
      * @author:　minhau
      * @time: 上午11:16 18-8-8
      */
-    private boolean validateSign(ContentCachingRequestWrapper request) {
-        String requestBody = IOUtils.getResponseBody(request.getContentAsByteArray());
+    private boolean validateSign(EhiSignServletRequestWrapper request) {
+        String requestBody = IOUtils.readerToString(request);
         String query = request.getQueryString();
         String resMd5 = SignUtils.sign(query,requestBody);
 
