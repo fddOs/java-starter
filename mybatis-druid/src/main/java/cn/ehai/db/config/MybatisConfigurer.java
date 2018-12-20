@@ -39,7 +39,7 @@ public class MybatisConfigurer {
         //分页尺寸为0时查询所有纪录不再执行分页
         properties.setProperty("pageSizeZero", "true");
         //页码<=0 查询第一页，页码>=总页数查询最后一页
-        properties.setProperty("reasonable", "false");
+        properties.setProperty("reasonable", "true");
         //支持通过 Mapper 接口参数来传递分页参数
         properties.setProperty("supportMethodsArguments", "true");
         pageHelper.setProperties(properties);
