@@ -1,5 +1,6 @@
 package cn.ehai.web.jwt;
 
+import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.web.config.EhiHeaderReqWrapper;
 import java.util.Date;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import cn.ehai.common.utils.ProjectInfoUtils;
 import io.jsonwebtoken.*;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
@@ -27,8 +29,9 @@ public class JwtTokenAuthentication {
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String HEADER_STRING = "Authorization";
     private static final String SYSTEM_NAME = ProjectInfoUtils.getProjectContext();
-    private static final String JWT_USER_ID = "userId";
+    private static final String JWT_USER_ID = "sub";
     private static final String HEADER_JWT_USER_ID="jwt-user-id";
+    private static final String JWT_HEADER ="x-ehi-sign";
 
     public static String addAuthentication(HttpServletResponse res, String userId) {
         String jwt = Jwts.builder().setSubject(SYSTEM_NAME).claim(JWT_USER_ID, userId)
@@ -46,20 +49,28 @@ public class JwtTokenAuthentication {
      * @author: 方典典
      * @time:2018/7/17 11:13
      */
-    public static boolean getAuthentication(EhiHeaderReqWrapper request) {
+    public static boolean getAuthentication(HttpServletRequest request) {
         String jwt = getJWT(request);
         if (StringUtils.isEmpty(jwt)) {
             return false;
         }
         try {
-            Claims claims = verify(jwt);
-            request.putHeader(HEADER_JWT_USER_ID,String.valueOf(claims.get(JWT_USER_ID)));
+            verify(jwt);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
+    public static void setJwtHeader(EhiHeaderReqWrapper request) {
+        String jwt = getJWT(request);
+        try {
+            Claims claims = verify(jwt);
+            request.putHeader(HEADER_JWT_USER_ID,String.valueOf(claims.get(JWT_USER_ID)));
+        } catch (Exception e) {
+            LoggerUtils.error(JwtTokenAuthentication.class, ExceptionUtils.getMessage(e));
+        }
+    }
     /**
      * @Description:获取JWT
      * @params:[request]
@@ -69,6 +80,10 @@ public class JwtTokenAuthentication {
      * @time:2018/7/17 11:15
      */
     public static String getJWT(HttpServletRequest request) {
+        String jwt=request.getHeader(JWT_HEADER);
+        if(!StringUtils.isEmpty(jwt)){
+            return jwt;
+        }
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return null;
@@ -78,7 +93,7 @@ public class JwtTokenAuthentication {
         if (streamCookie.isPresent()) {
             return streamCookie.get().getValue();
         }
-        return null;
+        return jwt;
     }
 
     /**

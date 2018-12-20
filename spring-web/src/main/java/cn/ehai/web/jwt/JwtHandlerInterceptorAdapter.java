@@ -24,8 +24,7 @@ public class JwtHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         log.info(request.getServletPath());
-        EhiHeaderReqWrapper contentCachingRequestWrapper = new EhiHeaderReqWrapper(request);
-        if (JwtTokenAuthentication.getAuthentication(contentCachingRequestWrapper)) {
+        if (JwtTokenAuthentication.getAuthentication(request)) {
             return true;
         } else {
             log.warn("jwt token 验证失败，请求接口：{}，请求参数：{}", request.getRequestURI(), JSON.toJSONString(request
