@@ -17,6 +17,7 @@ import cn.ehai.log.elk.RequestLog;
 import cn.ehai.log.elk.ResponseLog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -35,6 +36,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /*
  * okhtt工具类
@@ -45,6 +48,8 @@ public class EhiOkHttpClient {
     private static Logger LOGGER = LoggerFactory.getLogger(EhiOkHttpClient.class);
     private SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
+     private final String HEADER_JWT_USER_ID = "jwt-user-id";
+
     @Autowired
     private FeignProperties feignProperties;
     @Autowired
@@ -54,6 +59,7 @@ public class EhiOkHttpClient {
     public OkHttpClient getOkHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.addInterceptor(new Interceptor() {
+            @Override
             public Response intercept(Chain chain) {
                 Request builderRequest = handleRequest(chain.request());
                 Response response;
@@ -68,7 +74,7 @@ public class EhiOkHttpClient {
                     LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
                 } finally {
                     if(resultResponse==null){
-                       throw  new ServiceException(ResultCode.BAD_REQUEST,"请求异常"+exceptionMsg);
+                       throw  new ServiceException(ResultCode.BAD_REQUEST,"请求异常"+builderRequest.url());
                     }
                     responseTime = simpleFormat.format(new Date());
                     response = sendHttpLog(builderRequest, handleResponse(resultResponse), exceptionMsg, requestTime,
@@ -111,10 +117,18 @@ public class EhiOkHttpClient {
          * 处理请求的url
          */
         return request.newBuilder().addHeader("Content-MD5", SignUtils.sign(request.url().query(), bodyParams))
-                .addHeader("Content-Type", "application/json").url(request.url())
+                .addHeader("Content-Type", "application/json")
+                .addHeader(HEADER_JWT_USER_ID,handleHeader())
+                .url(request.url())
                 .method(request.method(), requestBodyNew).build();
     }
 
+
+    private String  handleHeader(){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            String userId = request.getHeader(HEADER_JWT_USER_ID);
+            return userId;
+    }
     /*
      * 处理返回参数
      */

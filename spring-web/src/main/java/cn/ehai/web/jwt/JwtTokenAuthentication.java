@@ -1,5 +1,6 @@
 package cn.ehai.web.jwt;
 
+import cn.ehai.web.config.EhiHeaderReqWrapper;
 import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -12,6 +13,7 @@ import javax.xml.bind.DatatypeConverter;
 import cn.ehai.common.utils.ProjectInfoUtils;
 import io.jsonwebtoken.*;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 /**
  * jwt 添加token验证
@@ -25,9 +27,11 @@ public class JwtTokenAuthentication {
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String HEADER_STRING = "Authorization";
     private static final String SYSTEM_NAME = ProjectInfoUtils.getProjectContext();
+    private static final String JWT_USER_ID = "userId";
+    private static final String HEADER_JWT_USER_ID="jwt-user-id";
 
     public static String addAuthentication(HttpServletResponse res, String userId) {
-        String jwt = Jwts.builder().setSubject(SYSTEM_NAME).claim("userId", userId)
+        String jwt = Jwts.builder().setSubject(SYSTEM_NAME).claim(JWT_USER_ID, userId)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS256, SECRET).compact();
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + jwt);
@@ -42,13 +46,14 @@ public class JwtTokenAuthentication {
      * @author: 方典典
      * @time:2018/7/17 11:13
      */
-    public static boolean getAuthentication(HttpServletRequest request) {
+    public static boolean getAuthentication(EhiHeaderReqWrapper request) {
         String jwt = getJWT(request);
         if (StringUtils.isEmpty(jwt)) {
             return false;
         }
         try {
-            verify(jwt);
+            Claims claims = verify(jwt);
+            request.putHeader(HEADER_JWT_USER_ID,String.valueOf(claims.get(JWT_USER_ID)));
             return true;
         } catch (Exception e) {
             return false;
