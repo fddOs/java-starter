@@ -67,6 +67,9 @@ public class EhiOkHttpClient {
                     exceptionMsg = ExceptionUtils.getStackTrace(e);
                     LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
                 } finally {
+                    if(resultResponse==null){
+                       throw  new ServiceException(ResultCode.BAD_REQUEST,"请求异常"+exceptionMsg);
+                    }
                     responseTime = simpleFormat.format(new Date());
                     response = sendHttpLog(builderRequest, handleResponse(resultResponse), exceptionMsg, requestTime,
                             responseTime);
