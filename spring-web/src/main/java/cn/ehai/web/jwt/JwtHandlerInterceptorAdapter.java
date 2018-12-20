@@ -1,5 +1,6 @@
 package cn.ehai.web.jwt;
 
+import cn.ehai.web.config.EhiHeaderReqWrapper;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.alibaba.fastjson.JSON;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 public class JwtHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
 

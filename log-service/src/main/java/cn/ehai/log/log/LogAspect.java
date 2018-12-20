@@ -45,7 +45,7 @@ public class LogAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(LogAspect.class);
     private Map<Long, ActionLog> actionLogMap = new HashMap<>();
-
+    private static final String HEADER_JWT_USER_ID="jwt-user-id";
     /**
      * @param pjp void
      * @return
@@ -85,6 +85,9 @@ public class LogAspect {
         String oprNo = request.getParameter("oprNo");
         String referId = request.getParameter("referId");
         String userId = request.getParameter("userId");
+        if(StringUtils.isEmpty(userId)){
+            userId = request.getHeader(HEADER_JWT_USER_ID);
+        }
         if (actionLog != null && url.equals(actionLog.getUrl())) {
             return pjp.proceed();
         }

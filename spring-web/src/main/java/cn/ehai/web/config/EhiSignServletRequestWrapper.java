@@ -93,4 +93,8 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
 
         return  super.getParameterValues(name);
     }
+
+    @Override public String getHeader(String name) {
+        return super.getHeader(name);
+    }
 }

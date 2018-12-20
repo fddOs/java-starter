@@ -1,5 +1,6 @@
 package cn.ehai.rpc.email.api;
 
+import feign.Headers;
 import java.util.List;
 
 import cn.ehai.email.domain.EmailModel;
