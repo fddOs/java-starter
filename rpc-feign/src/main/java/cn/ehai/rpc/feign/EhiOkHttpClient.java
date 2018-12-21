@@ -131,7 +131,7 @@ public class EhiOkHttpClient {
         try {
             request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         } catch (IllegalStateException e) {
-            LoggerUtils.error(EhiOkHttpClient.class, "从当前线程获取Request异常（Feign在子线程所致）", e);
+            LOGGER.warn("当 Feign 使用子线程调用时，Request 中的信息将无法传递到底层接口");
         }
         if (request == null) {
             return "";
