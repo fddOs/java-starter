@@ -126,6 +126,9 @@ public class EhiOkHttpClient {
 
     private String  handleHeader(){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            if(request==null){
+                return "";
+            }
             String userId = request.getHeader(HEADER_JWT_USER_ID);
             return userId==null?"":userId;
     }
