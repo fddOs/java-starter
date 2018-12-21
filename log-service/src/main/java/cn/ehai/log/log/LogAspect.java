@@ -43,7 +43,6 @@ import com.alibaba.fastjson.JSONObject;
 @Component
 public class LogAspect {
 
-    private static final Logger logger = LoggerFactory.getLogger(LogAspect.class);
     private Map<Long, ActionLog> actionLogMap = new HashMap<>();
     private static final String HEADER_JWT_USER_ID="jwt-user-id";
     /**
@@ -98,7 +97,7 @@ public class LogAspect {
         actionLog.setUserId(userId == null ? "" : userId);
         actionLog.setActionType(ServiceActionTypeEnum.OTHER_RECORD.getActionType());
         if (actionLogAnnotation != null) {
-            actionLog.setActionType(actionLogAnnotation.value().getActionType());
+            actionLog.setActionType(actionLogAnnotation.value());
         }
         actionLog.setMethodName(methodName.toString());
         actionLog.setActionDatetime(actionDateTime);
