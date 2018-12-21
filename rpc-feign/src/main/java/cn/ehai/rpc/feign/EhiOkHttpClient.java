@@ -17,7 +17,9 @@ import cn.ehai.log.elk.RequestLog;
 import cn.ehai.log.elk.ResponseLog;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -48,7 +50,7 @@ public class EhiOkHttpClient {
     private static Logger LOGGER = LoggerFactory.getLogger(EhiOkHttpClient.class);
     private SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
-     private final String HEADER_JWT_USER_ID = "jwt-user-id";
+    private final String HEADER_JWT_USER_ID = "jwt-user-id";
 
     @Autowired
     private FeignProperties feignProperties;
@@ -73,8 +75,8 @@ public class EhiOkHttpClient {
                     exceptionMsg = ExceptionUtils.getStackTrace(e);
                     LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
                 } finally {
-                    if(resultResponse==null){
-                       throw  new ServiceException(ResultCode.BAD_REQUEST,"请求异常"+builderRequest.url());
+                    if (resultResponse == null) {
+                        throw new ServiceException(ResultCode.BAD_REQUEST, "请求异常" + builderRequest.url());
                     }
                     responseTime = simpleFormat.format(new Date());
                     response = sendHttpLog(builderRequest, handleResponse(resultResponse), exceptionMsg, requestTime,
@@ -118,20 +120,26 @@ public class EhiOkHttpClient {
          */
         return request.newBuilder().addHeader("Content-MD5", SignUtils.sign(request.url().query(), bodyParams))
                 .addHeader("Content-Type", "application/json")
-                .addHeader(HEADER_JWT_USER_ID,handleHeader())
+                .addHeader(HEADER_JWT_USER_ID, handleHeader())
                 .url(request.url())
                 .method(request.method(), requestBodyNew).build();
     }
 
 
-    private String  handleHeader(){
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-            if(request==null){
-                return "";
-            }
-            String userId = request.getHeader(HEADER_JWT_USER_ID);
-            return userId==null?"":userId;
+    private String handleHeader() {
+        HttpServletRequest request = null;
+        try {
+            request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        } catch (IllegalStateException e) {
+            LoggerUtils.error(EhiOkHttpClient.class, "从当前线程获取Request异常（Feign在子线程所致）", e);
+        }
+        if (request == null) {
+            return "";
+        }
+        String userId = request.getHeader(HEADER_JWT_USER_ID);
+        return userId == null ? "" : userId;
     }
+
     /*
      * 处理返回参数
      */
@@ -145,7 +153,7 @@ public class EhiOkHttpClient {
                 String temp = responseBody.string();
                 if (md5 != null) {
                     if (temp != null) {
-                        String resMd5 = SignUtils.signResponse( temp);
+                        String resMd5 = SignUtils.signResponse(temp);
                         if (!md5.equalsIgnoreCase(resMd5)) {
                             throw new ServiceException(ResultCode.UNAUTHORIZED, "接口签名失败");
                         }
