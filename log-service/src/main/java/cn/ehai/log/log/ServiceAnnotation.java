@@ -22,6 +22,7 @@ public @interface ServiceAnnotation {
 	 * @author: 方典典
 	 * @time:2017年12月27日 下午6:28:07
 	 */
-	ServiceActionTypeEnum value();
+//	ServiceActionTypeEnum value();
+	int value();
 
 }
