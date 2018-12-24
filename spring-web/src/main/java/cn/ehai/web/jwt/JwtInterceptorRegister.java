@@ -17,7 +17,7 @@ public class JwtInterceptorRegister extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtHandlerInterceptorAdapter()).excludePathPatterns("/druid/**")
                 .excludePathPatterns("/swagger-resources/**").excludePathPatterns(
-                "/v2/**").excludePathPatterns("/login");
+                "/v2/**").excludePathPatterns("/login").excludePathPatterns("/heartbeat");
     }
 
 }
