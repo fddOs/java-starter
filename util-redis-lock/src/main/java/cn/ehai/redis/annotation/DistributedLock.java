@@ -42,7 +42,7 @@ public @interface DistributedLock {
      * 是否使用公平锁。
      * 公平锁即先来先得。
      */
-    boolean fairLock() default false;
+    boolean fairLock() default true;
     /**
      * 是否使用尝试锁。
      */

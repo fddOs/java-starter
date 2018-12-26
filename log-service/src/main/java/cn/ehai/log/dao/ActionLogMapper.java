@@ -1,6 +1,7 @@
 package cn.ehai.log.dao;
 
 import cn.ehai.log.entity.ActionLog;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
