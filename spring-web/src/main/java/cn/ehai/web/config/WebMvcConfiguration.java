@@ -20,10 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 
 /**
@@ -41,15 +40,16 @@ import org.springframework.web.servlet.resource.VersionResourceResolver;
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
-    private String signPlat= "dev";
+    private String signPlat = "dev";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
-            .addResourceLocations("classpath:/static/")
-            .resourceChain(true)
-            .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
+                .addResourceLocations("classpath:/static/")
+                .resourceChain(true)
+                .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
     }
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
@@ -57,11 +57,11 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         FastJsonConfig config = new FastJsonConfig();
         // 保留空的字段
         config.setSerializerFeatures(SerializerFeature.WriteMapNullValue,
-            // String null -> ""
+                // String null -> ""
                 SerializerFeature.WriteNullStringAsEmpty,
-            // Number null -> 0
+                // Number null -> 0
                 SerializerFeature.WriteNullNumberAsZero,
-            // boolean null
+                // boolean null
                 SerializerFeature.WriteNullBooleanAsFalse,
                 // ->false
                 SerializerFeature.WriteDateUseDateFormat);
@@ -93,6 +93,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         //        .excludePathPatterns("/v2/api-docs/**");
         //}
     }
+
     /**
      * @param builder
      * @return ObjectMapper
@@ -113,6 +114,16 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         return objectMapper;
     }
 
-
+    /**
+     * 忽略请求url的大小写
+     *
+     * @param configurer
+     */
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        pathMatcher.setCaseSensitive(false);
+        configurer.setPathMatcher(pathMatcher);
+    }
 
 }
