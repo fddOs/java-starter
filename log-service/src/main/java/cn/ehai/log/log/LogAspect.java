@@ -44,7 +44,8 @@ import com.alibaba.fastjson.JSONObject;
 public class LogAspect {
 
     private Map<Long, ActionLog> actionLogMap = new HashMap<>();
-    private static final String HEADER_JWT_USER_ID="jwt-user-id";
+    private static final String HEADER_JWT_USER_ID = "jwt-user-id";
+
     /**
      * @param pjp void
      * @return
@@ -66,6 +67,7 @@ public class LogAspect {
         Method method = signature.getMethod();
         // 获取方法上的注解
         ServiceAnnotation actionLogAnnotation = method.getAnnotation(ServiceAnnotation.class);
+        ServiceParamsAnnotation serviceParamsAnnotation = method.getAnnotation(ServiceParamsAnnotation.class);
         StringBuilder methodName = new StringBuilder();
         methodName.append(method.getName());
         methodName.append("(");
@@ -84,8 +86,19 @@ public class LogAspect {
         String oprNo = request.getParameter("oprNo");
         String referId = request.getParameter("referId");
         String userId = request.getParameter("userId");
-        if(StringUtils.isEmpty(userId)){
-            userId = request.getHeader(HEADER_JWT_USER_ID);
+        if (serviceParamsAnnotation != null) {
+            Object[] params = pjp.getArgs();
+            int referIdIndex = serviceParamsAnnotation.referIdIndex();
+            int userIdIndex = serviceParamsAnnotation.userIdIndex();
+            if (referIdIndex < params.length) {
+                referId = (String) params[referIdIndex];
+            }
+            if (userIdIndex < params.length) {
+                userId = (String) params[userIdIndex];
+            }
+        }
+        if (StringUtils.isEmpty(oprNo)) {
+            oprNo = request.getHeader(HEADER_JWT_USER_ID);
         }
         if (actionLog != null && url.equals(actionLog.getUrl())) {
             return pjp.proceed();
@@ -180,9 +193,13 @@ public class LogAspect {
 //            actionLogMap.remove(key);
             return pjp.proceed();
         }
-        boolean bool = "info".equalsIgnoreCase(ApolloBaseConfig.getServiceLogLevel())
-                && (actionLog.getActionType() == null || actionLog.getActionType().intValue() == 7);
-        if ("none".equalsIgnoreCase(ApolloBaseConfig.getServiceLogLevel()) || bool) {
+        boolean closeCommonServiceLog = !"true".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel());
+        boolean closeAnnotationServiceLog = (!"true".equalsIgnoreCase(ApolloBaseConfig.getServiceAnnotationLogLevel()
+        ) || ("true".equalsIgnoreCase(ApolloBaseConfig.getServiceAnnotationLogLevel()) && (actionLog.getActionType()
+                == null || actionLog.getActionType().intValue() == 7)));
+//        bool = "info".equalsIgnoreCase(ApolloBaseConfig.getServiceLogLevel())
+//                && (actionLog.getActionType() == null || actionLog.getActionType().intValue() == 7);
+        if (closeCommonServiceLog && closeAnnotationServiceLog) {
             actionLogMap.remove(key);
             return pjp.proceed();
         }
@@ -216,7 +233,14 @@ public class LogAspect {
                 actionLog.setNewValue(JSONArray.toJSONString(newParamList));
             }
         }
-        SpringContext.getApplicationContext().getBean(ActionLogServiceAsync.class).insertServiceLogAsync(actionLog);
+        ActionLogServiceAsync actionLogServiceAsync = SpringContext.getApplicationContext().getBean
+                (ActionLogServiceAsync.class);
+        if (!closeAnnotationServiceLog) {
+            actionLogServiceAsync.insertServiceLogAsync(actionLog);
+        }
+        if (!closeCommonServiceLog) {
+            actionLogServiceAsync.insertServiceLogCommonAsync(actionLog);
+        }
         actionLogMap.remove(key);
         return result;
     }

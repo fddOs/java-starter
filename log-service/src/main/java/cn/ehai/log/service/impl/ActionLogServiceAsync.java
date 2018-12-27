@@ -21,7 +21,16 @@ public class ActionLogServiceAsync {
     @Async
     public void insertServiceLogAsync(ActionLog actionLog){
         try {
-            actionLogService.insert(actionLog);
+            actionLogService.insertActionLog(actionLog);
+        } catch (Exception e) {
+            LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+        }
+    }
+
+    @Async
+    public void insertServiceLogCommonAsync(ActionLog actionLog){
+        try {
+            actionLogService.insertActionLogCommon(actionLog);
         } catch (Exception e) {
             LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
         }

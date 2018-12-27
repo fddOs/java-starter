@@ -60,8 +60,12 @@ public class ApolloBaseConfig {
      * @author: 方典典
      * @time:2018年5月22日 下午6:08:04
      */
-    public static String getServiceLogLevel() {
-        return aesDecrypt("serviceLogLevel", "info");
+    public static String getServiceAnnotationLogLevel() {
+        return aesDecrypt("serviceAnnotationLogLevel", "true");
+    }
+
+    public static String getServiceCommonLogLevel() {
+        return aesDecrypt("serviceCommonLogLevel", "false");
     }
 
     private ApolloBaseConfig(LoggingSystem loggingSystem) {

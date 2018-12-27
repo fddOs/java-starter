@@ -9,13 +9,10 @@ import java.util.Map;
 
 @Repository
 public interface ActionLogMapper {
-	int insert(ActionLog record);
+    int insertActionLog(ActionLog record);
 
-	ActionLog selectByPrimaryKey(Integer id);
+    int insertActionLogCommon(ActionLog record);
 
-	List<ActionLog> selectAll();
+    List<Map<String, String>> selectBySql(@Param("sql") String sql);
 
-	List<Map<String, String>> selectBySql(@Param("sql") String sql);
-
-	int updateByPrimaryKey(ActionLog record);
 }

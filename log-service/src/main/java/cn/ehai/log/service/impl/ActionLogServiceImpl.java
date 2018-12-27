@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by lx on 2017/12/27.
+ * @author 方典典
  */
 
 @Service
@@ -24,8 +24,13 @@ public class ActionLogServiceImpl implements ActionLogService {
     }
 
     @Override
-    public int insert(ActionLog actionLog) {
-        return actionLogMapper.insert(actionLog);
+    public int insertActionLog(ActionLog actionLog) {
+        return actionLogMapper.insertActionLog(actionLog);
+    }
+
+    @Override
+    public int insertActionLogCommon(ActionLog actionLog) {
+        return actionLogMapper.insertActionLogCommon(actionLog);
     }
 
 }

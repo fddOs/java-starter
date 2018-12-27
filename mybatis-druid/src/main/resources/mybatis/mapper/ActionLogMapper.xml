@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.ehai.log.dao.ActionLogMapper">
-    <resultMap id="BaseResultMap" type="cn.ehai.log.entity.ActionLog">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="action_datetime" jdbcType="TIMESTAMP" property="actionDatetime"/>
-        <result column="action_type" jdbcType="INTEGER" property="actionType"/>
-        <result column="opr_no" jdbcType="VARCHAR" property="oprNo"/>
-        <result column="opr_table_name" jdbcType="VARCHAR" property="oprTableName"/>
-        <result column="original_value" jdbcType="CHAR" property="originalValue"/>
-        <result column="new_value" jdbcType="CHAR" property="newValue"/>
-        <result column="refer_id" jdbcType="VARCHAR" property="referId"/>
-        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
-        <result column="is_success" jdbcType="BIT" property="isSuccess"/>
-        <result column="url" jdbcType="VARCHAR" property="url"/>
-        <result column="method_name" jdbcType="VARCHAR" property="methodName"/>
-    </resultMap>
-    <insert id="insert" parameterType="cn.ehai.log.entity.ActionLog">
-        <!--
-          WARNING - @mbg.generated
-        -->
+    <insert id="insertActionLog" parameterType="cn.ehai.log.entity.ActionLog">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -31,41 +14,19 @@
         #{referId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{isSuccess,jdbcType=BIT},
         #{url,jdbcType=VARCHAR}, #{methodName,jdbcType=VARCHAR})
     </insert>
-    <update id="updateByPrimaryKey" parameterType="cn.ehai.log.entity.ActionLog">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        update action_log
-        set action_datetime = #{actionDatetime,jdbcType=TIMESTAMP},
-        action_type = #{actionType,jdbcType=INTEGER},
-        opr_no = #{oprNo,jdbcType=VARCHAR},
-        opr_table_name = #{oprTableName,jdbcType=VARCHAR},
-        original_value = #{originalValue,jdbcType=CHAR},
-        new_value = #{newValue,jdbcType=CHAR},
-        refer_id = #{referId,jdbcType=VARCHAR},
-        user_id = #{userId,jdbcType=VARCHAR},
-        is_success = #{isSuccess,jdbcType=BIT},
-        url = #{url,jdbcType=VARCHAR},
-        method_name = #{methodName,jdbcType=VARCHAR}
-        where id = #{id,jdbcType=INTEGER}
-    </update>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        select id, action_datetime, action_type, opr_no, opr_table_name, original_value,
-        new_value, refer_id, user_id, is_success, url, method_name
-        from action_log
-        where id = #{id,jdbcType=INTEGER}
-    </select>
-    <select id="selectAll" resultMap="BaseResultMap">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        select id, action_datetime, action_type, opr_no, opr_table_name, original_value,
-        new_value, refer_id, user_id, is_success, url, method_name
-        from action_log
-    </select>
+    <insert id="insertActionLogCommon" parameterType="cn.ehai.log.entity.ActionLog">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into action_log_common(action_datetime, action_type, opr_no,
+        opr_table_name, original_value, new_value,
+        refer_id, user_id, is_success,
+        url, method_name)
+        values (#{actionDatetime,jdbcType=TIMESTAMP}, #{actionType,jdbcType=INTEGER}, #{oprNo,jdbcType=VARCHAR},
+        #{oprTableName,jdbcType=VARCHAR}, #{originalValue,jdbcType=CHAR}, #{newValue,jdbcType=CHAR},
+        #{referId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{isSuccess,jdbcType=BIT},
+        #{url,jdbcType=VARCHAR}, #{methodName,jdbcType=VARCHAR})
+    </insert>
 
     <select id="selectBySql" resultType="map">
     ${sql}
