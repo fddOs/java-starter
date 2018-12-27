@@ -1,5 +1,7 @@
 package cn.ehai.redis.lock;
 
+import cn.ehai.common.core.ResultCode;
+import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.LoggerUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.redisson.api.RLock;
@@ -55,7 +57,7 @@ public class SingleDistributedLockImpl implements DistributedLockService {
                 lock.unlock();
             }
         }
-        return null;
+        throw new ServiceException(ResultCode.REDIS_ERROR,"redis请求锁失败");
     }
 
   @Override public Boolean tryLock(String lockName) {

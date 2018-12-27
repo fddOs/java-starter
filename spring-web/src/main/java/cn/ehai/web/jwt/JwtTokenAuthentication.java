@@ -62,6 +62,13 @@ public class JwtTokenAuthentication {
         }
     }
 
+    /**
+     * 解析JWT添加到请求头上
+     * @param request
+     * @return void
+     * @author lixiao
+     * @date 2018-12-24 16:46
+     */
     public static void setJwtHeader(EhiHeaderReqWrapper request) {
         String jwt = getJWT(request);
         try {

@@ -19,7 +19,9 @@ public enum ResultCode {
     //参数错误
 	URL_ERROR(15000002),
     //数据异常
-    DATA_ERROR(15000003);
+    DATA_ERROR(15000003),
+    //redis异常
+     REDIS_ERROR(15000004);
 
     private int code;
 
