@@ -2,22 +2,20 @@ package cn.ehai.web.page;
 
 import java.time.LocalDateTime;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @Description:运维心跳页面
  * @author:lixiao
  * @time:2018年3月13日 下午5:34:48
  */
-@Controller
+@RestController
 public class HeartBeatController {
 
     @GetMapping("/heartbeat")
-    public String index(ModelMap model) {
+    public String index() {
         LocalDateTime now = LocalDateTime.now();
-        model.addAttribute("timestamp", now.toString());
-        return "heartbeat";
+        return now.toString();
     }
 }
