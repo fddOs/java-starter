@@ -14,13 +14,13 @@ import org.springframework.stereotype.Component;
 @EnableApolloConfig(value = {"EHI.JavaCommon"})
 public class ApolloCommonConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApolloCommonConfig.class);
+    private final Logger logger = LoggerFactory.getLogger(ApolloCommonConfig.class);
 
     @ApolloConfig("EHI.JavaCommon")
-    private static Config javaCommon;
+    private Config javaCommon;
     private LoggingSystem loggingSystem;
 
-    private static String aesDecrypt(String key, String defaultValue) {
+    private String aesDecrypt(String key, String defaultValue) {
         if (StringUtils.isEmpty(key)) {
             throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请求失败:获取配置key为空，请稍后重试");
         }
@@ -39,7 +39,7 @@ public class ApolloCommonConfig {
      * @param key
      * @return
      */
-    public static String getApolloConfig(String key) {
+    public String getApolloConfig(String key) {
         return aesDecrypt(key, "none");
     }
 }
