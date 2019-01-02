@@ -34,6 +34,10 @@
             <artifactId>javamelody-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.bull.javamelody</groupId>
+            <artifactId>javamelody-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.opentracing.brave</groupId>
             <artifactId>brave-opentracing</artifactId>
         </dependency>
