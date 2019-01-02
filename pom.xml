@@ -132,6 +132,11 @@
             <dependency>
                 <groupId>net.bull.javamelody</groupId>
                 <artifactId>javamelody-spring-boot-starter</artifactId>
+                <version>1.72.0</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bull.javamelody</groupId>
+                <artifactId>javamelody-core</artifactId>
                 <version>1.75.0</version>
             </dependency>
             <dependency>
