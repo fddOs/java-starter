@@ -6,6 +6,7 @@ import brave.propagation.TraceContext;
 import cn.ehai.common.core.*;
 import cn.ehai.common.utils.HeaderUtils;
 import cn.ehai.common.utils.LoggerUtils;
+import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.common.utils.UuidUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -16,8 +17,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
@@ -40,12 +39,9 @@ import java.util.Random;
  * @time:2018/11/6 10:18
  */
 @Component
-@EnableConfigurationProperties(ProjectInfoProperties.class)
 public class LoggingFilter extends OncePerRequestFilter {
     @Autowired
     private Tracer tracer;
-    @Autowired
-    private ProjectInfoProperties projectInfoProperties;
     private static final SimpleDateFormat SIMPLE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
     private static final String ATTRIBUTE_STOP_WATCH = LoggingFilter.class.getName()
@@ -110,7 +106,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             }
             String responseTime = SIMPLE_FORMAT.format(new Date());
             RequestLog requestLog = new RequestLog(requestId, requestTime, true,
-                    projectInfoProperties.getBasePackage(), requestUrl, getRequestBody(wrapperRequest),
+                    ProjectInfoUtils.getProjectContext(), requestUrl, getRequestBody(wrapperRequest),
                     request.getMethod(), headerMap);
             Map<String, String> responseHeaderMap = HeaderUtils.responseHeaderHandler(response);
             responseHeaderMap.put("response.code", String.valueOf(httpStatus));
