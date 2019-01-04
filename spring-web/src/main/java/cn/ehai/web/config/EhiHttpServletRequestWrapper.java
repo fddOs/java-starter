@@ -57,10 +57,15 @@ public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
 		String reqBody="";
 		//缓存请求body
 		try {
-			reqBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(), Charset.forName(charse)));
+			reqBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(),
+				Charset.forName(charse)));
+			if(reqBody==null){
+				reqBody="";
+			}
 			requestBody = reqBody.getBytes(charse);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LoggerUtils.error(EhiHttpServletRequestWrapper.class,e.fillInStackTrace().toString());
+			throw new ServiceException(ResultCode.UNAUTHORIZED,"签名错误");
 		}
 		if(!signRequest(request,reqBody,getQueryString())){
 			throw new ServiceException(ResultCode.UNAUTHORIZED,"签名错误");
@@ -132,7 +137,7 @@ public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
 			return AESUtils.aesDecryptString(string);
 		} catch (Exception e){
 			LoggerUtils.error(EhiHttpServletRequestWrapper.class,ExceptionUtils.getStackTrace(e));
-			throw new ServiceException(ResultCode.FAIL,"解密失败");
+			throw new ServiceException(ResultCode.UNAUTHORIZED,"参数解密错误");
 		}
 	}
 
