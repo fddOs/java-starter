@@ -1,9 +1,11 @@
 package cn.ehai.redis.aspect;
 
+import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.redis.annotation.DistributedLock;
 import cn.ehai.redis.lock.DistributedLockCallback;
 import cn.ehai.redis.lock.DistributedLockService;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -36,11 +38,21 @@ public class DistributedLockAspect {
         //得到使用注解的方法。可使用Method.getAnnotation(Class<T> annotationClass)获取指定的注解，然后可获得注解的属性
         Method method = ((MethodSignature)pjp.getSignature()).getMethod();
         Object[] arguments = pjp.getArgs();
-        final String lockName = getLockName(method, arguments);
+        String[] params = ((MethodSignature) pjp.getSignature()).getParameterNames();
+        final String lockName = getLockName(method, arguments,params);
         return lock(pjp, method, lockName);
     }
 
-    public String getLockName(Method method, Object[] args) {
+
+    /**
+     * 获取锁名称
+     * @param method
+     * @param args
+     * @return java.lang.String
+     * @author lixiao
+     * @date 2018-12-27 09:22
+     */
+    private String getLockName(Method method, Object[] args,String[] params) {
         Objects.requireNonNull(method);
         DistributedLock annotation = method.getAnnotation(DistributedLock.class);
 
@@ -50,12 +62,19 @@ public class DistributedLockAspect {
             if (args.length > 0) {
                 if (isNotEmpty(param)) {
                     Object arg;
-                    if (annotation.argNum() > 0) {
+                    String selectParam;
+                    if (annotation.argNum() > 0 && annotation.argNum()<=args.length) {
                         arg = args[annotation.argNum() - 1];
+                        selectParam=params[annotation.argNum() - 1];
                     } else {
                         arg = args[0];
+                        selectParam=params[0];
                     }
-                    lockName = String.valueOf(getParam(arg, param));
+                    if(isParamType(arg)&&selectParam.equals(param)){
+                        lockName = String.valueOf(arg);
+                    }else{
+                        lockName = String.valueOf(getParam(arg, param));
+                    }
                 } else if (annotation.argNum() > 0) {
                     lockName = args[annotation.argNum() - 1].toString();
                 }
@@ -83,6 +102,30 @@ public class DistributedLockAspect {
 
         throw new IllegalArgumentException("Can't get or generate lockName accurately!");
     }
+
+    /**
+     * 判断参数值是否可以直接获取
+     * @param arg
+     * @return boolean
+     * @author lixiao
+     * @date 2018-12-27 09:42
+     */
+     private boolean isParamType(Object arg){
+         boolean isType = false;
+         try {
+             isType = arg instanceof String||arg instanceof Integer ||arg instanceof Byte
+                 ||arg instanceof Short ||arg instanceof Long||arg instanceof Character||
+                 ((Class)arg.getClass().getField("TYPE").get(null)).isPrimitive();
+         } catch (IllegalAccessException e) {
+             LoggerUtils.error(DistributedLockAspect.class, ExceptionUtils.getStackTrace(e));
+             isType = false;
+         } catch (NoSuchFieldException e) {
+             LoggerUtils.error(DistributedLockAspect.class, ExceptionUtils.getStackTrace(e));
+             isType = false;
+         }
+
+         return isType;
+     }
 
     /**
      * 从方法参数获取数据

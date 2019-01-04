@@ -2,6 +2,9 @@ package cn.ehai.web.config;
 
 import cn.ehai.common.utils.EHIExceptionLogstashMarker;
 import cn.ehai.common.utils.EHIExceptionMsgWrapper;
+import cn.ehai.common.core.Result;
+import cn.ehai.common.core.ResultCode;
+import cn.ehai.common.core.ResultGenerator;
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.AESUtils;
 import cn.ehai.common.utils.IOUtils;
@@ -51,9 +54,14 @@ public class CommonFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         ServletRequest requestWrapper = null;
-        if (request instanceof HttpServletRequest) {
-            requestWrapper = new EhiHttpServletRequestWrapper((HttpServletRequest) request);
-        }
+		try{
+			if (request instanceof HttpServletRequest) {
+				requestWrapper = new EhiHttpServletRequestWrapper((HttpServletRequest) request);
+			}
+		}catch (Exception e){
+			responseResult((HttpServletResponse)response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "签名错误"));
+			return;
+		}
 
         EhiHttpServletResponseWrapper contentCachingResponseWrapper = new EhiHttpServletResponseWrapper(
                 (HttpServletResponse) response);
@@ -104,5 +112,14 @@ public class CommonFilter implements Filter {
     public void destroy() {
 
     }
+	private void responseResult(HttpServletResponse response, Result result) {
+		response.setCharacterEncoding("UTF-8");
+		response.setHeader("Content-type", "application/json;charset=UTF-8");
+		response.setStatus(200);
+		try {
+			response.getWriter().write(JSON.toJSONString(result));
 
+		} catch (IOException ex) {
+		}
+	}
 }
