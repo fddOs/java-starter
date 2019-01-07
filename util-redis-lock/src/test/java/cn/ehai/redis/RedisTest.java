@@ -16,44 +16,15 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author lixiao
  * @date 2018/11/27 13:41
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = UtilRedisApplication.class)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = UtilRedisApplication.class)
 public class RedisTest {
 
   //@Autowired DistributedLockService distributedLockService;
   @Test
   public void test(){
 
-     new Thread(new Runnable() {
-       @Override public void run() {
-           testLock("123456");
-       }
-     }).start();
-    new Thread(new Runnable() {
-      @Override public void run() {
-          testLock("123456");
-      }
-    }).start();
-    new Thread(new Runnable() {
-      @Override public void run() {
-          testLock("123456");
-       }
-   }).start();
-    new Thread(new Runnable() {
-      @Override public void run() {
-          testLock("123456");
-      }
-    }).start();
-    new Thread(new Runnable() {
-      @Override public void run() {
-          testLock("123456");
-      }
-    }).start();
 
   }
 
-  @DistributedLock(param = "userId",argNum = 1)
-  private void testLock(String userId){
-      LoggerUtils.error(RedisTest.class,userId+Thread.currentThread().getName());
-  }
 }

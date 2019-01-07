@@ -42,10 +42,12 @@ public class SignUtils {
 				}
 			}
 		}
+		return sign(signMap,body);
+	}
+	public static String sign(Map<String, String> signMap, String body) {
 		if (!StringUtils.isEmpty(body)) {
 			signMap.put(BODY_KEY, body);
 		}
-
 		String second = EncryptUtils.HMACSHA256(SECRET + getSignContent(signMap) + SECRET, SECRET);
 		String result = Base64Utils.encryptBASE64(second);
 		return result;
