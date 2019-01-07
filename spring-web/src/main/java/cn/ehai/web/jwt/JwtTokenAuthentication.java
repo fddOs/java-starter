@@ -83,7 +83,7 @@ public class JwtTokenAuthentication {
      * @time:2018/7/17 11:15
      */
     public static String getJWT(HttpServletRequest request) {
-        String jwt = request.getHeader(JWT_HEADER);
+        String jwt = request.getHeader(HEADER_STRING);
         if (!StringUtils.isEmpty(jwt)) {
             return jwt;
         }

@@ -19,13 +19,16 @@ public class ResultGenerator {
 	}
 
 	public static <T> Result<T> genSuccessResult(T data) {
+		return genSuccessResult(data,DEFAULT_SUCCESS_MESSAGE);
+	}
+
+	public static <T> Result<T> genSuccessResult(T data,String msg) {
 		Result<T> result = new Result<>();
 		result.setErrorCode(ResultCode.SUCCESS);
-		result.setMessage(DEFAULT_SUCCESS_MESSAGE);
+		result.setMessage(msg);
 		result.setResult(data);
 		return result;
 	}
-
 	public static <T> Result<T> genFailResult(ResultCode errorCode,String message) {
 		return result(null, errorCode, message);
 	}
