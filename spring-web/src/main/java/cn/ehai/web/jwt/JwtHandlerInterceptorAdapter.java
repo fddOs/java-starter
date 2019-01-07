@@ -1,6 +1,9 @@
 package cn.ehai.web.jwt;
 
-import cn.ehai.web.config.EhiHeaderReqWrapper;
+import cn.ehai.common.utils.EHIExceptionLogstashMarker;
+import cn.ehai.common.utils.EHIExceptionMsgWrapper;
+import cn.ehai.common.utils.LoggerUtils;
+
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,26 +12,18 @@ import javax.servlet.http.HttpServletResponse;
 import cn.ehai.common.core.Result;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ResultGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.alibaba.fastjson.JSON;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 public class JwtHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtHandlerInterceptorAdapter.class);
-
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        log.info(request.getServletPath());
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
         if (JwtTokenAuthentication.getAuthentication(request)) {
             return true;
         } else {
-            log.warn("jwt token 验证失败，请求接口：{}，请求参数：{}", request.getRequestURI(), JSON.toJSONString(request
-					.getParameterMap()));
             responseResult(response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "jwt token 验证失败"));
             return false;
         }
@@ -41,6 +36,9 @@ public class JwtHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
         try {
             response.getWriter().write(JSON.toJSONString(result));
         } catch (IOException ex) {
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
+                    (getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                            Object[]{response, result}, ExceptionUtils.getStackTrace(ex))));
         }
     }
 }

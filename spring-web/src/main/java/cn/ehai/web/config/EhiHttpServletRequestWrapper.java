@@ -1,9 +1,10 @@
 package cn.ehai.web.config;
 
+import cn.ehai.common.utils.EHIExceptionLogstashMarker;
+import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.AESUtils;
-import cn.ehai.common.utils.IOUtils;
 import cn.ehai.common.utils.SignUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -12,18 +13,11 @@ import java.io.InputStreamReader;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +25,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import cn.ehai.common.utils.LoggerUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.owasp.encoder.Encode;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
@@ -57,10 +50,17 @@ public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
 		String reqBody="";
 		//缓存请求body
 		try {
-			reqBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(), Charset.forName(charse)));
+			reqBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(),
+				Charset.forName(charse)));
+			if(reqBody==null){
+				reqBody="";
+			}
 			requestBody = reqBody.getBytes(charse);
-		} catch (IOException e) {
-			LoggerUtils.error(EhiHttpServletRequestWrapper.class,e.fillInStackTrace().toString());
+		} catch (Exception e) {
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{request},
+                    ExceptionUtils.getStackTrace(e))));
+			throw new ServiceException(ResultCode.UNAUTHORIZED,"签名错误");
 		}
 		if(!signRequest(request,reqBody,getQueryString())){
 			throw new ServiceException(ResultCode.UNAUTHORIZED,"签名错误");
@@ -131,8 +131,7 @@ public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
 		try {
 			return AESUtils.aesDecryptString(string);
 		} catch (Exception e){
-			LoggerUtils.error(EhiHttpServletRequestWrapper.class,ExceptionUtils.getStackTrace(e));
-			throw new ServiceException(ResultCode.FAIL,"解密失败");
+			throw new ServiceException(ResultCode.UNAUTHORIZED,"参数解密错误");
 		}
 	}
 
@@ -167,7 +166,9 @@ public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
 				}
 			}
 		} catch (Exception e){
-			LoggerUtils.error(EhiHttpServletRequestWrapper.class,"加密失败"+ ExceptionUtils.getStackTrace(e));
+			LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+					.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{questSting},
+					ExceptionUtils.getStackTrace(e))));
 		}
 		return paramsMap;
 	}

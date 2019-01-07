@@ -1,6 +1,9 @@
 package cn.ehai.web.config;
 
+import cn.ehai.common.utils.EHIExceptionLogstashMarker;
+import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.utils.LoggerUtils;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -9,6 +12,8 @@ import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.owasp.encoder.Encode;
 import org.springframework.util.StreamUtils;
 
@@ -21,17 +26,18 @@ import org.springframework.util.StreamUtils;
 public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
 
 
-
     private byte[] requestBody = null;
 
-    public EhiSignServletRequestWrapper (HttpServletRequest request) {
+    public EhiSignServletRequestWrapper(HttpServletRequest request) {
 
         super(request);
         //缓存请求body
         try {
             requestBody = StreamUtils.copyToByteArray(request.getInputStream());
         } catch (IOException e) {
-            LoggerUtils.error(EhiHttpServletRequestWrapper.class,e.fillInStackTrace().toString());
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
+                    (getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                            Object[]{request}, ExceptionUtils.getStackTrace(e))));
         }
     }
 
@@ -40,8 +46,8 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
      */
     @Override
     public ServletInputStream getInputStream() throws IOException {
-        if(requestBody == null){
-            requestBody= new byte[0];
+        if (requestBody == null) {
+            requestBody = new byte[0];
         }
         final ByteArrayInputStream bais = new ByteArrayInputStream(requestBody);
         return new ServletInputStream() {
@@ -91,10 +97,11 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
             return escapseValues;
         }
 
-        return  super.getParameterValues(name);
+        return super.getParameterValues(name);
     }
 
-    @Override public String getHeader(String name) {
+    @Override
+    public String getHeader(String name) {
         return super.getHeader(name);
     }
 }

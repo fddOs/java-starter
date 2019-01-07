@@ -45,7 +45,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * okhtt工具类
  */
 @Configuration
-@EnableConfigurationProperties({FeignProperties.class, ProjectInfoProperties.class})
+@EnableConfigurationProperties({FeignProperties.class})
 public class EhiOkHttpClient {
     private static Logger LOGGER = LoggerFactory.getLogger(EhiOkHttpClient.class);
     private SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
@@ -54,8 +54,6 @@ public class EhiOkHttpClient {
 
     @Autowired
     private FeignProperties feignProperties;
-    @Autowired
-    private ProjectInfoProperties projectInfoProperties;
 
     @Bean
     public OkHttpClient getOkHttpClient() {
@@ -163,7 +161,9 @@ public class EhiOkHttpClient {
                     responseBodyNew = ResponseBody.create(MediaType.parse("application/json; charset=UTF-8"), temp);
                 }
             } catch (Exception e) {
-                LoggerUtils.error(EhiOkHttpClient.class, "接口处理异常", e);
+                LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+                        .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{res},
+                        ExceptionUtils.getStackTrace(e))));
             } finally {
                 responseBody.close();
             }
@@ -195,12 +195,14 @@ public class EhiOkHttpClient {
                 .CODE_200.getCode()) {
             return response;
         }
-        long totalTime = 0l;
+        long totalTime = 0L;
         try {
             totalTime = simpleFormat.parse(responseTime).getTime() - simpleFormat.parse(requestTime).getTime();
         } catch (Exception e) {
             // ignore
-            LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{response,
+                    request, exceptionMsg, requestTime, responseTime}, ExceptionUtils.getStackTrace(e))));
         }
         String requestUrl = request.url().encodedPath();
         RequestBody requestBody = request.body();
@@ -233,7 +235,9 @@ public class EhiOkHttpClient {
             try {
                 requestUrlQuery = URLDecoder.decode(request.url().encodedQuery(), "utf-8");
             } catch (UnsupportedEncodingException e) {
-                LoggerUtils.error(getClass(), "decode请求url参数失败", e);
+                LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+                        .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{response,
+                        request, exceptionMsg, requestTime, responseTime}, ExceptionUtils.getStackTrace(e))));
             }
         } else {
             requestUrlQuery = "";
@@ -245,7 +249,9 @@ public class EhiOkHttpClient {
                 requestBody.writeTo(bufferedSink);
                 bodyParams = bufferedSink.readString(Charset.forName("UTF-8"));
             } catch (Exception e) {
-                LoggerUtils.error(getClass(), "获取请求Body参数失败", e);
+                LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+                        .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{response,
+                        request, exceptionMsg, requestTime, responseTime}, ExceptionUtils.getStackTrace(e))));
             }
         }
         JSON requestBodyJSON = JSON.parseObject(bodyParams);
@@ -265,8 +271,8 @@ public class EhiOkHttpClient {
             responseBody.close();
             responseBody = null;
         }
-        RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, projectInfoProperties
-                .getContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
+        RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
+                .getProjectContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
                 requestHeaderMap);
 
         ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, exceptionMsg, totalTime,

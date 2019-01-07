@@ -1,5 +1,7 @@
 package cn.ehai.log.service.impl;
 
+import cn.ehai.common.utils.EHIExceptionLogstashMarker;
+import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.log.entity.ActionLog;
 import cn.ehai.log.service.ActionLogService;
@@ -19,20 +21,24 @@ public class ActionLogServiceAsync {
     private ActionLogService actionLogService;
 
     @Async
-    public void insertServiceLogAsync(ActionLog actionLog){
+    public void insertServiceLogAsync(ActionLog actionLog) {
         try {
             actionLogService.insertActionLog(actionLog);
         } catch (Exception e) {
-            LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{actionLog},
+                    ExceptionUtils.getStackTrace(e))));
         }
     }
 
     @Async
-    public void insertServiceLogCommonAsync(ActionLog actionLog){
+    public void insertServiceLogCommonAsync(ActionLog actionLog) {
         try {
             actionLogService.insertActionLogCommon(actionLog);
         } catch (Exception e) {
-            LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{actionLog},
+                    ExceptionUtils.getStackTrace(e))));
         }
     }
 }

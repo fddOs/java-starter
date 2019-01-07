@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.util.StringUtils;
  * @author lixiao
  * @date 2018-12-24 16:33
  */
+@Component
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProjectProperty {
 
@@ -20,7 +22,7 @@ public class JwtProjectProperty {
      * @author lixiao
      * @date 2018-12-24 16:37
      */
-    @Value("interceptorUrl")
+    @Value("interceptor-url")
     private String interceptorUrl;
 
     private List<String> url = new ArrayList<>();

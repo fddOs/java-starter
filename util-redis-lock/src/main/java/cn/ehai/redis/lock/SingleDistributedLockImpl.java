@@ -2,12 +2,16 @@ package cn.ehai.redis.lock;
 
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
+import cn.ehai.common.utils.EHIExceptionLogstashMarker;
+import cn.ehai.common.utils.EHIExceptionMsgWrapper;
+import cn.ehai.common.utils.IOUtils;
 import cn.ehai.common.utils.LoggerUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
 import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,28 +61,31 @@ public class SingleDistributedLockImpl implements DistributedLockService {
                 lock.unlock();
             }
         }
-        throw new ServiceException(ResultCode.REDIS_ERROR,"redis请求锁失败");
+        throw new ServiceException(ResultCode.REDIS_ERROR, "redis请求锁失败");
     }
 
-  @Override public Boolean tryLock(String lockName) {
-    RLock lock = getLock(redisson, lockName, true);
-    try {
-        return lock.tryLock(DEFAULT_WAIT_TIME,DEFAULT_TIMEOUT,DEFAULT_TIME_UNIT);
-    } catch (Exception e) {
-      LoggerUtils.error(SingleDistributedLockImpl.class,"tryLock--操作失败"+
-          ExceptionUtils.getStackTrace(e));
+    @Override
+    public Boolean tryLock(String lockName) {
+        RLock lock = getLock(redisson, lockName, true);
+        try {
+            return lock.tryLock(DEFAULT_WAIT_TIME, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
+        } catch (Exception e) {
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
+                    (getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                            Object[]{lockName}, ExceptionUtils.getStackTrace(e))));
+        }
+        return true;
     }
-    return true;
-  }
 
-  @Override public void unLock(String lockName) {
-    RLock lock = getLock(redisson, lockName, true);
-    if (lock != null && lock.isHeldByCurrentThread()) {
-      lock.unlock();
+    @Override
+    public void unLock(String lockName) {
+        RLock lock = getLock(redisson, lockName, true);
+        if (lock != null && lock.isHeldByCurrentThread()) {
+            lock.unlock();
+        }
     }
-  }
 
-  private static RLock getLock(RedissonClient redisson, String lockName, boolean fairLock) {
+    private static RLock getLock(RedissonClient redisson, String lockName, boolean fairLock) {
         RLock lock;
         if (fairLock) {
             lock = redisson.getFairLock(lockName);

@@ -1,13 +1,16 @@
 package cn.ehai.common.core;
 
 import cn.ehai.common.utils.AESUtils;
+import cn.ehai.common.utils.EHIExceptionLogstashMarker;
+import cn.ehai.common.utils.EHIExceptionMsgWrapper;
+import cn.ehai.common.utils.LoggerUtils;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,7 +21,6 @@ public class ApolloCommonConfig {
 
     @ApolloConfig("EHI.JavaCommon")
     private Config javaCommon;
-    private LoggingSystem loggingSystem;
 
     private String aesDecrypt(String key, String defaultValue) {
         if (StringUtils.isEmpty(key)) {
@@ -28,7 +30,10 @@ public class ApolloCommonConfig {
         try {
             str = AESUtils.aesDecryptString(str);
         } catch (Exception e) {
-            logger.error("ApolloCommonConfig 解密配置异常：", e);
+            str = defaultValue;
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
+                    (getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                            Object[]{key, defaultValue}, ExceptionUtils.getStackTrace(e))));
         }
         return str;
     }

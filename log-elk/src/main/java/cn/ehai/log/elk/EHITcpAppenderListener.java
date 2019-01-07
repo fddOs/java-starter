@@ -4,6 +4,8 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import cn.ehai.common.core.SpringContext;
+import cn.ehai.common.utils.EHIExceptionLogstashMarker;
+import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.email.domain.EmailKeyValue;
 import cn.ehai.email.service.EmailService;
@@ -37,7 +39,9 @@ public class EHITcpAppenderListener implements TcpAppenderListener {
             event = (LoggingEvent) deferredProcessingAware;
             marker = (EHILogstashMarker) event.getMarker();
         } catch (Exception e) {
-            LoggerUtils.error(getClass(), "获取日志信息失败:" + ExceptionUtils.getStackTrace(e));
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
+                    (getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                            Object[]{appender, deferredProcessingAware, reason}, ExceptionUtils.getStackTrace(e))));
         }
         EmailService emailService = SpringContext.getApplicationContext().getBean(EmailService.class);
         EmailKeyValue request = new EmailKeyValue("request", JSONObject.toJSONString(marker.getRequestLog()));

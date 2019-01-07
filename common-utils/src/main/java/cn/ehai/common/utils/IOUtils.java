@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
@@ -17,14 +18,15 @@ public class IOUtils {
 
     /**
      * 获取请求藜麦的body
+     *
      * @param reader
      * @return java.lang.String
      * @author lixiao
      * @date 2018/12/15 15:16
      */
-    public static String readerToString(HttpServletRequest reader){
+    public static String readerToString(HttpServletRequest reader) {
         BufferedReader br;
-        StringBuilder builder=new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         try {
             br = reader.getReader();
             String str;
@@ -33,12 +35,14 @@ public class IOUtils {
             }
 
         } catch (IOException e) {
-            LoggerUtils.error(IOUtils.class, ExceptionUtils.getStackTrace(e));
+            LoggerUtils.error(IOUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
+                    (IOUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                            Object[]{reader}, ExceptionUtils.getStackTrace(e))));
         }
         return builder.toString();
     }
 
-    public static  String getResponseBody(byte[] buf) {
+    public static String getResponseBody(byte[] buf) {
         String bodyString;
         if (buf.length > 0) {
             try {

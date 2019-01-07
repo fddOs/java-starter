@@ -4,7 +4,7 @@
     <parent>
         <groupId>cn.ehai</groupId>
         <artifactId>java-starter</artifactId>
-        <version>0.6.6-SNAPSHOT</version>
+        <version>0.6.7-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -12,4 +12,15 @@
     <packaging>jar</packaging>
     <name>common-utils</name>
     <description>Common Utils for Java Starter</description>
+    <dependencies>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.10</version>
+        </dependency>
+    </dependencies>
 </project>

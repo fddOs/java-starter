@@ -1,5 +1,7 @@
 package cn.ehai.common.utils;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -24,7 +26,9 @@ public class BeanInitUtils {
         try {
             obj = o.newInstance();
         } catch (Exception e1) {
-            LoggerUtils.error(BeanInitUtils.class, e1.getMessage());
+            LoggerUtils.error(BeanInitUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
+                    (BeanInitUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                            Object[]{o}, ExceptionUtils.getStackTrace(e1))));
             return (T) new Object();
         }
         Field[] fs = o.getDeclaredFields();
@@ -38,6 +42,7 @@ public class BeanInitUtils {
 
     /**
      * 将null附一个初始值
+     *
      * @return
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
@@ -47,13 +52,14 @@ public class BeanInitUtils {
         Field[] fs = t.getClass().getDeclaredFields();
         for (Field f : fs) {
             f.setAccessible(true);
-            String type = f.getGenericType().toString();
             try {
                 if (f.get(t) != null) {
                     continue;
                 }
             } catch (IllegalAccessException e) {
-                LoggerUtils.error(BeanInitUtils.class, e.getMessage());
+                LoggerUtils.error(BeanInitUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
+                        (BeanInitUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                                Object[]{t}, ExceptionUtils.getStackTrace(e))));
                 continue;
             }
             initField(t, f);
@@ -68,7 +74,7 @@ public class BeanInitUtils {
             if ("class java.lang.String".equals(type)) {
                 f.set(obj, "");
             } else if ("class java.lang.Long".equals(type)) {
-                f.set(obj, 0l);
+                f.set(obj, 0L);
             } else if ("class java.lang.Integer".equals(type)) {
                 f.set(obj, 0);
             } else if ("class java.math.BigDecimal".equals(type)) {
@@ -91,7 +97,9 @@ public class BeanInitUtils {
                 LoggerUtils.error(BeanInitUtils.class, type);
             }
         } catch (Exception e) {
-            LoggerUtils.error(BeanInitUtils.class, e.getMessage());
+            LoggerUtils.error(BeanInitUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
+                    (BeanInitUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                            Object[]{obj, f}, ExceptionUtils.getStackTrace(e))));
         }
     }
 
