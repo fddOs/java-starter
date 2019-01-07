@@ -1,6 +1,7 @@
 package cn.ehai.rpc.feign;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import feign.Feign;
@@ -16,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * @author chenxl
@@ -36,10 +40,25 @@ public class FeignConfig {
                 .errorDecoder(new ErrorExceptionDecoder())
                 .encoder(new JacksonEncoder(new ObjectMapper().setSerializationInclusion(JsonInclude.Include
                         .NON_NULL).configure(SerializationFeature.INDENT_OUTPUT, false)))
-                .decoder(new JacksonDecoder())
+                .decoder(new JacksonDecoder(createObjectMapper()))
                 .logger(new Slf4jLogger())
                 .logLevel(feign.Logger.Level.FULL)
                 .options(new Options(feignProperties.getConnectTimeoutMillis(), feignProperties.getReadTimeoutMillis
                         ()));
+    }
+
+    /**
+     * 设置 Jackson 的时区以及日期的格式
+     *
+     * @param
+     * @return com.fasterxml.jackson.databind.ObjectMapper
+     * @author xianglong.chen
+     * @time 2019/1/7 10:46
+     */
+    private static ObjectMapper createObjectMapper(){
+        return new ObjectMapper()
+                .setTimeZone(TimeZone.getTimeZone("GMT+8:00"))
+                .setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 }
