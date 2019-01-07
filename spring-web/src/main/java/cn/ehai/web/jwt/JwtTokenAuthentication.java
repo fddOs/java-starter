@@ -1,7 +1,9 @@
 package cn.ehai.web.jwt;
 
-import cn.ehai.common.utils.LoggerUtils;
+import cn.ehai.common.core.SpringContext;
+import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.web.config.EhiHeaderReqWrapper;
+
 import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -11,11 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
-import cn.ehai.common.utils.ProjectInfoUtils;
 import io.jsonwebtoken.*;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 /**
  * jwt 添加token验证
@@ -23,15 +22,14 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
  * @author lixiao
  */
 public class JwtTokenAuthentication {
-
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 1L; // 1 days
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 1L;
     private static String SECRET = "AgQGCAoMDfASFAIEBggKDA4QETAdBAYICgwOE52UAgQ=";
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String HEADER_STRING = "Authorization";
     private static final String SYSTEM_NAME = ProjectInfoUtils.getProjectContext();
     private static final String JWT_USER_ID = "sub";
-    private static final String HEADER_JWT_USER_ID="jwt-user-id";
-    private static final String JWT_HEADER ="x-ehi-sign";
+    private static final String HEADER_JWT_USER_ID = "jwt-user-id";
+    private static final String JWT_HEADER = "x-ehi-sign";
 
     public static String addAuthentication(HttpServletResponse res, String userId) {
         String jwt = Jwts.builder().setSubject(SYSTEM_NAME).claim(JWT_USER_ID, userId)
@@ -54,16 +52,15 @@ public class JwtTokenAuthentication {
         if (StringUtils.isEmpty(jwt)) {
             return false;
         }
-        try {
-            verify(jwt);
+        if (verify(jwt) != null) {
             return true;
-        } catch (Exception e) {
-            return false;
         }
+        return false;
     }
 
     /**
      * 解析JWT添加到请求头上
+     *
      * @param request
      * @return void
      * @author lixiao
@@ -71,13 +68,12 @@ public class JwtTokenAuthentication {
      */
     public static void setJwtHeader(EhiHeaderReqWrapper request) {
         String jwt = getJWT(request);
-        try {
-            Claims claims = verify(jwt);
-            request.putHeader(HEADER_JWT_USER_ID,String.valueOf(claims.get(JWT_USER_ID)));
-        } catch (Exception e) {
-            LoggerUtils.error(JwtTokenAuthentication.class, ExceptionUtils.getMessage(e));
+        Claims claims = verify(jwt);
+        if (claims != null) {
+            request.putHeader(HEADER_JWT_USER_ID, String.valueOf(claims.get(JWT_USER_ID)));
         }
     }
+
     /**
      * @Description:获取JWT
      * @params:[request]
@@ -87,8 +83,8 @@ public class JwtTokenAuthentication {
      * @time:2018/7/17 11:15
      */
     public static String getJWT(HttpServletRequest request) {
-        String jwt=request.getHeader(HEADER_STRING);
-        if(!StringUtils.isEmpty(jwt)){
+        String jwt = request.getHeader(HEADER_STRING);
+        if (!StringUtils.isEmpty(jwt)) {
             return jwt;
         }
         Cookie[] cookies = request.getCookies();
@@ -112,7 +108,11 @@ public class JwtTokenAuthentication {
      * @time:2018/7/17 11:10
      */
     public static Claims verify(String jwt) {
-        return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET))
-                .parseClaimsJws(jwt).getBody();
+        try {
+            return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET))
+                    .parseClaimsJws(jwt).getBody();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

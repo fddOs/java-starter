@@ -1,8 +1,8 @@
 package cn.ehai.rpc.feign;
 
-import cn.ehai.common.core.ExternalException;
-import cn.ehai.common.core.Result;
-import cn.ehai.common.core.ResultCode;
+import cn.ehai.common.core.*;
+import cn.ehai.common.utils.EHIExceptionLogstashMarker;
+import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.utils.LoggerUtils;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
@@ -37,7 +37,9 @@ public class ErrorExceptionDecoder implements ErrorDecoder {
             parseError = "ResponseBody:" + bodyString + " Exception:" + ExceptionUtils.getStackTrace(e);
         } catch (Exception e) {
             // TODO
-            LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{arg0, arg1},
+                    ExceptionUtils.getStackTrace(e))));
         }
         return new ExternalException(ResultCode.INTERNAL_SERVER_ERROR, "外部服务器异常：调用" + arg0 + "接口错误，错误码:" +
                 arg1.status() + (StringUtils.isEmpty(parseError) ? "" : " 解析失败:" + parseError) + (StringUtils.isEmpty

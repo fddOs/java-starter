@@ -1,27 +1,36 @@
 package cn.ehai.common.utils;
 
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * @Description:工具类
  * @author:方典典
  * @time:2018/11/7 10:35
  */
 public class ProjectInfoUtils {
-    /**
-     * @param
-     * @return javautils.lang.String
-     * @Description:获取项目名称
-     * @exception:
-     * @author: 方典典
-     * @time:2018/11/7 10:36
-     */
-    public static String getProjectContext() {
+    private static Map map;
+
+    static {
+        Yaml yaml = new Yaml();
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
-            String path = Class.forName(getStackTopClassName()).getResource("/").getPath();
-            String[] projectURL = path.split("/");
-            return projectURL[projectURL.length - 3];
-        } catch (Exception e) {
-            return "unknow-project";
+            map = yaml.loadAs(resolver.getResource("classpath:application.yml").getInputStream(), Map.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public static String getBasePackage() {
+        return (String) ((Map) map.get("project")).get("base-package");
+    }
+
+    public static String getProjectContext() {
+        return (String) ((Map) map.get("project")).get("context");
     }
 
     /**

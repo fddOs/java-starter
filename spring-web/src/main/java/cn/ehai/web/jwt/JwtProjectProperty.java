@@ -22,7 +22,7 @@ public class JwtProjectProperty {
      * @author lixiao
      * @date 2018-12-24 16:37
      */
-    @Value("interceptorUrl")
+    @Value("interceptor-url")
     private String interceptorUrl;
 
     private List<String> url = new ArrayList<>();

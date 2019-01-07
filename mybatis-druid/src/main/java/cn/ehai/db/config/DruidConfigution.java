@@ -62,7 +62,6 @@ public class DruidConfigution {
 			dataSource.setConnectionInitSqls(initSql);
 			dataSource.init();
 		} catch (SQLException e) {
-			LoggerUtils.error(getClass(), "重置数据库链接失败", e);
 			throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "获取数据信息失败！");
 		}
 	}
