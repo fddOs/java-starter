@@ -41,7 +41,7 @@ import org.springframework.core.annotation.Order;
 @WebFilter(filterName = "CommonFilter", urlPatterns = "/**")
 @ConditionalOnProperty(
         prefix = "project",
-        value = "signFilter",
+        value = "sign",
         havingValue = "true"
 )
 public class CommonFilter implements Filter {
