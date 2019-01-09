@@ -8,10 +8,10 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author xianglong.chen
- * @description
- * @time 2018/12/28 17:31
+ * @description 分页统一请求对象
+ * @time 2019/1/9 15:52
  */
-@ApiModel(" 分页统一请求对象")
+@ApiModel(value = "RequestPage", description = "分页统一请求对象")
 public class RequestPage<T> {
 
     @ApiModelProperty("当前页码")
@@ -22,7 +22,8 @@ public class RequestPage<T> {
     @NotNull(message = "pageSize不能为空")
     private Integer pageSize;
 
-    @NotNull(message = "条件不能为空")
+    @ApiModelProperty("查询条件")
+    @NotNull(message = "t不能为空")
     @Valid
     private T t;
 
