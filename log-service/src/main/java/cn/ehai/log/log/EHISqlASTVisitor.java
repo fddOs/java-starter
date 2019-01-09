@@ -23,6 +23,7 @@ public class EHISqlASTVisitor extends MySqlASTVisitorAdapter {
     private boolean complex;
     private boolean replace;
 
+    @Override
     public boolean visit(SQLExprTableSource x) {
         String alia = x.getAlias();
         String table = x.getName().getSimpleName();

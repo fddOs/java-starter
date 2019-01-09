@@ -16,6 +16,7 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 import javax.servlet.ReadListener;
@@ -62,18 +63,28 @@ public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
                     ExceptionUtils.getStackTrace(e))));
 			throw new ServiceException(ResultCode.UNAUTHORIZED,"签名错误");
 		}
-		if(!signRequest(request,reqBody,getQueryString())){
+		if(!signRequest(request,reqBody,getParams(parameterMap))){
 			throw new ServiceException(ResultCode.UNAUTHORIZED,"签名错误");
 		}
 
 	}
 
+	private Map<String, String>  getParams(Map<String, String[]> parameter){
+		Map<String, String> parameterMap = new HashMap<>();
+		Iterator<Map.Entry<String,String[]>> iterator = parameter.entrySet().iterator();
+		while (iterator.hasNext()){
+			Map.Entry<String,String[]> entry = iterator.next();
+			parameterMap.put(entry.getKey(),entry.getValue()[0]);
+		}
+		return parameterMap;
+	}
 
-	private boolean signRequest(HttpServletRequest request,String requestBody,String query){
+
+	private boolean signRequest(HttpServletRequest request,String requestBody,Map<String,String> query){
 
 		String resMd5 = SignUtils.sign(query,requestBody);
 
-		if(org.apache.commons.lang3.StringUtils.isEmpty(requestBody) && query == null ){
+		if(org.apache.commons.lang3.StringUtils.isEmpty(requestBody) && query.isEmpty() ){
 			return true;
 		}
 		String md5 = request.getHeader(SIGN_HEADER);
