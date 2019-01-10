@@ -67,11 +67,26 @@ public class JwtTokenAuthentication {
      * @date 2018-12-24 16:46
      */
     public static void setJwtHeader(EhiHeaderReqWrapper request) {
-        String jwt = getJWT(request);
-        Claims claims = verify(jwt);
-        if (claims != null) {
-            request.putHeader(HEADER_JWT_USER_ID, String.valueOf(claims.get(JWT_USER_ID)));
+        String userCode = getUserCode(request);
+        if (StringUtils.isEmpty(userCode)) {
+            request.putHeader(HEADER_JWT_USER_ID, userCode);
         }
+    }
+
+    /**
+     * 获取UserCode
+     *
+     * @param request
+     * @return java.lang.String
+     * @author 方典典
+     * @time 2019/1/9 17:49
+     */
+    public static String getUserCode(HttpServletRequest request) {
+        Claims claims = verify(getJWT(request));
+        if (claims != null) {
+            return claims.get(JWT_USER_ID).toString();
+        }
+        return null;
     }
 
     /**

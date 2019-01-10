@@ -1,5 +1,6 @@
 package cn.ehai.web.jwt;
 
+import cn.ehai.common.core.SpringContext;
 import cn.ehai.common.utils.EHIExceptionLogstashMarker;
 import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.utils.LoggerUtils;
@@ -13,6 +14,8 @@ import cn.ehai.common.core.Result;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ResultGenerator;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.alibaba.fastjson.JSON;
@@ -20,10 +23,15 @@ import com.alibaba.fastjson.JSON;
 public class JwtHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
+            IOException {
+        String loginUrl= SpringContext.getApplicationContext().getBean(JwtProjectProperty.class).getLoginUrl();
         if (JwtTokenAuthentication.getAuthentication(request)) {
             return true;
         } else {
+            if (!StringUtils.isEmpty(loginUrl)) {
+                response.sendRedirect(request.getContextPath() + loginUrl);
+            }
             responseResult(response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "jwt token 验证失败"));
             return false;
         }
