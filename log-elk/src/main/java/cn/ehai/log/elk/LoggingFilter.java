@@ -125,12 +125,12 @@ public class LoggingFilter extends OncePerRequestFilter {
                 TraceContext traceContext = ((BraveSpanContext) spanContext).unwrap();
                 String traceId = HexCodec.toLowerHex(traceContext.traceId());
                 String spanId = HexCodec.toLowerHex(traceContext.spanId());
-                headerMap.put("parentId", "0");
+                headerMap.put("x-b3-parentspanid", "0");
                 if (traceContext.parentId() != null) {
-                    headerMap.put("parentId", HexCodec.toLowerHex(traceContext.parentId()));
+                    headerMap.put("x-b3-parentspanid", HexCodec.toLowerHex(traceContext.parentId()));
                 }
-                headerMap.put("traceId", traceId);
-                headerMap.put("spanId", spanId);
+                headerMap.put("x-b3-traceid", traceId);
+                headerMap.put("x-b3-spanid", spanId);
             }
         }
         return headerMap;
