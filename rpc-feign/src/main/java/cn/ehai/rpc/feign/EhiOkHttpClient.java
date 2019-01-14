@@ -117,6 +117,7 @@ public class EhiOkHttpClient {
          * 处理请求的url
          */
         return request.newBuilder().addHeader("Content-MD5", SignUtils.sign(request.url().query(), bodyParams))
+                .addHeader("Connection", "close")
                 .addHeader("Content-Type", "application/json")
                 .addHeader(HEADER_JWT_USER_ID, handleHeader())
                 .url(request.url())
