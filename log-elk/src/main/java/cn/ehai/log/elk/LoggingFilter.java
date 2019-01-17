@@ -116,6 +116,14 @@ public class LoggingFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * getRequestHeaderMap
+     *
+     * @param request
+     * @return java.util.Map<java.lang.String   ,   java.lang.String>
+     * @author 方典典
+     * @time 2019/1/15 17:44
+     */
     private Map<String, String> getRequestHeaderMap(HttpServletRequest request) {
         Map<String, String> headerMap = HeaderUtils.requestHeaderHandler(request);
         Scope serverSpan = tracer.scopeManager().active();
@@ -136,6 +144,14 @@ public class LoggingFilter extends OncePerRequestFilter {
         return headerMap;
     }
 
+    /**
+     * createStopWatchIfNecessary
+     *
+     * @param request
+     * @return org.springframework.util.StopWatch
+     * @author 方典典
+     * @time 2019/1/15 17:44
+     */
     private StopWatch createStopWatchIfNecessary(HttpServletRequest request) {
         StopWatch stopWatch = (StopWatch) request.getAttribute(ATTRIBUTE_STOP_WATCH);
         if (stopWatch == null) {
@@ -187,7 +203,7 @@ public class LoggingFilter extends OncePerRequestFilter {
                 return JSON.parseObject(bodyString);
             } catch (Exception e) {
                 return JSON.parseObject("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
-                        response.getContentType() + "ResponseBody:" + bodyString + "\"}");
+                        response.getContentType() + "\"}");
             }
         }
         return new JSONObject();

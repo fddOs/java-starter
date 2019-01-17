@@ -17,10 +17,25 @@ import java.util.List;
 import java.util.Map;
 
 public class EHISqlASTVisitor extends MySqlASTVisitorAdapter {
+    /**
+    *update语句的set项
+    */
     private Map<String, String> items = new HashMap<>();
+    /**
+     *表名
+     */
     private List<String> tables = new ArrayList<>();
+    /**
+     *where语句
+     */
     private String where = "";
+    /**
+     *是否复杂语句
+     */
     private boolean complex;
+    /**
+     *是否为replace语句
+     */
     private boolean replace;
 
     @Override
