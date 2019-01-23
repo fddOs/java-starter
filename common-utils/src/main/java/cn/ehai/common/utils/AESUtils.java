@@ -23,11 +23,11 @@ import javax.crypto.spec.SecretKeySpec;
  * @author 26046
  */
 public class AESUtils {
-
+    public static final String ENCRYPT_FLAG = "_encrypt";
     // 16位初始向量
-    private static final String IV_STRING = "a1rg35Dew47f4ffk";
-    private static final String KEY = "7hf^$Hd*g3@#!fd4";
-    private static final String CHARSET = "UTF-8";
+    public static final String IV_STRING = "a1rg35Dew47f4ffk";
+    public static final String KEY = "7hf^$Hd*g3@#!fd4";
+    public static final String CHARSET = "UTF-8";
 
     private AESUtils() {
     }

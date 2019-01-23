@@ -21,10 +21,11 @@ public class MybatisConfigurer {
 
     @Bean
     public SqlSessionFactory sqlSessionFactoryBean(DataSource dataSource) throws Exception {
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.setTypeAliasesPackage(ProjectInfoUtils.getBasePackage() + ".entity,cn.ehai.log.entity");
-
+        factory.setConfigLocation(resolver.getResources("classpath*:mybatis/mybatis-config.xml")[0]);
         //配置分页插件，详情请查阅官方文档
         PageHelper pageHelper = new PageHelper();
         Properties properties = new Properties();
@@ -38,7 +39,6 @@ public class MybatisConfigurer {
         //添加插件
         factory.setPlugins(new Interceptor[]{pageHelper});
         //添加XML目录
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         factory.setMapperLocations(resolver.getResources("classpath*:mybatis/mapper/*.xml"));
         return factory.getObject();
     }

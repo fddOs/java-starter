@@ -1,6 +1,8 @@
 package cn.ehai.log.log;
 
 import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,9 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.SpringContext;
+import cn.ehai.common.utils.AESUtils;
 import cn.ehai.log.entity.ActionLog;
 import cn.ehai.log.service.ActionLogService;
 import cn.ehai.log.service.impl.ActionLogServiceAsync;
+import com.alibaba.druid.proxy.jdbc.PreparedStatementProxyImpl;
+import com.alibaba.druid.stat.JdbcSqlStat;
 import com.alibaba.druid.util.JdbcConstants;
 import com.alibaba.fastjson.JSONArray;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -45,6 +50,7 @@ public class LogAspect {
 
     private Map<Long, ActionLog> actionLogMap = new HashMap<>();
     private static final String HEADER_JWT_USER_ID = "jwt-user-id";
+    private static final String NEED_AES_HANDLE = "needAesHandle";
 
     /**
      * @param pjp void
@@ -158,6 +164,8 @@ public class LogAspect {
         map.put("where", visitor.getWhere());
         map.put("complex", visitor.isComplex());
         map.put("replace", visitor.isReplace());
+        map.put("sql", visitor.getSql());
+        map.put("needAesHandle", visitor.isNeedAesHandle());
         return map;
     }
 
@@ -178,20 +186,33 @@ public class LogAspect {
             return pjp.proceed();
         }
         String sql = statement.getSqlStat().getSql();
+        if (sql.contains(AESUtils.KEY)) {
+            return pjp.proceed();
+        }
         // 目标sql的所有参数
         List<JdbcParameter> paramList = new ArrayList<>(statement.getParameters().values());
         sql = SQLUtils.format(sql, JdbcConstants.MYSQL, paramList.stream().map(JdbcParameter::getValue).collect
                 (Collectors.toList()));
         Map<String, Object> map = convertSQL(sql);
+        sql = StringUtils.isEmpty((String) map.get("sql")) ? sql : (String) map.get("sql");
+//        statement.setSqlStat(new JdbcSqlStat(sql));
+        statement = new PreparedStatementProxyImpl(statement.getConnectionProxy(), statement.getConnectionProxy()
+                .prepareStatement(sql), sql, statement.getId());
         boolean isReplace = (boolean) map.get("replace");
         if (StringUtils.isEmpty((String) map.get("where")) && !isReplace) {
 //            actionLogMap.remove(key);
-            return pjp.proceed();
+            if (!(boolean) map.get(NEED_AES_HANDLE)) {
+                return pjp.proceed();
+            }
+            return pjp.proceed(new Object[]{pjp.getArgs()[0], statement});
         }
         ActionLog actionLog = actionLogMap.get(key);
         if (null == actionLog) {
 //            actionLogMap.remove(key);
-            return pjp.proceed();
+            if (!(boolean) map.get(NEED_AES_HANDLE)) {
+                return pjp.proceed();
+            }
+            return pjp.proceed(new Object[]{pjp.getArgs()[0], statement});
         }
         boolean closeCommonServiceLog = !"true".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel());
         boolean closeAnnotationServiceLog = (!"true".equalsIgnoreCase(ApolloBaseConfig.getServiceAnnotationLogLevel()
@@ -201,14 +222,20 @@ public class LogAspect {
 //                && (actionLog.getActionType() == null || actionLog.getActionType().intValue() == 7);
         if (closeCommonServiceLog && closeAnnotationServiceLog) {
             actionLogMap.remove(key);
-            return pjp.proceed();
+            if (!(boolean) map.get(NEED_AES_HANDLE)) {
+                return pjp.proceed();
+            }
+            return pjp.proceed(new Object[]{pjp.getArgs()[0], statement});
         }
         // 表名
         String tables = (String) map.get("tables");
         // 对业务日志表的更新操作不进行拦截
         if (tables.contains("action_log")) {
 //            actionLogMap.remove(key);
-            return pjp.proceed();
+            if (!(boolean) map.get(NEED_AES_HANDLE)) {
+                return pjp.proceed();
+            }
+            return pjp.proceed(new Object[]{pjp.getArgs()[0], statement});
         }
         Object result;
         actionLog.setIsSuccess(true);
@@ -217,14 +244,22 @@ public class LogAspect {
             actionLog.setOriginalValue("{\"type\": \"replace\"}");
             actionLog.setNewValue("{\"type\": \"" + SQLUtils.formatMySql(sql, new SQLUtils.FormatOption(true, false))
                     + "\"}");
-            result = pjp.proceed();
+            if (!(boolean) map.get(NEED_AES_HANDLE)) {
+                result = pjp.proceed();
+            } else {
+                result = pjp.proceed(new Object[]{pjp.getArgs()[0], statement});
+            }
         } else {
             // 获取查询老值的sql
             String selectSql = getSelectSQL(map);
             ActionLogService actionLogService = SpringContext.getApplicationContext().getBean(ActionLogService.class);
             List<Map<String, String>> oldParamList = actionLogService.selectBySql(selectSql);
             actionLog.setOriginalValue(JSONArray.toJSONString(oldParamList));
-            result = pjp.proceed();
+            if (!(boolean) map.get(NEED_AES_HANDLE)) {
+                result = pjp.proceed();
+            } else {
+                result = pjp.proceed(new Object[]{pjp.getArgs()[0], statement});
+            }
             if (!(boolean) map.get("complex")) {
                 // 非复杂SQL
                 actionLog.setNewValue(JSONObject.toJSONString(map.get("items")));

@@ -116,7 +116,7 @@ public class CodeGenerator {
         JDBC_PASSWORD = dbPassword;
         BUSINESS_NAME = businessName;
         PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
-        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE);
+        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE)+".impl";
         PACKAGE_PATH_CONTROLLER = packageConvertPath(BASE_PACKAGE + "." + businessName + ".controller");
         genModelAndMapper(tableName, modelName);
         genService(tableName, modelName);
