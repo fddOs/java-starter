@@ -255,15 +255,15 @@ public class EhiOkHttpClient {
                         request, exceptionMsg, requestTime, responseTime}, ExceptionUtils.getStackTrace(e))));
             }
         }
-        JSON requestBodyJSON = JSON.parseObject(bodyParams);
+        Object requestBodyJSON = JSON.parse(bodyParams);
         if (requestBodyJSON == null) {
             requestBodyJSON = new JSONObject();
         }
-        JSON responseBodyJSON = new JSONObject();
+        Object responseBodyJSON = new JSONObject();
         String bodyString = "";
         try {
             bodyString = responseBody.string();
-            responseBodyJSON = JSON.parseObject(bodyString);
+            responseBodyJSON = JSON.parse(bodyString);
         } catch (Exception e) {
             exceptionMsg = "ResponseBody:" + bodyString + "\r\n Exception:" + exceptionMsg;
         } finally {
