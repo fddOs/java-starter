@@ -95,7 +95,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             if (!StringUtils.isEmpty(queryString)) {
                 requestUrl = requestUrl + "?" + queryString;
             }
-            JSON responseBody = getResponseBody(wrapperResponse);
+            Object responseBody = getResponseBody(wrapperResponse);
             wrapperResponse.copyBodyToResponse();
             if (!wrapperRequest.isAsyncStarted()) {
                 if (wrapperResponse.isCommitted()) {
@@ -170,16 +170,16 @@ public class LoggingFilter extends OncePerRequestFilter {
      * @author: 方典典
      * @time:2018/11/6 16:50
      */
-    private JSON getRequestBody(ContentCachingRequestWrapper request) {
+    private Object getRequestBody(ContentCachingRequestWrapper request) {
         if (isBinaryContent(request) || isMultipart(request)) {
-            return JSON.parseObject("{\"content\":\"二进制\"}");
+            return JSON.parse("{\"content\":\"二进制\"}");
         }
         byte[] buf = request.getContentAsByteArray();
         if (buf.length > 0) {
             try {
-                return JSON.parseObject(new String(buf, 0, buf.length, "utf-8"));
+                return JSON.parse(new String(buf, 0, buf.length, "utf-8"));
             } catch (Exception e) {
-                return JSON.parseObject("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
+                return JSON.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
                         request.getContentType() + "\"}");
             }
         }
@@ -194,15 +194,15 @@ public class LoggingFilter extends OncePerRequestFilter {
      * @author: 方典典
      * @time:2018/11/6 16:50
      */
-    private JSON getResponseBody(ContentCachingResponseWrapper response) {
+    private Object getResponseBody(ContentCachingResponseWrapper response) {
         byte[] buf = response.getContentAsByteArray();
         String bodyString = "";
         if (buf.length > 0) {
             try {
                 bodyString = new String(buf, 0, buf.length, "utf-8");
-                return JSON.parseObject(bodyString);
+                return JSON.parse(bodyString);
             } catch (Exception e) {
-                return JSON.parseObject("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
+                return JSON.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
                         response.getContentType() + "\"}");
             }
         }
