@@ -22,7 +22,7 @@ public class EHISqlPropertyASTVisitor extends MySqlASTVisitorAdapter {
     public boolean visit(SQLIdentifierExpr x) {
         String name = x.getName();
         if (!StringUtils.isEmpty(name) && name.endsWith(AESUtils.ENCRYPT_FLAG)) {
-            x.setName(SQLUtils.toMySqlString(SqlAesUtils.aesDecryptString(x)));
+            x.setName(SQLUtils.toMySqlString(SqlAesUtils.aesDecryptString(x)) + " AS " + name);
             needAesHandle = true;
         }
         return super.visit(x);
@@ -36,7 +36,8 @@ public class EHISqlPropertyASTVisitor extends MySqlASTVisitorAdapter {
         }
         String name = x.getName();
         if (!StringUtils.isEmpty(name) && name.endsWith(AESUtils.ENCRYPT_FLAG)) {
-            ((SQLSelectItem) parentSqlObject).setExpr(SqlAesUtils.aesDecryptString(x));
+            String aesExprString = SQLUtils.toMySqlString(SqlAesUtils.aesDecryptString(x)) + " AS " + name;
+            ((SQLSelectItem) parentSqlObject).setExpr(SQLUtils.toMySqlExpr(aesExprString));
             needAesHandle = true;
         }
         return super.visit(x);
