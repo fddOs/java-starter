@@ -107,9 +107,11 @@ public class ApolloBaseConfig {
         if (StringUtils.isEmpty(key)) {
             throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请求失败:获取配置key为空，请稍后重试");
         }
-        String str = null;
+        if(application==null){
+            return defaultValue;
+        }
+        String str = application.getProperty(key, defaultValue);
         try {
-            str = application.getProperty(key, defaultValue);
             str = AESUtils.aesDecryptString(str);
         } catch (Exception e) {
             str = defaultValue;
