@@ -25,6 +25,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import static cn.ehai.web.config.VerificationReqFilter.REQ_DECODE;
+
 /**
  * 验证加密、签名返回参数过滤器
  *
@@ -54,27 +56,30 @@ public class VerificationResFilter implements Filter {
                         .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
                         Object[]{request, response, chain}, ExceptionUtils.getStackTrace(e))));
                 }
-            } finally {
-                ServletOutputStream out;
-                try {
-                    String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
-                    byte[] aesResp = AESUtils.aesEncryptString(respStr).getBytes("UTF-8");
-                    String resSign = SignUtils.signResponse(respStr);
-                    contentCachingResponseWrapper.setHeader("x-ehi-sign", resSign);
-                    contentCachingResponseWrapper.setHeader("content-type", "text");
-                    contentCachingResponseWrapper.setHeader("content-length", String.valueOf(aesResp.length));
-                    out = response.getOutputStream();
-                    out.write(aesResp);
-                    out.flush();
-
-                } catch (Exception e) {
-                    LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                        .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                        Object[]{request, response, chain}, ExceptionUtils.getStackTrace(e))));
-                } finally {
-
-                }
             }
+        ServletOutputStream out;
+        try {
+            String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
+            if(REQ_DECODE){
+                respStr = AESUtils.aesEncryptString(respStr);
+            }
+
+            byte[] aesResp =respStr.getBytes("UTF-8");
+            String resSign = SignUtils.signResponse(respStr);
+            contentCachingResponseWrapper.setHeader("x-ehi-sign", resSign);
+            contentCachingResponseWrapper.setHeader("content-type", "text");
+            contentCachingResponseWrapper.setHeader("content-length", String.valueOf(aesResp.length));
+            out = response.getOutputStream();
+            out.write(aesResp);
+            out.flush();
+
+        } catch (Exception e) {
+            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
+                .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                Object[]{request, response, chain}, ExceptionUtils.getStackTrace(e))));
+        } finally {
+
+        }
     }
 
     @Override
