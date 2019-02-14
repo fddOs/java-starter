@@ -1,5 +1,6 @@
 package cn.ehai.web.config;
 
+import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.Result;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ResultGenerator;
@@ -25,7 +26,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import static cn.ehai.web.config.VerificationReqFilter.REQ_DECODE;
 
 /**
  * 验证加密、签名返回参数过滤器
@@ -60,7 +60,9 @@ public class VerificationResFilter implements Filter {
         ServletOutputStream out;
         try {
             String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
-            if(REQ_DECODE){
+            boolean reqDecode = Boolean.parseBoolean(
+                ApolloBaseConfig.get("reqDecode","false"));
+            if(reqDecode){
                 respStr = AESUtils.aesEncryptString(respStr);
             }
 

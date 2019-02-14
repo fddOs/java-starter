@@ -37,9 +37,6 @@ import org.springframework.core.annotation.Order;
 @Configuration
 @WebFilter(filterName = "VerificationReqFilter", urlPatterns = "/**")
 public class VerificationReqFilter implements Filter {
-    public static  boolean REQ_DECODE = Boolean.parseBoolean(
-        ApolloBaseConfig.get("reqDecode","false"));
-    public static  boolean REQ_SIGN = Boolean.parseBoolean(ApolloBaseConfig.get("reqSign","false"));
 
         @Override
         public void init(FilterConfig filterConfig) throws ServletException {
@@ -78,11 +75,13 @@ public class VerificationReqFilter implements Filter {
 
     }
         private void responseResult(HttpServletResponse response, Result result) {
+           boolean reqDecode = Boolean.parseBoolean(
+                ApolloBaseConfig.get("reqDecode","false"));
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
         try {
             String respStr = JSON.toJSONString(result);
-            if(REQ_DECODE){
+            if(reqDecode){
                 respStr = AESUtils.aesEncryptString(respStr);
                 response.setHeader("content-type", "text");
             }else{

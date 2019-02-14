@@ -33,8 +33,6 @@ import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
 import static cn.ehai.web.common.SignConfig.SIGN_HEADER;
-import static cn.ehai.web.config.VerificationReqFilter.REQ_DECODE;
-import static cn.ehai.web.config.VerificationReqFilter.REQ_SIGN;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
@@ -67,8 +65,8 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
                 ExceptionUtils.getStackTrace(e))));
             throw new ServiceException(ResultCode.FAIL, e.getMessage());
         }
-
-        if (REQ_SIGN &&!signRequest(request, reqBody, getParams(parameterMap))) {
+        boolean reqSign = Boolean.parseBoolean(ApolloBaseConfig.get("reqSign","false"));
+        if (reqSign &&!signRequest(request, reqBody, getParams(parameterMap))) {
             throw new ServiceException(ResultCode.UNAUTHORIZED, "签名错误");
         }
 
@@ -210,7 +208,9 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
         try {
             //对请求url的参数进行解密
             String params ;
-            if(REQ_DECODE){
+            boolean reqDecode = Boolean.parseBoolean(
+                ApolloBaseConfig.get("reqDecode","false"));
+            if(reqDecode){
                 params = aesDecrypt(questSting);
             }else{
                 params = questSting;
