@@ -7,6 +7,7 @@ import cn.ehai.common.utils.LoggerUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -101,6 +102,14 @@ public class ApolloBaseConfig {
         if (changeEvent.isChanged("logLevel") || changeEvent.isChanged("logName")) {
             initLogLevel();
         }
+        if (changeEvent.isChanged("web.sign.enable")) {
+            FilterRegistrationBean signRegistration = (FilterRegistrationBean) SpringContext.getApplicationContext().getBean("signFilter");
+            signRegistration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
+        }
+        if(changeEvent.isChanged("web.jwt.enable")){
+            FilterRegistrationBean jwtRegistration = (FilterRegistrationBean) SpringContext.getApplicationContext().getBean("jwtFilter");
+            jwtRegistration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.jwt.enable", "false")));
+        }
     }
 
     public static String aesDecrypt(String key, String defaultValue) {
@@ -126,4 +135,5 @@ public class ApolloBaseConfig {
     public static String get(String key, String defaultValue) {
         return aesDecrypt(key, defaultValue);
     }
+
 }

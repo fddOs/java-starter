@@ -1,20 +1,13 @@
 package cn.ehai.web.config;
 
-import cn.ehai.common.core.ApolloBaseConfig;
-import cn.ehai.common.core.Result;
-import cn.ehai.common.core.ResultCode;
-import cn.ehai.common.core.ResultGenerator;
-import cn.ehai.common.utils.SignUtils;
-import com.alibaba.fastjson.JSON;
+import cn.ehai.common.core.*;
+import cn.ehai.web.jwt.JwtFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,13 +15,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -39,8 +26,6 @@ import org.springframework.web.servlet.resource.VersionResourceResolver;
  */
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
-
-    private String signPlat = "dev";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -73,25 +58,17 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
     // 解决跨域问题
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-//		registry.addMapping("/**");
-        registry.addMapping("/**")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                //放行哪些原始域(头部信息)
-                .allowedHeaders("*")
-                .allowedOrigins("*");
+        if ("true".equals(ApolloBaseConfig.get("web.cross-domain", "false"))) {
+            registry.addMapping("/**")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    //放行哪些原始域(头部信息)
+                    .allowedHeaders("*")
+                    .allowedOrigins("*");
+        }
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //if(!signPlat.equalsIgnoreCase(ApolloBaseConfig.getPlatForm())){
-        //    //签名拦截器
-        //    registry.addInterceptor(new RequestSignInterceptor())
-        //        .addPathPatterns("/**")
-        //        .excludePathPatterns("/druid/*")
-        //        .excludePathPatterns("/heartbeat")
-        //        .excludePathPatterns("/swagger-resources/**")
-        //        .excludePathPatterns("/v2/api-docs/**");
-        //}
     }
 
     /**
@@ -126,4 +103,23 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         configurer.setPathMatcher(pathMatcher);
     }
 
+    @Bean(name = "signFilter")
+    public FilterRegistrationBean signFilterRegister() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new CommonFilter());
+        registration.addUrlPatterns("/**");
+        registration.setOrder(1);
+        registration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
+        return registration;
+    }
+
+    @Bean(name = "jwtFilter")
+    public FilterRegistrationBean jwtFilterRegister() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new JwtFilter());
+        registration.addUrlPatterns("/**");
+        registration.setOrder(1);
+        registration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.jwt.enable", "false")));
+        return registration;
+    }
 }

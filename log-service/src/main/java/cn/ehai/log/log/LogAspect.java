@@ -2,6 +2,7 @@ package cn.ehai.log.log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -262,16 +263,17 @@ public class LogAspect {
      */
     private PreparedStatementProxy statementHandle(PreparedStatementProxy statement, String sql) throws
             Exception {
+        // 获取JDBC4PreparedStatement
         Field statementField = statement.getClass().getDeclaredField("statement");
         statementField.setAccessible(true);
         JDBC4PreparedStatement jdbc4PreparedStatement = (JDBC4PreparedStatement) statementField.get(statement);
         jdbc4PreparedStatement.clearParameters();
-        Field parameterValuesField = jdbc4PreparedStatement.getClass().getSuperclass().getSuperclass()
-                .getDeclaredField("parameterValues");
+        // 获取PreparedStatement
+        Class<PreparedStatement> preparedStatementClass = (Class<PreparedStatement>) jdbc4PreparedStatement.getClass().getSuperclass().getSuperclass();
+        Field parameterValuesField = preparedStatementClass.getDeclaredField("parameterValues");
         parameterValuesField.setAccessible(true);
         parameterValuesField.set(jdbc4PreparedStatement, new byte[][]{});
-        Field staticSqlStringsField = jdbc4PreparedStatement.getClass().getSuperclass().getSuperclass()
-                .getDeclaredField("staticSqlStrings");
+        Field staticSqlStringsField = preparedStatementClass.getDeclaredField("staticSqlStrings");
         staticSqlStringsField.setAccessible(true);
         staticSqlStringsField.set(jdbc4PreparedStatement, new byte[][]{sql.getBytes(), new byte[]{}});
         return statement;
