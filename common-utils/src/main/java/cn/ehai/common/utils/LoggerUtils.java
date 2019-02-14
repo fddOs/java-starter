@@ -2,6 +2,7 @@ package cn.ehai.common.utils;
 
 import net.logstash.logback.marker.LogstashMarker;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,7 @@ public class LoggerUtils {
         logger.error(marker, null);
         logger.error(((EHIExceptionLogstashMarker) marker).getEhiExceptionMsgWrapper().getExceptionMsg());
     }
+
 
     /**
      * Debug 输出
