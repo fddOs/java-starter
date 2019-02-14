@@ -11,6 +11,7 @@ import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.utils.IOUtils;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.SignUtils;
+import cn.ehai.web.common.ExcludePathHandler;
 import com.alibaba.fastjson.JSON;
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -33,8 +34,8 @@ import org.springframework.core.annotation.Order;
  * @author lixiao
  * @date 2019-02-12 16:00
  */
-@Order(100)
-@Configuration
+//@Order(100)
+//@Configuration
 public class VerificationResFilter implements Filter {
 
     @Override
@@ -44,19 +45,12 @@ public class VerificationResFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-
+        if (ExcludePathHandler.contain(request, response, ApolloBaseConfig.get("web.sign.exclude-path", ""))) {
+            chain.doFilter(request, response);
+        }
         EhiHttpServletResponseWrapper contentCachingResponseWrapper = new EhiHttpServletResponseWrapper(
             (HttpServletResponse) response);
-            try {
-                chain.doFilter(request, contentCachingResponseWrapper);
-            } catch (Exception e) {
-                boolean isLogger = !(e instanceof ServiceException);
-                if (isLogger) {
-                    LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                        .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                        Object[]{request, response, chain}, ExceptionUtils.getStackTrace(e))));
-                }
-            }
+        chain.doFilter(request, contentCachingResponseWrapper);
         ServletOutputStream out;
         try {
             String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());

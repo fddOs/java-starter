@@ -103,8 +103,10 @@ public class ApolloBaseConfig {
             initLogLevel();
         }
         if (changeEvent.isChanged("web.sign.enable")) {
-            FilterRegistrationBean signRegistration = (FilterRegistrationBean) SpringContext.getApplicationContext().getBean("signFilter");
-            signRegistration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
+            FilterRegistrationBean verificationReqFilterRegistration = (FilterRegistrationBean) SpringContext.getApplicationContext().getBean("verificationReqFilter");
+            FilterRegistrationBean verificationResFilterRegistration = (FilterRegistrationBean) SpringContext.getApplicationContext().getBean("verificationResFilter");
+            verificationReqFilterRegistration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
+            verificationResFilterRegistration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
         }
         if(changeEvent.isChanged("web.jwt.enable")){
             FilterRegistrationBean jwtRegistration = (FilterRegistrationBean) SpringContext.getApplicationContext().getBean("jwtFilter");

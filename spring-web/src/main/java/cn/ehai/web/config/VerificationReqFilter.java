@@ -11,7 +11,9 @@ import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.utils.IOUtils;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.SignUtils;
+import cn.ehai.web.common.ExcludePathHandler;
 import com.alibaba.fastjson.JSON;
+
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -23,6 +25,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -33,34 +36,38 @@ import org.springframework.core.annotation.Order;
  * @author lixiao
  * @date 2019-02-12 15:32
  */
-@Order(Integer.MIN_VALUE)
-@Configuration
-@WebFilter(filterName = "VerificationReqFilter", urlPatterns = "/**")
+//@Order(Integer.MIN_VALUE)
+//@Configuration
+//@WebFilter(filterName = "VerificationReqFilter", urlPatterns = "/**")
 public class VerificationReqFilter implements Filter {
 
-        @Override
-        public void init(FilterConfig filterConfig) throws ServletException {
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
     }
 
-        @Override
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        if (ExcludePathHandler.contain(request, response, ApolloBaseConfig.get("web.sign.exclude-path", ""))) {
+            chain.doFilter(request, response);
+        }
         ServletRequest requestWrapper = null;
-        try{
+        try {
             if (request instanceof HttpServletRequest) {
                 requestWrapper = new EhiSignServletRequestWrapper((HttpServletRequest) request);
             }
-        }catch (Exception e){
-            String excepMsg ="";
-            if(e instanceof ServiceException){
-                excepMsg=e.getMessage();
-            }else{
-                excepMsg = "参数验证失败";
+        } catch (Exception e) {
+            String exceptionMsg = "";
+            if (e instanceof ServiceException) {
+                exceptionMsg = e.getMessage();
+            } else {
+                exceptionMsg = "参数验证失败";
             }
-            responseResult((HttpServletResponse)response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED,excepMsg ));
+            responseResult((HttpServletResponse) response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED,
+                    exceptionMsg));
             LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                Object[]{request, response, chain}, ExceptionUtils.getStackTrace(e))));
+                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
+                    Object[]{request, response, chain}, ExceptionUtils.getStackTrace(e))));
             return;
         }
         if (requestWrapper == null) {
@@ -70,21 +77,22 @@ public class VerificationReqFilter implements Filter {
         }
     }
 
-        @Override
-        public void destroy() {
+    @Override
+    public void destroy() {
 
     }
-        private void responseResult(HttpServletResponse response, Result result) {
-           boolean reqDecode = Boolean.parseBoolean(
-                ApolloBaseConfig.get("reqDecode","false"));
+
+    private void responseResult(HttpServletResponse response, Result result) {
+        boolean reqDecode = Boolean.parseBoolean(
+                ApolloBaseConfig.get("reqDecode", "false"));
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
         try {
             String respStr = JSON.toJSONString(result);
-            if(reqDecode){
+            if (reqDecode) {
                 respStr = AESUtils.aesEncryptString(respStr);
                 response.setHeader("content-type", "text");
-            }else{
+            } else {
                 response.setHeader("content-type", "application/json");
             }
             String resSign = SignUtils.signResponse(respStr);

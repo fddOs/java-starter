@@ -103,12 +103,22 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         configurer.setPathMatcher(pathMatcher);
     }
 
-    @Bean(name = "signFilter")
-    public FilterRegistrationBean signFilterRegister() {
+    @Bean(name = "verificationReqFilter")
+    public FilterRegistrationBean verificationReqFilterRegister() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new CommonFilter());
+        registration.setFilter(new VerificationReqFilter());
         registration.addUrlPatterns("/**");
-        registration.setOrder(1);
+        registration.setOrder(Integer.MIN_VALUE);
+        registration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
+        return registration;
+    }
+
+    @Bean(name = "verificationResFilter")
+    public FilterRegistrationBean VerificationResFilterRegister() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new VerificationResFilter());
+        registration.addUrlPatterns("/**");
+        registration.setOrder(100);
         registration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
         return registration;
     }
