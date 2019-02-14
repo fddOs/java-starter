@@ -1,12 +1,6 @@
 package cn.ehai.web.common;
 
-import cn.ehai.common.core.ApolloBaseConfig;
-import cn.ehai.common.core.ServiceException;
-import cn.ehai.common.utils.EHIExceptionLogstashMarker;
-import cn.ehai.common.utils.EHIExceptionMsgWrapper;
-import cn.ehai.common.utils.LoggerUtils;
 import org.apache.catalina.connector.RequestFacade;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.ServletRequest;

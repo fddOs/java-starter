@@ -8,8 +8,6 @@ import cn.ehai.web.common.ExcludePathHandler;
 import cn.ehai.web.config.EhiHeaderReqWrapper;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -20,11 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.catalina.connector.RequestFacade;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 
 /**
@@ -34,7 +30,7 @@ import org.springframework.util.StringUtils;
  * @date 2018-12-20 15:34
  */
 @Configuration
-@ConditionalOnProperty(value = "jwt.enabled", havingValue = "true")
+//@ConditionalOnProperty(value = "jwt.enabled", havingValue = "true")
 public class JwtFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
