@@ -1,4 +1,4 @@
-package cn.ehai.log.log.buss;
+package cn.ehai.log.log.business;
 
 /**
  * TODO

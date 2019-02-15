@@ -1,23 +1,18 @@
-package cn.ehai.log.log.buss;
+package cn.ehai.log.log.business;
 
 import brave.internal.HexCodec;
 import brave.opentracing.BraveSpanContext;
 import brave.propagation.TraceContext;
-import cn.ehai.common.utils.EHIExceptionLogstashMarker;
-import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.log.dao.BusinessLogMapper;
-import cn.ehai.log.entity.BusinessLog;
 import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import io.opentracing.Tracer;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,7 +32,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Aspect
 @Order(1)
 @Component
-public class BussLogAspect {
+public class BusLogAspect {
     private static final String HEADER_JWT_USER_ID = "jwt-user-id";
 
     @Autowired
@@ -53,7 +48,7 @@ public class BussLogAspect {
      * @author lixiao
      * @date 2019-02-14 14:47
      */
-    @Around(value = "execution(* ((cn.ehai.*.*.controller.*)||(cn.ehai.*.*.service.impl.* && !cn.ehai.*.actionlog.service.impl.*)).*(..)))&& @annotation(cn.ehai.log.log.buss.BussinessLog)")
+    @Around(value = "@annotation(cn.ehai.log.log.business.BusinessLog)")
     public void bussLogAction(ProceedingJoinPoint pjp) throws Throwable {
         pjp.proceed();
         //获取且面方法的参数信息
@@ -77,7 +72,7 @@ public class BussLogAspect {
 
         Objects.requireNonNull(method);
 
-        BussinessLog bussinessLog =  method.getAnnotation(BussinessLog.class);
+        BusinessLog bussinessLog =  method.getAnnotation(BusinessLog.class);
         int actionType = bussinessLog.actionType();
         //获取操作人
         String orderID = (String)methodParams(arguments,params,bussinessLog.oprNo(),bussinessLog
@@ -110,8 +105,8 @@ public class BussLogAspect {
     }
 
 
-    private BusinessLog createBussnissLog(int actionType,String orderId,String referId,String userId,String oprTableName,String extend,String traceId){
-        BusinessLog businessLog = new BusinessLog();
+    private cn.ehai.log.entity.BusinessLog createBussnissLog(int actionType,String orderId,String referId,String userId,String oprTableName,String extend,String traceId){
+        cn.ehai.log.entity.BusinessLog businessLog = new cn.ehai.log.entity.BusinessLog();
         businessLog.setActionType(actionType);
         businessLog.setOprNo(orderId);
         businessLog.setExtendContent(extend);
