@@ -76,13 +76,22 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
      * @date 2019-02-12 14:44
      */
     private String handlerBodyParams(HttpServletRequest request) {
-        String reqBody = null;
+        if(GET.name().equals(request.getMethod())){
+            return "";
+        }
+        String reqBody;
+        try {
+            reqBody = StreamUtils.copyToString(request.getInputStream(),
+                Charset.forName(CHARSE));
+        } catch (IOException e) {
+            LoggerUtils.error(getClass(), new Object[]{request}, e);
+            throw new ServiceException(ResultCode.UNAUTHORIZED, "body获取错误");
+        }
         //处理除get请求外的body里面的参数
-        if (!GET.name().equals(request.getMethod())) {
-            //缓存请求body
+        if (Boolean.parseBoolean(
+            ApolloBaseConfig.get("reqDecode", "false"))) {
             try {
-                reqBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(),
-                        Charset.forName(CHARSE)));
+                reqBody = aesDecrypt(reqBody);
             } catch (Exception e) {
                 LoggerUtils.error(getClass(), new Object[]{request}, e);
                 throw new ServiceException(ResultCode.UNAUTHORIZED, "body参数解密错误");
