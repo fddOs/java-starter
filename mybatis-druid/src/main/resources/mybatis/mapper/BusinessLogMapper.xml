@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ehai.log.dao.BusinessLogMapper">
+  <resultMap id="BaseResultMap" type="cn.ehai.log.entity.BusinessLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="action_type" jdbcType="INTEGER" property="actionType" />
+    <result column="opr_no" jdbcType="VARCHAR" property="oprNo" />
+    <result column="refer_id" jdbcType="VARCHAR" property="referId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="opr_table_name" jdbcType="VARCHAR" property="oprTableName" />
+    <result column="action_datetime" jdbcType="TIMESTAMP" property="actionDatetime" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="extend_content" jdbcType="LONGVARCHAR" property="extendContent" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    delete from business_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.ehai.koala.entity.BusinessLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into business_log (action_type, opr_no, refer_id, 
+      user_id, trace_id, opr_table_name,
+      extend_content)
+    values (#{actionType,jdbcType=INTEGER}, #{oprNo,jdbcType=VARCHAR}, #{referId,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{traceId,jdbcType=VARCHAR}, #{oprTableName,jdbcType=VARCHAR},
+      #{extendContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.ehai.koala.entity.BusinessLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    update business_log
+    set action_type = #{actionType,jdbcType=INTEGER},
+      opr_no = #{oprNo,jdbcType=VARCHAR},
+      refer_id = #{referId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      opr_table_name = #{oprTableName,jdbcType=VARCHAR},
+      action_datetime = #{actionDatetime,jdbcType=TIMESTAMP},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      extend_content = #{extendContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    select id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime, 
+    gmt_create, gmt_modified, extend_content
+    from business_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    select id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime, 
+    gmt_create, gmt_modified, extend_content
+    from business_log
+  </select>
+</mapper>

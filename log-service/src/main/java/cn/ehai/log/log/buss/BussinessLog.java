@@ -24,7 +24,7 @@ public @interface BussinessLog {
      * @author lixiao
      * @date 2019-02-13 17:13
      */
-    int action() default 0;
+    int actionType() default 0;
 
     /**
      * 关联单号
