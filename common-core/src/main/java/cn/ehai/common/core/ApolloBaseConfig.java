@@ -102,30 +102,17 @@ public class ApolloBaseConfig {
         if (changeEvent.isChanged("logLevel") || changeEvent.isChanged("logName")) {
             initLogLevel();
         }
-        if (changeEvent.isChanged("web.sign.enable")) {
-            FilterRegistrationBean verificationReqFilterRegistration = (FilterRegistrationBean) SpringContext.getApplicationContext().getBean("verificationReqFilter");
-            FilterRegistrationBean verificationResFilterRegistration = (FilterRegistrationBean) SpringContext.getApplicationContext().getBean("verificationResFilter");
-            verificationReqFilterRegistration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
-            verificationResFilterRegistration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
-        }
-        if(changeEvent.isChanged("web.jwt.enable")){
-            FilterRegistrationBean jwtRegistration = (FilterRegistrationBean) SpringContext.getApplicationContext().getBean("jwtFilter");
-            jwtRegistration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.jwt.enable", "false")));
-        }
     }
 
     public static String aesDecrypt(String key, String defaultValue) {
         if (StringUtils.isEmpty(key)) {
             throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请求失败:获取配置key为空，请稍后重试");
         }
-        if(application==null){
-            return defaultValue;
-        }
         String str = application.getProperty(key, defaultValue);
         try {
             str = AESUtils.aesDecryptString(str);
         } catch (Exception e) {
-            str = defaultValue;
+            //IGNORE
         }
         return str;
     }

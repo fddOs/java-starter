@@ -36,45 +36,45 @@ import org.springframework.core.annotation.Order;
  * @author lixiao
  * @date 2019-02-12 16:00
  */
-//@Order(100)
-//@Configuration
+@Order(100)
+@Configuration
 public class VerificationResFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        if (ExcludePathHandler.contain(request, response, ApolloBaseConfig.get("web.sign.exclude-path", ""))) {
+        if (ExcludePathHandler.contain(request, response, ApolloBaseConfig.get("sign.exclude-path", ""))) {
             chain.doFilter(request, response);
-        }
-        EhiHttpServletResponseWrapper contentCachingResponseWrapper = new EhiHttpServletResponseWrapper(
-                (HttpServletResponse) response);
-        chain.doFilter(request, contentCachingResponseWrapper);
-        ServletOutputStream out;
-        try {
-            String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
-            boolean reqDecode = Boolean.parseBoolean(
-                    ApolloBaseConfig.get("reqDecode", "false"));
-            if (reqDecode) {
-                respStr = AESUtils.aesEncryptString(respStr);
+        } else {
+            EhiHttpServletResponseWrapper contentCachingResponseWrapper = new EhiHttpServletResponseWrapper(
+                    (HttpServletResponse) response);
+            chain.doFilter(request, contentCachingResponseWrapper);
+            ServletOutputStream out;
+            try {
+                String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
+                boolean reqDecode = Boolean.parseBoolean(
+                        ApolloBaseConfig.get("reqDecode", "false"));
+                String resSign = SignUtils.signResponse(respStr);
+                if (reqDecode) {
+                    respStr = AESUtils.aesEncryptString(respStr);
+                }
+                byte[] aesResp = respStr.getBytes("UTF-8");
+                contentCachingResponseWrapper.setHeader("x-ehi-sign", resSign);
+                contentCachingResponseWrapper.setHeader("content-type", "text");
+                contentCachingResponseWrapper.setHeader("content-length", String.valueOf(aesResp.length));
+                out = response.getOutputStream();
+                out.write(aesResp);
+                out.flush();
+
+            } catch (Exception e) {
+                LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
+            } finally {
+
             }
-
-            byte[] aesResp = respStr.getBytes("UTF-8");
-            String resSign = SignUtils.signResponse(respStr);
-            contentCachingResponseWrapper.setHeader("x-ehi-sign", resSign);
-            contentCachingResponseWrapper.setHeader("content-type", "text");
-            contentCachingResponseWrapper.setHeader("content-length", String.valueOf(aesResp.length));
-            out = response.getOutputStream();
-            out.write(aesResp);
-            out.flush();
-
-        } catch (Exception e) {
-            LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
-        } finally {
-
         }
     }
 

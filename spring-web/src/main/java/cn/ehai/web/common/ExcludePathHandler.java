@@ -1,10 +1,10 @@
 package cn.ehai.web.common;
 
-import org.apache.catalina.connector.RequestFacade;
 import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,11 +26,12 @@ public class ExcludePathHandler {
      * @time 2019/2/14 17:23
      */
     public static boolean contain(ServletRequest request, ServletResponse response, String excludePath) {
-        String excludePaths = "/druid/**,/swagger-resources/**,/v2/**,/heartbeat" + excludePath;
+        String excludePaths = "/druid/**,/swagger-resources/**,/v2/**,/heartbeat,/api-docs*,/swagger*,/**/*.png,/**/" +
+                "*.css,/**/*.js,/**/*.html,/favicon.ico" + excludePath;
         List<String> excludePathList = Arrays.asList(excludePaths.split(","));
         AntPathMatcher matcher = new AntPathMatcher();
         for (String path : excludePathList) {
-            if (matcher.match(path, ((RequestFacade) request).getServletPath())) {
+            if (matcher.match(path, ((HttpServletRequest) request).getServletPath())) {
                 return true;
             }
         }

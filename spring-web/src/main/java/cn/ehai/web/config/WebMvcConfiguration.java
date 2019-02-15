@@ -1,14 +1,12 @@
 package cn.ehai.web.config;
 
 import cn.ehai.common.core.*;
-import cn.ehai.web.jwt.JwtFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -103,33 +101,4 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         configurer.setPathMatcher(pathMatcher);
     }
 
-    @Bean(name = "verificationReqFilter")
-    public FilterRegistrationBean verificationReqFilterRegister() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new VerificationReqFilter());
-        registration.addUrlPatterns("/**");
-        registration.setOrder(Integer.MIN_VALUE);
-        registration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
-        return registration;
-    }
-
-    @Bean(name = "verificationResFilter")
-    public FilterRegistrationBean VerificationResFilterRegister() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new VerificationResFilter());
-        registration.addUrlPatterns("/**");
-        registration.setOrder(100);
-        registration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.sign.enable", "false")));
-        return registration;
-    }
-
-    @Bean(name = "jwtFilter")
-    public FilterRegistrationBean jwtFilterRegister() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new JwtFilter());
-        registration.addUrlPatterns("/**");
-        registration.setOrder(1);
-        registration.setEnabled(Boolean.valueOf(ApolloBaseConfig.get("web.jwt.enable", "false")));
-        return registration;
-    }
 }
