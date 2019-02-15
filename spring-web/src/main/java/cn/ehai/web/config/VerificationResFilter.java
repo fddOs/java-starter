@@ -58,12 +58,11 @@ public class VerificationResFilter implements Filter {
                 String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
                 boolean reqDecode = Boolean.parseBoolean(
                         ApolloBaseConfig.get("reqDecode", "false"));
+                String resSign = SignUtils.signResponse(respStr);
                 if (reqDecode) {
                     respStr = AESUtils.aesEncryptString(respStr);
                 }
-
                 byte[] aesResp = respStr.getBytes("UTF-8");
-                String resSign = SignUtils.signResponse(respStr);
                 contentCachingResponseWrapper.setHeader("x-ehi-sign", resSign);
                 contentCachingResponseWrapper.setHeader("content-type", "text");
                 contentCachingResponseWrapper.setHeader("content-length", String.valueOf(aesResp.length));
