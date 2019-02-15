@@ -1,8 +1,6 @@
 package cn.ehai.web.config;
 
 import cn.ehai.common.core.ApolloBaseConfig;
-import cn.ehai.common.utils.EHIExceptionLogstashMarker;
-import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.AESUtils;
@@ -23,18 +21,15 @@ import java.util.Map;
 import java.util.Vector;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import cn.ehai.common.utils.LoggerUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
 import static cn.ehai.web.common.SignConfig.SIGN_HEADER;
 import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
 
 /**
  * 对请求参数进行解密

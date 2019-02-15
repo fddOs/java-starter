@@ -36,42 +36,43 @@ import org.springframework.core.annotation.Order;
  * @author lixiao
  * @date 2019-02-12 15:32
  */
-//@Order(Integer.MIN_VALUE)
-//@Configuration
-//@WebFilter(filterName = "VerificationReqFilter", urlPatterns = "/**")
+@Order(Integer.MIN_VALUE)
+@Configuration
+@WebFilter(filterName = "VerificationReqFilter", urlPatterns = "/**")
 public class VerificationReqFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        if (ExcludePathHandler.contain(request, response, ApolloBaseConfig.get("web.sign.exclude-path", ""))) {
-            chain.doFilter(request, response);
-        }
-        ServletRequest requestWrapper = null;
-        try {
-            if (request instanceof HttpServletRequest) {
-                requestWrapper = new EhiSignServletRequestWrapper((HttpServletRequest) request);
-            }
-        } catch (Exception e) {
-            String exceptionMsg = "";
-            if (e instanceof ServiceException) {
-                exceptionMsg = e.getMessage();
-            } else {
-                exceptionMsg = "参数验证失败";
-            }
-            responseResult((HttpServletResponse) response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED,
-                    exceptionMsg));
-            LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
-            return;
-        }
-        if (requestWrapper == null) {
+        if (ExcludePathHandler.contain(request, response, ApolloBaseConfig.get("sign.exclude-path", ""))) {
             chain.doFilter(request, response);
         } else {
-            chain.doFilter(requestWrapper, response);
+            ServletRequest requestWrapper = null;
+            try {
+                if (request instanceof HttpServletRequest) {
+                    requestWrapper = new EhiSignServletRequestWrapper((HttpServletRequest) request);
+                }
+            } catch (Exception e) {
+                String exceptionMsg = "";
+                if (e instanceof ServiceException) {
+                    exceptionMsg = e.getMessage();
+                } else {
+                    exceptionMsg = "参数验证失败";
+                }
+                responseResult((HttpServletResponse) response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED,
+                        exceptionMsg));
+                LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
+                return;
+            }
+            if (requestWrapper == null) {
+                chain.doFilter(request, response);
+            } else {
+                chain.doFilter(requestWrapper, response);
+            }
         }
     }
 

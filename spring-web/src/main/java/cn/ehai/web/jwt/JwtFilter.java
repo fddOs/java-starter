@@ -1,8 +1,6 @@
 package cn.ehai.web.jwt;
 
 import cn.ehai.common.core.*;
-import cn.ehai.common.utils.EHIExceptionLogstashMarker;
-import cn.ehai.common.utils.EHIExceptionMsgWrapper;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.web.common.ExcludePathHandler;
 import cn.ehai.web.config.EhiHeaderReqWrapper;
@@ -14,13 +12,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.util.StringUtils;
 
 /**
@@ -29,36 +27,37 @@ import org.springframework.util.StringUtils;
  * @author lixiao
  * @date 2018-12-20 15:34
  */
+@Order(1)
 @Configuration
-//@ConditionalOnProperty(value = "jwt.enabled", havingValue = "true")
+@WebFilter(filterName = "jwtFilter", urlPatterns = "/**")
 public class JwtFilter implements Filter {
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
 
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        EhiHeaderReqWrapper contentCachingRequestWrapper = new EhiHeaderReqWrapper(httpServletRequest);
-        if (ExcludePathHandler.contain(request, response, ApolloBaseConfig.get("web.sign" +
-                ".exclude-path", ""))) {
-            chain.doFilter(contentCachingRequestWrapper, response);
-        }
-        JwtTokenAuthentication.setJwtHeader(contentCachingRequestWrapper);
-        String loginUrl = ApolloBaseConfig.get("web.login-url", "");
-        if (JwtTokenAuthentication.getAuthentication(httpServletRequest)) {
-            chain.doFilter(contentCachingRequestWrapper, response);
+        if (!Boolean.valueOf(ApolloBaseConfig.get("jwtEnable", "false")) || ExcludePathHandler.contain(request,
+                response, ApolloBaseConfig.get("jwtExcludePath", ""))) {
+            chain.doFilter(request, response);
         } else {
-            if (!StringUtils.isEmpty(loginUrl)) {
-                httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + loginUrl);
+            HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+            EhiHeaderReqWrapper contentCachingRequestWrapper = new EhiHeaderReqWrapper(httpServletRequest);
+            JwtTokenAuthentication.setJwtHeader(contentCachingRequestWrapper);
+            String loginUrl = ApolloBaseConfig.get("webLoginUrl", "");
+            if (JwtTokenAuthentication.getAuthentication(httpServletRequest)) {
+                chain.doFilter(contentCachingRequestWrapper, response);
+            } else {
+                if (!StringUtils.isEmpty(loginUrl)) {
+                    httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + loginUrl);
+                }
+                responseResult(httpServletResponse, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "jwt token" +
+                        " 验证失败"));
             }
-            responseResult(httpServletResponse, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "jwt token " +
-                    "验证失败"));
         }
-
     }
 
     @Override
