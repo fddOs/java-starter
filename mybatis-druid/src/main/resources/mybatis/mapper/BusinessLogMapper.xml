@@ -24,7 +24,7 @@
     delete from business_log
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.ehai.koala.entity.BusinessLog">
+  <insert id="insert" parameterType="cn.ehai.log.entity.BusinessLog">
     <!--
       WARNING - @mbg.generated
     -->
@@ -38,7 +38,7 @@
       #{userId,jdbcType=VARCHAR}, #{traceId,jdbcType=VARCHAR}, #{oprTableName,jdbcType=VARCHAR},
       #{extendContent,jdbcType=LONGVARCHAR})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="cn.ehai.koala.entity.BusinessLog">
+  <update id="updateByPrimaryKey" parameterType="cn.ehai.log.entity.BusinessLog">
     <!--
       WARNING - @mbg.generated
     -->
