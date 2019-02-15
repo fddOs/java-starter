@@ -54,9 +54,7 @@ public class EncryptUtils {
             }
             return strHexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            LoggerUtils.error(EncryptUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (EncryptUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{strText, strType}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(EncryptUtils.class, new Object[]{strText, strType}, e);
         }
 
         return "";
@@ -69,9 +67,7 @@ public class EncryptUtils {
             mac.init(signingKey);
             return byte2hex(mac.doFinal(data.getBytes())).toLowerCase();
         } catch (Exception e) {
-            LoggerUtils.error(EncryptUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (EncryptUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{data, key}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(EncryptUtils.class, new Object[]{data, key}, e);
         }
         return null;
     }
@@ -81,8 +77,9 @@ public class EncryptUtils {
         String stmp;
         for (int n = 0; b != null && n < b.length; n++) {
             stmp = Integer.toHexString(b[n] & 0XFF);
-            if (stmp.length() == 1)
+            if (stmp.length() == 1) {
                 hs.append('0');
+            }
             hs.append(stmp);
         }
         return hs.toString().toUpperCase();

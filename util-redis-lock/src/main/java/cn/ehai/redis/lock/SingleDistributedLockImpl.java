@@ -70,9 +70,7 @@ public class SingleDistributedLockImpl implements DistributedLockService {
         try {
             return lock.tryLock(DEFAULT_WAIT_TIME, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
         } catch (Exception e) {
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{lockName}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{lockName}, e);
         }
         return true;
     }

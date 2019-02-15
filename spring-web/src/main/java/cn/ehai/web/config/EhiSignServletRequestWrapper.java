@@ -38,6 +38,7 @@ import static org.springframework.http.HttpMethod.POST;
 
 /**
  * 对请求参数进行解密
+ *
  * @author lixiao
  * @date 2019-02-12 14:24
  */
@@ -58,15 +59,13 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
         //处理body的参数
         String reqBody = handlerBodyParams(request);
         try {
-            requestBody =  reqBody.getBytes(CHARSE);
+            requestBody = reqBody.getBytes(CHARSE);
         } catch (UnsupportedEncodingException e) {
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{request},
-                ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{request}, e);
             throw new ServiceException(ResultCode.FAIL, e.getMessage());
         }
-        boolean reqSign = Boolean.parseBoolean(ApolloBaseConfig.get("reqSign","false"));
-        if (reqSign &&!signRequest(request, reqBody, getParams(parameterMap))) {
+        boolean reqSign = Boolean.parseBoolean(ApolloBaseConfig.get("reqSign", "false"));
+        if (reqSign && !signRequest(request, reqBody, getParams(parameterMap))) {
             throw new ServiceException(ResultCode.UNAUTHORIZED, "签名错误");
         }
 
@@ -75,28 +74,27 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * 处理请求的body参数
+     *
      * @param request
      * @return java.lang.String
      * @author lixiao
      * @date 2019-02-12 14:44
      */
-    private String handlerBodyParams(HttpServletRequest request){
-        String reqBody=null;
+    private String handlerBodyParams(HttpServletRequest request) {
+        String reqBody = null;
         //处理除get请求外的body里面的参数
-        if(!GET.name().equals(request.getMethod())){
+        if (!GET.name().equals(request.getMethod())) {
             //缓存请求body
             try {
                 reqBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(),
-                    Charset.forName(CHARSE)));
+                        Charset.forName(CHARSE)));
             } catch (Exception e) {
-                LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{request},
-                    ExceptionUtils.getStackTrace(e))));
+                LoggerUtils.error(getClass(), new Object[]{request}, e);
                 throw new ServiceException(ResultCode.UNAUTHORIZED, "body参数解密错误");
             }
         }
         if (reqBody == null) {
-            reqBody="";
+            reqBody = "";
         }
         return reqBody;
     }
@@ -186,8 +184,10 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * 解密url后面的参数
+     *
      * @param questSting
-     * @return java.util.Map<java.lang.String,java.lang.String[]>
+     * @return java.util.Map<java.lang.String               ,               java.lang.String               [
+            * ]>
      * @author lixiao
      * @date 2019-02-12 15:50
      */
@@ -207,12 +207,12 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
 
         try {
             //对请求url的参数进行解密
-            String params ;
+            String params;
             boolean reqDecode = Boolean.parseBoolean(
-                ApolloBaseConfig.get("reqDecode","false"));
-            if(reqDecode){
+                    ApolloBaseConfig.get("reqDecode", "false"));
+            if (reqDecode) {
                 params = aesDecrypt(questSting);
-            }else{
+            } else {
                 params = questSting;
             }
             if (!StringUtils.isEmpty(params)) {
@@ -225,9 +225,7 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
                 }
             }
         } catch (Exception e) {
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{questSting},
-                    ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{questSting}, e);
             throw new ServiceException(ResultCode.FAIL, "Aes解密失败");
         }
 

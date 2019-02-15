@@ -73,9 +73,7 @@ public class JwtFilter implements Filter {
         try {
             response.getWriter().write(JSON.toJSONString(result));
         } catch (IOException ex) {
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{response, result}, ExceptionUtils.getStackTrace(ex))));
+            LoggerUtils.error(getClass(), new Object[]{response, result}, ex);
         }
     }
 }

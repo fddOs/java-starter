@@ -65,9 +65,7 @@ public class VerificationReqFilter implements Filter {
             }
             responseResult((HttpServletResponse) response, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED,
                     exceptionMsg));
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                    Object[]{request, response, chain}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
             return;
         }
         if (requestWrapper == null) {

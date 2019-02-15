@@ -162,9 +162,7 @@ public class EhiOkHttpClient {
                     responseBodyNew = ResponseBody.create(MediaType.parse("application/json; charset=UTF-8"), temp);
                 }
             } catch (Exception e) {
-                LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                        .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{res},
-                        ExceptionUtils.getStackTrace(e))));
+                LoggerUtils.error(getClass(), new Object[]{res}, e);
             } finally {
                 responseBody.close();
             }
@@ -201,9 +199,7 @@ public class EhiOkHttpClient {
             totalTime = simpleFormat.parse(responseTime).getTime() - simpleFormat.parse(requestTime).getTime();
         } catch (Exception e) {
             // ignore
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{response,
-                    request, exceptionMsg, requestTime, responseTime}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{response, request, exceptionMsg, requestTime, responseTime}, e);
         }
         String requestUrl = request.url().encodedPath();
         RequestBody requestBody = request.body();
@@ -236,9 +232,8 @@ public class EhiOkHttpClient {
             try {
                 requestUrlQuery = URLDecoder.decode(request.url().encodedQuery(), "utf-8");
             } catch (UnsupportedEncodingException e) {
-                LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                        .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{response,
-                        request, exceptionMsg, requestTime, responseTime}, ExceptionUtils.getStackTrace(e))));
+                LoggerUtils.error(getClass(), new Object[]{response, request, exceptionMsg, requestTime,
+                        responseTime}, e);
             }
         } else {
             requestUrlQuery = "";
@@ -250,9 +245,8 @@ public class EhiOkHttpClient {
                 requestBody.writeTo(bufferedSink);
                 bodyParams = bufferedSink.readString(Charset.forName("UTF-8"));
             } catch (Exception e) {
-                LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                        .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{response,
-                        request, exceptionMsg, requestTime, responseTime}, ExceptionUtils.getStackTrace(e))));
+                LoggerUtils.error(getClass(), new Object[]{response, request, exceptionMsg, requestTime,
+                        responseTime}, e);
             }
         }
         Object requestBodyJSON = JSON.parse(bodyParams);
