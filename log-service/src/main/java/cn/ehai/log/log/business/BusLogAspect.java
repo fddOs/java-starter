@@ -72,10 +72,10 @@ public class BusLogAspect {
 
         Objects.requireNonNull(method);
 
-        BusinessLog bussinessLog =  method.getAnnotation(BusinessLog.class);
-        int actionType = bussinessLog.actionType();
+        BusinessLog businessLog =  method.getAnnotation(BusinessLog.class);
+        int actionType = businessLog.actionType();
         //获取操作人
-        String orderID = (String)methodParams(arguments,params,bussinessLog.oprNo(),bussinessLog
+        String orderID = (String)methodParams(arguments,params,businessLog.oprNo(),businessLog
             .referNoNum());
         if(StringUtils.isEmpty(orderID)){
             HttpServletRequest request = null;
@@ -88,15 +88,15 @@ public class BusLogAspect {
             }
         }
         //关联单号
-        String referId = (String)methodParams(arguments,params,bussinessLog.referNo(),
-            bussinessLog.referNoNum());
+        String referId = (String)methodParams(arguments,params,businessLog.referNo(),
+            businessLog.referNoNum());
         //用户id
-        String userId = (String)methodParams(arguments,params,bussinessLog.userId(),bussinessLog.userIdNum());
+        String userId = (String)methodParams(arguments,params,businessLog.userId(),businessLog.userIdNum());
         //要记录的表名
-        String oprTableName = bussinessLog.oprTableName();
+        String oprTableName = businessLog.oprTableName();
         //附加信息-JSON
         String extend = JSONObject.toJSONString(
-            new ExtendsJson(methodParams(arguments,params,bussinessLog.extend(),bussinessLog.extendNum())));
+            new ExtendsJson(methodParams(arguments,params,businessLog.extend(),businessLog.extendNum())));
 
         //traceId
         String traceId=requestTraceId();
