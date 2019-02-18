@@ -47,7 +47,7 @@ public class VerificationResFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        if (ExcludePathHandler.contain(request, response, ApolloBaseConfig.get("sign.exclude-path", ""))) {
+        if (ExcludePathHandler.contain(request, response, ApolloBaseConfig.get("verificationExcludePath", ""))) {
             chain.doFilter(request, response);
         } else {
             EhiHttpServletResponseWrapper contentCachingResponseWrapper = new EhiHttpServletResponseWrapper(
