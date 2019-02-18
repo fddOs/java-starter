@@ -1,4 +1,11 @@
-package cn.ehai.log.log.buss;
+package cn.ehai.log.log.business;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * 业务日志注解
@@ -6,7 +13,10 @@ package cn.ehai.log.log.buss;
  * @author lixiao
  * @date 2019-02-13 17:08
  */
-public @interface BussinessLog {
+@Target(ElementType.METHOD)
+@Retention(RUNTIME)
+@Documented
+public @interface BusinessLog {
 
     /**
      * 操作人
@@ -24,7 +34,7 @@ public @interface BussinessLog {
      * @author lixiao
      * @date 2019-02-13 17:13
      */
-    int action() default 0;
+    int actionType() default 0;
 
     /**
      * 关联单号
