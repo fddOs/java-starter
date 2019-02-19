@@ -14,7 +14,9 @@ import java.util.Objects;
 import io.opentracing.Tracer;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -52,9 +54,8 @@ public class BusLogAspect {
      * @author lixiao
      * @date 2019-02-14 14:47
      */
-    @Around(value = "@annotation(cn.ehai.log.log.business.BusinessLog)")
-    public void bussLogAction(ProceedingJoinPoint pjp) throws Throwable {
-        pjp.proceed();
+    @After(value = "@annotation(cn.ehai.log.log.business.BusinessLog)")
+    public void bussLogAction(JoinPoint pjp) throws Throwable {
         //获取且面方法的参数信息
         Method method = ((MethodSignature)pjp.getSignature()).getMethod();
         Object[] arguments = pjp.getArgs();
