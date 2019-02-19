@@ -5,6 +5,7 @@ import brave.opentracing.BraveSpanContext;
 import brave.propagation.TraceContext;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.log.dao.BusinessLogMapper;
+import cn.ehai.log.service.impl.BusinessLogAsync;
 import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
@@ -40,6 +41,9 @@ public class BusLogAspect {
 
     @Autowired
     private BusinessLogMapper businessLogMapper;
+
+    @Autowired
+    private BusinessLogAsync businessLogAsync;
 
     /**
      * // TODO:
@@ -101,11 +105,13 @@ public class BusLogAspect {
         //traceId
         String traceId=requestTraceId();
 
-        businessLogMapper.insert(createBussnissLog(actionType,orderID,referId,userId,oprTableName,extend,traceId));
+        businessLogMapper.insert(createBusinessLog(actionType,orderID,referId,userId,oprTableName,extend,traceId));
+
+        businessLogAsync.handleLogUpdateData(oprTableName,traceId);
     }
 
 
-    private cn.ehai.log.entity.BusinessLog createBussnissLog(int actionType,String orderId,String referId,String userId,String oprTableName,String extend,String traceId){
+    private cn.ehai.log.entity.BusinessLog createBusinessLog(int actionType,String orderId,String referId,String userId,String oprTableName,String extend,String traceId){
         cn.ehai.log.entity.BusinessLog businessLog = new cn.ehai.log.entity.BusinessLog();
         businessLog.setActionType(actionType);
         businessLog.setOprNo(orderId);

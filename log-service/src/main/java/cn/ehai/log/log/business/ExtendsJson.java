@@ -8,17 +8,17 @@ package cn.ehai.log.log.business;
  */
 public class ExtendsJson<T> {
 
-    private T extens;
+    private T extend;
 
     public ExtendsJson(T obj){
-        extens= obj;
+        extend= obj;
     }
 
-    public T getExtens() {
-        return extens;
+    public T getExtend() {
+        return extend;
     }
 
-    public void setExtens(T extens) {
-        this.extens = extens;
+    public void setExtend(T extend) {
+        this.extend = extend;
     }
 }
