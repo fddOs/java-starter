@@ -15,7 +15,7 @@
     <result column="action_datetime" jdbcType="TIMESTAMP" property="actionDatetime" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
-    <result column="extend_content" jdbcType="LONGVARCHAR" property="extendContent" />
+    <result column="extend_content" jdbcType="VARCHAR" property="extendContent" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--
@@ -31,12 +31,11 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into business_log (action_type, opr_no, refer_id, 
-      user_id, trace_id, opr_table_name,
-      extend_content)
+    insert into business_log (action_type, opr_no, refer_id,
+    user_id, trace_id, opr_table_name,extend_content)
     values (#{actionType,jdbcType=INTEGER}, #{oprNo,jdbcType=VARCHAR}, #{referId,jdbcType=VARCHAR}, 
       #{userId,jdbcType=VARCHAR}, #{traceId,jdbcType=VARCHAR}, #{oprTableName,jdbcType=VARCHAR},
-      #{extendContent,jdbcType=LONGVARCHAR})
+      #{extendContent,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="cn.ehai.log.entity.BusinessLog">
     <!--

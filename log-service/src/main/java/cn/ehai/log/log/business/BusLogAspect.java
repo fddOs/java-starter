@@ -5,6 +5,7 @@ import brave.opentracing.BraveSpanContext;
 import brave.propagation.TraceContext;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.log.dao.BusinessLogMapper;
+import cn.ehai.log.service.impl.BusinessLogAsync;
 import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
@@ -13,7 +14,9 @@ import java.util.Objects;
 import io.opentracing.Tracer;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -41,6 +44,9 @@ public class BusLogAspect {
     @Autowired
     private BusinessLogMapper businessLogMapper;
 
+    @Autowired
+    private BusinessLogAsync businessLogAsync;
+
     /**
      * // TODO:
      * @param pjp
@@ -48,9 +54,8 @@ public class BusLogAspect {
      * @author lixiao
      * @date 2019-02-14 14:47
      */
-    @Around(value = "@annotation(cn.ehai.log.log.business.BusinessLog)")
-    public void bussLogAction(ProceedingJoinPoint pjp) throws Throwable {
-        pjp.proceed();
+    @After(value = "@annotation(cn.ehai.log.log.business.BusinessLog)")
+    public void bussLogAction(JoinPoint pjp) throws Throwable {
         //获取且面方法的参数信息
         Method method = ((MethodSignature)pjp.getSignature()).getMethod();
         Object[] arguments = pjp.getArgs();
@@ -101,11 +106,13 @@ public class BusLogAspect {
         //traceId
         String traceId=requestTraceId();
 
-        businessLogMapper.insert(createBussnissLog(actionType,orderID,referId,userId,oprTableName,extend,traceId));
+        businessLogMapper.insert(createBusinessLog(actionType,orderID,referId,userId,oprTableName,extend,traceId));
+
+        businessLogAsync.handleLogUpdateData(oprTableName,traceId);
     }
 
 
-    private cn.ehai.log.entity.BusinessLog createBussnissLog(int actionType,String orderId,String referId,String userId,String oprTableName,String extend,String traceId){
+    private cn.ehai.log.entity.BusinessLog createBusinessLog(int actionType,String orderId,String referId,String userId,String oprTableName,String extend,String traceId){
         cn.ehai.log.entity.BusinessLog businessLog = new cn.ehai.log.entity.BusinessLog();
         businessLog.setActionType(actionType);
         businessLog.setOprNo(orderId);
