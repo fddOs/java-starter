@@ -23,6 +23,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -34,6 +35,13 @@ import com.alibaba.druid.proxy.jdbc.PreparedStatementProxy;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.fastjson.JSONObject;
+
+import io.opentracing.Tracer;
+import brave.opentracing.BraveSpanContext;
+import brave.propagation.TraceContext;
+import io.opentracing.Scope;
+import io.opentracing.SpanContext;
+import brave.internal.HexCodec;
 
 /**
  * @Description:业务日志记录
@@ -48,6 +56,8 @@ public class LogAspect {
     private Map<Long, ActionLog> actionLogMap = new HashMap<>();
     private static final String HEADER_JWT_USER_ID = "jwt-user-id";
     private static final String NEED_AES_HANDLE = "needAesHandle";
+    @Autowired
+    private Tracer tracer;
 
     /**
      * @param pjp void
@@ -112,6 +122,7 @@ public class LogAspect {
         actionLog.setUrl(url);
         actionLog.setUserId(userId == null ? "" : userId);
         actionLog.setActionType(ServiceActionTypeEnum.OTHER_RECORD.getActionType());
+        actionLog.setTraceId(requestTraceId());
         if (actionLogAnnotation != null) {
             actionLog.setActionType(actionLogAnnotation.value());
         }
@@ -269,7 +280,8 @@ public class LogAspect {
         JDBC4PreparedStatement jdbc4PreparedStatement = (JDBC4PreparedStatement) statementField.get(statement);
         jdbc4PreparedStatement.clearParameters();
         // 获取PreparedStatement
-        Class<PreparedStatement> preparedStatementClass = (Class<PreparedStatement>) jdbc4PreparedStatement.getClass().getSuperclass().getSuperclass();
+        Class<PreparedStatement> preparedStatementClass = (Class<PreparedStatement>) jdbc4PreparedStatement.getClass
+                ().getSuperclass().getSuperclass();
         Field parameterValuesField = preparedStatementClass.getDeclaredField("parameterValues");
         parameterValuesField.setAccessible(true);
         parameterValuesField.set(jdbc4PreparedStatement, new byte[][]{});
@@ -277,6 +289,26 @@ public class LogAspect {
         staticSqlStringsField.setAccessible(true);
         staticSqlStringsField.set(jdbc4PreparedStatement, new byte[][]{sql.getBytes(), new byte[]{}});
         return statement;
+    }
+
+    /**
+     * 获取这次请求的traceid
+     * @param
+     * @return java.lang.String
+     * @author lixiao
+     * @date 2019-02-15 16:12
+     */
+    private String requestTraceId(){
+        String traceId="";
+        Scope serverSpan = tracer.scopeManager().active();
+        if (serverSpan != null) {
+            SpanContext spanContext = serverSpan.span().context();
+            if (spanContext instanceof BraveSpanContext) {
+                TraceContext traceContext = ((BraveSpanContext) spanContext).unwrap();
+                traceId = HexCodec.toLowerHex(traceContext.traceId());
+            }
+        }
+        return traceId;
     }
 
     /**
