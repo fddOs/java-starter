@@ -81,8 +81,8 @@ public class BusLogAspect {
         BusinessLog businessLog =  method.getAnnotation(BusinessLog.class);
         int actionType = businessLog.actionType();
         //获取操作人
-        String orderID = (String)methodParams(arguments,params,businessLog.oprNo(),businessLog
-            .referNoNum());
+        String orderID = String.valueOf(methodParams(arguments,params,businessLog.oprNo(),businessLog
+            .referNoNum()));
         if(StringUtils.isEmpty(orderID)){
             HttpServletRequest request = null;
             try {
@@ -94,10 +94,10 @@ public class BusLogAspect {
             }
         }
         //关联单号
-        String referId = (String)methodParams(arguments,params,businessLog.referNo(),
-            businessLog.referNoNum());
+        String referId = String.valueOf(methodParams(arguments,params,businessLog.referNo(),
+            businessLog.referNoNum()));
         //用户id
-        String userId = (String)methodParams(arguments,params,businessLog.userId(),businessLog.userIdNum());
+        String userId = String.valueOf(methodParams(arguments,params,businessLog.userId(),businessLog.userIdNum()));
         //要记录的表名
         String oprTableName = businessLog.oprTableName();
         //附加信息-JSON
