@@ -17,6 +17,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -54,7 +55,7 @@ public class BusLogAspect {
      * @author lixiao
      * @date 2019-02-14 14:47
      */
-    @After(value = "@annotation(cn.ehai.log.log.business.BusinessLog)")
+    @AfterReturning(value = "@annotation(cn.ehai.log.log.business.BusinessLog)")
     public void bussLogAction(JoinPoint pjp) throws Throwable {
         //获取且面方法的参数信息
         Method method = ((MethodSignature)pjp.getSignature()).getMethod();
