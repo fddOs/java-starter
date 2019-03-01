@@ -36,7 +36,7 @@ public class AESUtils {
             NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
             UnsupportedEncodingException {
         if (StringUtils.isEmpty(content)) {
-            return null;
+            return "";
         }
         return aesEncryptString(content, KEY);
     }

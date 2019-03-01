@@ -8,11 +8,11 @@
         insert into action_log (action_datetime, action_type, opr_no,
         opr_table_name, original_value, new_value,
         refer_id, user_id, is_success,
-        url, method_name)
+        url, method_name, trace_id)
         values (#{actionDatetime,jdbcType=TIMESTAMP}, #{actionType,jdbcType=INTEGER}, #{oprNo,jdbcType=VARCHAR},
         #{oprTableName,jdbcType=VARCHAR}, #{originalValue,jdbcType=CHAR}, #{newValue,jdbcType=CHAR},
         #{referId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{isSuccess,jdbcType=BIT},
-        #{url,jdbcType=VARCHAR}, #{methodName,jdbcType=VARCHAR})
+        #{url,jdbcType=VARCHAR}, #{methodName,jdbcType=VARCHAR}, #{traceId,jdbcType=VARCHAR})
     </insert>
     <insert id="insertActionLogCommon" parameterType="cn.ehai.log.entity.ActionLog">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -21,14 +21,21 @@
         insert into action_log_common(action_datetime, action_type, opr_no,
         opr_table_name, original_value, new_value,
         refer_id, user_id, is_success,
-        url, method_name)
+        url, method_name, trace_id)
         values (#{actionDatetime,jdbcType=TIMESTAMP}, #{actionType,jdbcType=INTEGER}, #{oprNo,jdbcType=VARCHAR},
         #{oprTableName,jdbcType=VARCHAR}, #{originalValue,jdbcType=CHAR}, #{newValue,jdbcType=CHAR},
         #{referId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{isSuccess,jdbcType=BIT},
-        #{url,jdbcType=VARCHAR}, #{methodName,jdbcType=VARCHAR})
+        #{url,jdbcType=VARCHAR}, #{methodName,jdbcType=VARCHAR}, #{traceId,jdbcType=VARCHAR})
     </insert>
 
     <select id="selectBySql" resultType="map">
     ${sql}
+    </select>
+    <select id="selectByBusinessLog" resultType="cn.ehai.log.entity.BusinessLogValue">
+      SELECT original_value originalValue ,new_value newValue,opr_table_name oprTableName,trace_id traceId
+      FROM `action_log` WHERE trace_id = #{traceId} and opr_table_name IN
+      <foreach collection = "oprTableNameList" item="item" index = "index" open="(" separator="," close=")">
+          #{item}
+      </foreach>
     </select>
 </mapper>

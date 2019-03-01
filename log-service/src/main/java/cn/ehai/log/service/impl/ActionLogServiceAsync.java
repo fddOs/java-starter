@@ -25,9 +25,7 @@ public class ActionLogServiceAsync {
         try {
             actionLogService.insertActionLog(actionLog);
         } catch (Exception e) {
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{actionLog},
-                    ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{actionLog}, e);
         }
     }
 
@@ -36,9 +34,7 @@ public class ActionLogServiceAsync {
         try {
             actionLogService.insertActionLogCommon(actionLog);
         } catch (Exception e) {
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{actionLog},
-                    ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{actionLog}, e);
         }
     }
 }

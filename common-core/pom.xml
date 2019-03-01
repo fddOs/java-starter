@@ -4,7 +4,7 @@
     <parent>
         <groupId>cn.ehai</groupId>
         <artifactId>java-starter</artifactId>
-        <version>0.6.7-SNAPSHOT</version>
+        <version>0.6.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -33,6 +33,14 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentracing.brave</groupId>
+            <artifactId>brave-opentracing</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentracing.brave</groupId>
+            <artifactId>brave-opentracing</artifactId>
         </dependency>
     </dependencies>
 </project>

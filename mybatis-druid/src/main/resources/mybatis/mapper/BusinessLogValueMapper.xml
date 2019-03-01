@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ehai.log.dao.BusinessLogValueMapper">
+  <resultMap id="BaseResultMap" type="cn.ehai.log.entity.BusinessLogValue">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="opr_table_name" jdbcType="VARCHAR" property="oprTableName" />
+    <result column="original_value" jdbcType="CHAR" property="originalValue" />
+    <result column="new_value" jdbcType="CHAR" property="newValue" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+
+  <insert id="insertList" parameterType="cn.ehai.log.entity.BusinessLogValue">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into business_log_value (trace_id, opr_table_name, original_value, 
+      new_value
+      )
+    values
+    <foreach collection="list" item="item" close=")" open="(" index="index" separator=",">
+      #{item.traceId,jdbcType=VARCHAR}, #{item.oprTableName,jdbcType=VARCHAR}, #{item.originalValue,jdbcType=CHAR},
+      #{item.newValue,jdbcType=CHAR}
+    </foreach>
+  </insert>
+
+</mapper>

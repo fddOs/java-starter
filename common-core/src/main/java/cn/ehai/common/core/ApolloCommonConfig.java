@@ -31,9 +31,7 @@ public class ApolloCommonConfig {
             str = AESUtils.aesDecryptString(str);
         } catch (Exception e) {
             str = defaultValue;
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{key, defaultValue}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{key, defaultValue}, e);
         }
         return str;
     }

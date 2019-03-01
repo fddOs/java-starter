@@ -37,9 +37,7 @@ public class ErrorExceptionDecoder implements ErrorDecoder {
             parseError = "ResponseBody:" + bodyString + " Exception:" + ExceptionUtils.getStackTrace(e);
         } catch (Exception e) {
             // TODO
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(getClass()
-                    .getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new Object[]{arg0, arg1},
-                    ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{arg0, arg1}, e);
         }
         return new ExternalException(ResultCode.INTERNAL_SERVER_ERROR, "外部服务器异常：调用" + arg0 + "接口错误，错误码:" +
                 arg1.status() + (StringUtils.isEmpty(parseError) ? "" : " 解析失败:" + parseError) + (StringUtils.isEmpty

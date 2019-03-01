@@ -11,11 +11,7 @@ public class ResultGenerator {
 	}
 
 	private static <T> Result<T> result(T data, ResultCode resultCode, String message) {
-		Result<T> result = new Result<T>();
-		result.setErrorCode(resultCode);
-		result.setMessage(message);
-		result.setResult(data);
-		return result;
+		return result(null, resultCode.getCode(), message);
 	}
 
 	public static <T> Result<T> genSuccessResult(T data) {
@@ -23,16 +19,20 @@ public class ResultGenerator {
 	}
 
 	public static <T> Result<T> genSuccessResult(T data,String msg) {
-		Result<T> result = new Result<>();
-		result.setErrorCode(ResultCode.SUCCESS);
-		result.setMessage(msg);
-		result.setResult(data);
-		return result;
+		return result(data, ResultCode.SUCCESS.getCode(), msg);
 	}
 	public static <T> Result<T> genFailResult(ResultCode errorCode,String message) {
 		return result(null, errorCode, message);
 	}
 	public static <T> Result<T> genFailResult(String message) {
 		return result(null, ResultCode.FAIL, message);
+	}
+
+	public static <T> Result<T> result(T data, Integer resultCode, String message) {
+		Result<T> result = new Result<T>();
+		result.setErrorCode(resultCode);
+		result.setMessage(message);
+		result.setResult(data);
+		return result;
 	}
 }

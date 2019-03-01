@@ -37,9 +37,7 @@ public class ExcelUtils {
         try {
             out.close();
         } catch (IOException e) {
-            LoggerUtils.error(ExcelUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (ExcelUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{out, type, data, c}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(ExcelUtils.class, new Object[]{out, type, data, c}, e);
         }
     }
 }

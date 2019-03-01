@@ -35,9 +35,7 @@ public class IOUtils {
             }
 
         } catch (IOException e) {
-            LoggerUtils.error(IOUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (IOUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{reader}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(IOUtils.class, new Object[]{reader}, e);
         }
         return builder.toString();
     }

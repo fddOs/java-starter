@@ -1,3 +1,5 @@
 project:
   basePackage: cn.ehai
   context: java-starter
+
+apollo.bootstrap.enabled = true

@@ -7,6 +7,7 @@ import cn.ehai.common.utils.LoggerUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -111,7 +112,7 @@ public class ApolloBaseConfig {
         try {
             str = AESUtils.aesDecryptString(str);
         } catch (Exception e) {
-            //TODO
+            //IGNORE
         }
         return str;
     }
@@ -126,4 +127,5 @@ public class ApolloBaseConfig {
     public static String get(String key, String defaultValue) {
         return aesDecrypt(key, defaultValue);
     }
+
 }

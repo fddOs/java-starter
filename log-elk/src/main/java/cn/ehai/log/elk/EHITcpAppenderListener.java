@@ -39,9 +39,7 @@ public class EHITcpAppenderListener implements TcpAppenderListener {
             event = (LoggingEvent) deferredProcessingAware;
             marker = (EHILogstashMarker) event.getMarker();
         } catch (Exception e) {
-            LoggerUtils.error(getClass(), new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{appender, deferredProcessingAware, reason}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(getClass(), new Object[]{appender, deferredProcessingAware, reason}, e);
         }
         EmailService emailService = SpringContext.getApplicationContext().getBean(EmailService.class);
         EmailKeyValue request = new EmailKeyValue("request", JSONObject.toJSONString(marker.getRequestLog()));

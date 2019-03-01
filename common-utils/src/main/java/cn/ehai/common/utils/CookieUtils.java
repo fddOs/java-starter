@@ -38,9 +38,7 @@ public class CookieUtils {
             cookie.setPath("/");
             response.addCookie(cookie);
         } catch (Exception ex) {
-            LoggerUtils.error(CookieUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (CookieUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{response, name, value, maxAge}, ExceptionUtils.getStackTrace(ex))));
+            LoggerUtils.error(CookieUtils.class, new Object[]{response, name, value, maxAge}, ex);
         }
     }
 
@@ -76,14 +74,13 @@ public class CookieUtils {
             for (int i = 0; i < cookies.length; i++) {
                 Cookie cookie = new Cookie(name, null);
                 cookie.setMaxAge(0);
-                cookie.setPath("/");// 根据你创建cookie的路径进行填写
+                // 根据你创建cookie的路径进行填写
+                cookie.setPath("/");
                 response.addCookie(cookie);
                 bool = true;
             }
         } catch (Exception ex) {
-            LoggerUtils.error(CookieUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (CookieUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{request, response, name}, ExceptionUtils.getStackTrace(ex))));
+            LoggerUtils.error(CookieUtils.class, new Object[]{request, response, name}, ex);
         }
         return bool;
     }
@@ -106,15 +103,14 @@ public class CookieUtils {
             for (int i = 0; i < cookies.length; i++) {
                 Cookie cookie = new Cookie(name, null);
                 cookie.setMaxAge(0);
-                cookie.setPath("/");// 根据你创建cookie的路径进行填写
+                // 根据你创建cookie的路径进行填写
+                cookie.setPath("/");
                 cookie.setDomain(domain);
                 response.addCookie(cookie);
                 bool = true;
             }
         } catch (Exception ex) {
-            LoggerUtils.error(CookieUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (CookieUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{request, response, name, domain}, ExceptionUtils.getStackTrace(ex))));
+            LoggerUtils.error(CookieUtils.class, new Object[]{request, response, name, domain}, ex);
         }
         return bool;
     }
@@ -128,8 +124,9 @@ public class CookieUtils {
      */
     public static String findCookieByName(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
-        if (null == cookies || cookies.length == 0)
+        if (null == cookies || cookies.length == 0) {
             return null;
+        }
         String string = null;
         try {
             for (int i = 0; i < cookies.length; i++) {
@@ -143,9 +140,7 @@ public class CookieUtils {
 
             }
         } catch (Exception ex) {
-            LoggerUtils.error(CookieUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (CookieUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{request, name}, ExceptionUtils.getStackTrace(ex))));
+            LoggerUtils.error(CookieUtils.class, new Object[]{request, name}, ex);
         }
         return string;
     }
@@ -163,8 +158,9 @@ public class CookieUtils {
      */
     public static String findExternalCookieByName(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
-        if (null == cookies || cookies.length == 0)
+        if (null == cookies || cookies.length == 0) {
             return null;
+        }
         String string = null;
         try {
             for (int i = 0; i < cookies.length; i++) {
@@ -176,9 +172,7 @@ public class CookieUtils {
 
             }
         } catch (Exception ex) {
-            LoggerUtils.error(CookieUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (CookieUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{request, name}, ExceptionUtils.getStackTrace(ex))));
+            LoggerUtils.error(CookieUtils.class, new Object[]{request, name}, ex);
         }
         return string;
     }

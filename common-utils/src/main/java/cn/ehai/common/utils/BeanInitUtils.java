@@ -26,9 +26,7 @@ public class BeanInitUtils {
         try {
             obj = o.newInstance();
         } catch (Exception e1) {
-            LoggerUtils.error(BeanInitUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (BeanInitUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{o}, ExceptionUtils.getStackTrace(e1))));
+            LoggerUtils.error(BeanInitUtils.class, new Object[]{o}, e1);
             return (T) new Object();
         }
         Field[] fs = o.getDeclaredFields();
@@ -57,9 +55,7 @@ public class BeanInitUtils {
                     continue;
                 }
             } catch (IllegalAccessException e) {
-                LoggerUtils.error(BeanInitUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                        (BeanInitUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                                Object[]{t}, ExceptionUtils.getStackTrace(e))));
+                LoggerUtils.error(BeanInitUtils.class, new Object[]{t}, e);
                 continue;
             }
             initField(t, f);
@@ -97,9 +93,7 @@ public class BeanInitUtils {
                 LoggerUtils.error(BeanInitUtils.class, type);
             }
         } catch (Exception e) {
-            LoggerUtils.error(BeanInitUtils.class, new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper
-                    (BeanInitUtils.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(), new
-                            Object[]{obj, f}, ExceptionUtils.getStackTrace(e))));
+            LoggerUtils.error(BeanInitUtils.class, new Object[]{obj, f}, e);
         }
     }
 

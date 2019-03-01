@@ -67,6 +67,11 @@ public class ActionLog {
      */
     private String methodName;
 
+    /**
+     * traceId
+     */
+    private String traceId;
+
 
     public Integer getId() {
         return id;
@@ -164,4 +169,11 @@ public class ActionLog {
         this.methodName = methodName;
     }
 
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
+    }
 }

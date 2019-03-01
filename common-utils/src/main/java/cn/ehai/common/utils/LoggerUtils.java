@@ -2,6 +2,7 @@ package cn.ehai.common.utils;
 
 import net.logstash.logback.marker.LogstashMarker;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,14 +19,22 @@ public class LoggerUtils {
     /**
      * ELK记录error
      *
-     * @param clazz
-     * @param marker
+     * @param clazz   异常输出类
+     * @param objects 异常方法的参数
+     * @param e       异常
+     * @return void
+     * @author 方典典
+     * @time 2019/2/14 18:24
      */
-    public static void error(Class<? extends Object> clazz, LogstashMarker marker) {
+    public static void error(Class<? extends Object> clazz, Object[] objects, Exception e) {
         Logger logger = LoggerFactory.getLogger(clazz);
+        LogstashMarker marker = new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(clazz
+                .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
+                .getStackTrace(e)));
         logger.error(marker, null);
-        logger.error(((EHIExceptionLogstashMarker) marker).getEhiExceptionMsgWrapper().getExceptionMsg());
+        logger.error(ExceptionUtils.getStackTrace(e));
     }
+
 
     /**
      * Debug 输出
