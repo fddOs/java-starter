@@ -58,7 +58,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                     throw new ServiceException(ResultCode.BAD_REQUEST, "未获取到登录用户信息，请求失败");
                 }
                 Result<Boolean> booleanResult = authApi.verifyAuth(userCode, systemCode, moduleId);
-                if (booleanResult != null && booleanResult.getErrorCode() == 200 && booleanResult.getResult() == true) {
+                if (booleanResult != null && booleanResult.getErrorCode() == 0 && booleanResult.getResult() == true) {
                     return true;
                 } else {
                     logger.debug("userCode[{}],systemCode[{}],moduleId[{}] 权限验证失败",userCode,systemCode,moduleId);
