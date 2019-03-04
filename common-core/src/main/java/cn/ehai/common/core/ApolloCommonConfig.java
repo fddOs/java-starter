@@ -43,6 +43,6 @@ public class ApolloCommonConfig {
      * @return
      */
     public String getApolloConfig(String key) {
-        return aesDecrypt(key, "none");
+        return aesDecrypt(key, null);
     }
 }
