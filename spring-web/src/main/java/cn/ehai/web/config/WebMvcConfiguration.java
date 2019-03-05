@@ -53,11 +53,6 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         converters.add(converter);
     }
 
-    // 解决跨域问题
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-
-    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

@@ -212,9 +212,7 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
         try {
             //对请求url的参数进行解密
             String params;
-            boolean reqDecode = Boolean.parseBoolean(
-                    ApolloBaseConfig.get("reqDecode", "false"));
-            if (reqDecode) {
+            if (isDecode()) {
                 params = aesDecrypt(questSting);
             } else {
                 params = questSting;
@@ -245,8 +243,12 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
      */
     @Override
     public Enumeration<String> getParameterNames() {
-        Vector<String> vector = new Vector<String>(parameterMap.keySet());
-        return vector.elements();
+        if(isDecode()){
+            Vector<String> vector = new Vector<String>(parameterMap.keySet());
+            return vector.elements();
+        }else{
+            return super.getParameterNames();
+        }
     }
 
     /**
@@ -257,12 +259,24 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
      */
     @Override
     public String getParameter(String name) {
-        String[] results = parameterMap.get(name);
-        if (results == null || results.length <= 0) {
-            return "";
-        } else {
-            return results[0];
+
+        if(isDecode()){
+            String[] results = parameterMap.get(name);
+            if (results == null || results.length <= 0) {
+                return "";
+            } else {
+                return results[0];
+            }
+        }else{
+            return super.getParameter(name);
         }
+
+    }
+
+    private  boolean isDecode(){
+        return  Boolean.parseBoolean(
+            ApolloBaseConfig.get("reqDecode", "false"));
+
     }
 
     /**
@@ -270,11 +284,16 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
      */
     @Override
     public String[] getParameterValues(String name) {
-        String[] results = parameterMap.get(name);
-        if (results == null || results.length <= 0) {
-            return new String[]{};
-        } else {
-            return results;
+        if(isDecode()){
+            String[] results = parameterMap.get(name);
+            if (results == null || results.length <= 0) {
+                return new String[]{};
+            } else {
+                return results;
+            }
+        }else{
+            return super.getParameterValues(name);
         }
+
     }
 }
