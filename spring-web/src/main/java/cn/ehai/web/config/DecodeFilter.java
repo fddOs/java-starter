@@ -50,7 +50,7 @@ public class DecodeFilter implements Filter {
         } else {
             EhiHttpServletResponseWrapper contentCachingResponseWrapper = new EhiHttpServletResponseWrapper(
                     (HttpServletResponse) response);
-            EhiDecodeServletRequestWrapper ehiDecodeServletRequestWrapper = null;
+            EhiDecodeServletRequestWrapper ehiDecodeServletRequestWrapper;
             try {
                 ehiDecodeServletRequestWrapper = new EhiDecodeServletRequestWrapper(
                         (HttpServletRequest) request);
