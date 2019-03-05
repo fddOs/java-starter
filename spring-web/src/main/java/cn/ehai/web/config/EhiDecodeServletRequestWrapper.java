@@ -4,29 +4,19 @@ import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.AESUtils;
+import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.SignUtils;
+import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-
-import cn.ehai.common.utils.LoggerUtils;
-import org.springframework.util.StreamUtils;
-import org.springframework.util.StringUtils;
+import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.*;
 
 import static cn.ehai.web.common.SignConfig.SIGN_HEADER;
 import static org.springframework.http.HttpMethod.GET;
@@ -37,7 +27,7 @@ import static org.springframework.http.HttpMethod.GET;
  * @author lixiao
  * @date 2019-02-12 14:24
  */
-public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
+public class EhiDecodeServletRequestWrapper extends HttpServletRequestWrapper {
 
     private byte[] requestBody;
 
@@ -46,7 +36,7 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
     private static final String CHARSE = "UTF-8";
 
 
-    public EhiSignServletRequestWrapper(HttpServletRequest request) {
+    public EhiDecodeServletRequestWrapper(HttpServletRequest request) {
 
         super(request);
         //解密url的参数
@@ -58,10 +48,6 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
         } catch (UnsupportedEncodingException e) {
             LoggerUtils.error(getClass(), new Object[]{request}, e);
             throw new ServiceException(ResultCode.FAIL, e.getMessage());
-        }
-        boolean reqSign = Boolean.parseBoolean(ApolloBaseConfig.getReqSign());
-        if (reqSign && !signRequest(request, reqBody, getParams(parameterMap))) {
-            throw new ServiceException(ResultCode.UNAUTHORIZED, "签名错误");
         }
 
     }
@@ -81,51 +67,16 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
         }
         String reqBody;
         try {
-            reqBody = StreamUtils.copyToString(request.getInputStream(),
-                    Charset.forName(CHARSE));
-        } catch (IOException e) {
+            reqBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(),
+                    Charset.forName(CHARSE)));
+        } catch (Exception e) {
             LoggerUtils.error(getClass(), new Object[]{request}, e);
-            throw new ServiceException(ResultCode.UNAUTHORIZED, "body获取错误");
-        }
-        //处理除get请求外的body里面的参数
-        if (Boolean.parseBoolean(ApolloBaseConfig.getReqDecode())) {
-            try {
-                reqBody = aesDecrypt(reqBody);
-            } catch (Exception e) {
-                LoggerUtils.error(getClass(), new Object[]{request}, e);
-                throw new ServiceException(ResultCode.UNAUTHORIZED, "body参数解密错误");
-            }
+            throw new ServiceException(ResultCode.UNAUTHORIZED, "body参数解密错误");
         }
         if (reqBody == null) {
             reqBody = "";
         }
         return reqBody;
-    }
-
-    private Map<String, String> getParams(Map<String, String[]> parameter) {
-        Map<String, String> parameterMap = new HashMap<>();
-        Iterator<Map.Entry<String, String[]>> iterator = parameter.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, String[]> entry = iterator.next();
-            parameterMap.put(entry.getKey(), entry.getValue()[0]);
-        }
-        return parameterMap;
-    }
-
-
-    private boolean signRequest(HttpServletRequest request, String requestBody, Map<String, String> query) {
-
-        if (StringUtils.isEmpty(requestBody) && query.isEmpty()) {
-            return true;
-        }
-        String sign = SignUtils.sign(query, requestBody);
-        String signHeader = request.getHeader(SIGN_HEADER);
-        if (StringUtils.isEmpty(signHeader) || StringUtils
-                .isEmpty(sign)) {
-            return false;
-        }
-
-        return signHeader.equalsIgnoreCase(sign);
     }
 
     /**
@@ -209,13 +160,7 @@ public class EhiSignServletRequestWrapper extends HttpServletRequestWrapper {
 
         try {
             //对请求url的参数进行解密
-            String params;
-            boolean reqDecode = Boolean.parseBoolean(ApolloBaseConfig.getReqDecode());
-            if (reqDecode) {
-                params = aesDecrypt(questSting);
-            } else {
-                params = questSting;
-            }
+            String params = aesDecrypt(questSting);
             if (!StringUtils.isEmpty(params)) {
                 String[] paramList = params.split("&");
                 for (String param : paramList) {

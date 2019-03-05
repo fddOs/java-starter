@@ -56,7 +56,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
     // 解决跨域问题
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        if ("true".equals(ApolloBaseConfig.get("web.cross-domain", "false"))) {
+        if ("true".equals(ApolloBaseConfig.getWebCrossDomain())) {
             registry.addMapping("/**")
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     //放行哪些原始域(头部信息)

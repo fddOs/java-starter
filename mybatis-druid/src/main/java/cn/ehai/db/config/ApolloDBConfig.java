@@ -57,8 +57,8 @@ public class ApolloDBConfig {
      * @time:2018年5月22日 下午5:27:26
      */
     @ApolloConfigChangeListener("EHI.DBConfig")
-    private void configChangeListter(ConfigChangeEvent changeEvent) {
-        if (changeEvent.isChanged("Apollo_YD_Onlineservice")) {
+    private void configChangeListen(ConfigChangeEvent changeEvent) {
+        if (changeEvent.isChanged(key)) {
             DruidConfigution druidConfigution = SpringContext.getApplicationContext().getBean(DruidConfigution.class);
             druidConfigution.resetDataBase(initDBInfo());
         }

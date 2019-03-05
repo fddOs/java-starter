@@ -27,7 +27,7 @@ public class ExcludePathHandler {
      */
     public static boolean contain(ServletRequest request, ServletResponse response, String excludePath) {
         String excludePaths = "/druid/**,/swagger-resources/**,/v2/**,/heartbeat,/api-docs*,/swagger*,/**/*.png,/**/" +
-                "*.css,/**/*.js,/**/*.html,/favicon.ico" + excludePath;
+                "*.css,/**/*.js,/**/*.html,/favicon.ico," + excludePath;
         List<String> excludePathList = Arrays.asList(excludePaths.split(","));
         AntPathMatcher matcher = new AntPathMatcher();
         for (String path : excludePathList) {

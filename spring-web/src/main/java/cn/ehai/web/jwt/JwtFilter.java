@@ -39,15 +39,15 @@ public class JwtFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        if (!Boolean.valueOf(ApolloBaseConfig.get("jwtEnable", "false")) || ExcludePathHandler.contain(request,
-                response, ApolloBaseConfig.get("jwtExcludePath", ""))) {
+        if (!Boolean.valueOf(ApolloBaseConfig.getJwtEnable()) || ExcludePathHandler.contain(request,
+                response, ApolloBaseConfig.getJwtExcludePath())) {
             chain.doFilter(request, response);
         } else {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             EhiHeaderReqWrapper contentCachingRequestWrapper = new EhiHeaderReqWrapper(httpServletRequest);
             JwtTokenAuthentication.setJwtHeader(contentCachingRequestWrapper);
-            String loginUrl = ApolloBaseConfig.get("webLoginUrl", "");
+            String loginUrl = ApolloBaseConfig.getWebLoginUrl();
             if (JwtTokenAuthentication.getAuthentication(httpServletRequest)) {
                 chain.doFilter(contentCachingRequestWrapper, response);
             } else {

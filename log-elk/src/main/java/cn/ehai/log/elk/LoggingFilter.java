@@ -17,6 +17,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
@@ -38,6 +39,7 @@ import java.util.Random;
  * @author:方典典
  * @time:2018/11/6 10:18
  */
+@Order(Integer.MIN_VALUE + 1)
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
     @Autowired
@@ -63,6 +65,11 @@ public class LoggingFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             if (e.getCause() != null) {
                 e = (Exception) e.getCause();
+            }
+            if (e instanceof ServiceException) {
+                responseResult(wrapperResponse, ResultGenerator.genFailResult(((ServiceException) e).getCode(),
+                        e.getMessage()));
+                return;
             }
             errorMsg = ExceptionUtils.getStackTrace(e);
             LoggerUtils.error(getClass(), errorMsg);
@@ -120,7 +127,7 @@ public class LoggingFilter extends OncePerRequestFilter {
      * getRequestHeaderMap
      *
      * @param request
-     * @return java.util.Map<java.lang.String   ,   java.lang.String>
+     * @return java.util.Map<java.lang.String       ,       java.lang.String>
      * @author 方典典
      * @time 2019/1/15 17:44
      */
