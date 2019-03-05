@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.*;
 
 /**
- * @Description: TODO
+ * @Description: 拷贝responseBody
  * @author:闵豪
  * @time:18-8-8 下午5:19
  */

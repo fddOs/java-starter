@@ -26,31 +26,31 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @ControllerAdvice
 public class BaseExceptionHandler {
 
-	@ExceptionHandler(ServiceException.class)
-	@ResponseBody
-	private <T> Result<T> serviceExceptionHandler(HttpServletRequest request, ServiceException e) {
-		LoggerUtils.error(getClass(),ExceptionUtils.getStackTrace(e));
-		return ResultGenerator.genFailResult(e.getCode(), e.getMessage());
-	}
+    @ExceptionHandler(ServiceException.class)
+    @ResponseBody
+    private <T> Result<T> serviceExceptionHandler(HttpServletRequest request, ServiceException e) {
+        LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+        return ResultGenerator.genFailResult(e.getCode(), e.getMessage());
+    }
 
-	@ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
-	@ResponseBody
-	private <T> Result<T> bindExceptionHandler(HttpServletRequest request, Exception e) {
-		List<FieldError> fieldErrors;
-		try {
-			fieldErrors = ((BindException) e).getBindingResult().getFieldErrors();
-		} catch (Exception e2) {
-			fieldErrors = ((MethodArgumentNotValidException) e).getBindingResult().getFieldErrors();
-		}
-		LoggerUtils.error(getClass(),ExceptionUtils.getStackTrace(e));
-		return ResultGenerator.genFailResult(ResultCode.BAD_REQUEST, fieldErrors.get(0).getDefaultMessage());
-	}
+    @ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
+    @ResponseBody
+    private <T> Result<T> bindExceptionHandler(HttpServletRequest request, Exception e) {
+        List<FieldError> fieldErrors;
+        try {
+            fieldErrors = ((BindException) e).getBindingResult().getFieldErrors();
+        } catch (Exception e2) {
+            fieldErrors = ((MethodArgumentNotValidException) e).getBindingResult().getFieldErrors();
+        }
+        LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+        return ResultGenerator.genFailResult(ResultCode.BAD_REQUEST, fieldErrors.get(0).getDefaultMessage());
+    }
 
-	@ExceptionHandler(NoHandlerFoundException.class)
-	@ResponseBody
-	private <T> Result<T> noHandlerFoundExceptionHandler(HttpServletRequest request, NoHandlerFoundException e) {
-		LoggerUtils.error(getClass(),ExceptionUtils.getStackTrace(e));
-		return ResultGenerator.genFailResult(ResultCode.NOT_FOUND, e.getMessage());
-	}
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseBody
+    private <T> Result<T> noHandlerFoundExceptionHandler(HttpServletRequest request, NoHandlerFoundException e) {
+        LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+        return ResultGenerator.genFailResult(ResultCode.NOT_FOUND, e.getMessage());
+    }
 
 }

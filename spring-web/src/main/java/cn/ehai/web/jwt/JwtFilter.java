@@ -16,6 +16,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.ehai.web.config.EhiHttpServletResponseWrapper;
 import com.alibaba.fastjson.JSON;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -39,23 +40,22 @@ public class JwtFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        if (!Boolean.valueOf(ApolloBaseConfig.get("jwtEnable", "false")) || ExcludePathHandler.contain(request,
-                response, ApolloBaseConfig.get("jwtExcludePath", ""))) {
+        if (!Boolean.valueOf(ApolloBaseConfig.getJwtEnable()) || ExcludePathHandler.contain(request,
+                response, ApolloBaseConfig.getJwtExcludePath())) {
             chain.doFilter(request, response);
         } else {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             EhiHeaderReqWrapper contentCachingRequestWrapper = new EhiHeaderReqWrapper(httpServletRequest);
             JwtTokenAuthentication.setJwtHeader(contentCachingRequestWrapper);
-            String loginUrl = ApolloBaseConfig.get("webLoginUrl", "");
+            String loginUrl = ApolloBaseConfig.getWebLoginUrl();
             if (JwtTokenAuthentication.getAuthentication(httpServletRequest)) {
                 chain.doFilter(contentCachingRequestWrapper, response);
             } else {
                 if (!StringUtils.isEmpty(loginUrl)) {
-                    httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + loginUrl);
+                    ((HttpServletResponse) response).sendRedirect(httpServletRequest.getContextPath() + loginUrl);
                 }
-                responseResult(httpServletResponse, ResultGenerator.genFailResult(ResultCode.UNAUTHORIZED, "jwt token" +
-                        " 验证失败"));
+                responseResult((HttpServletResponse) response, ResultGenerator.genFailResult(ResultCode
+                        .UNAUTHORIZED, "jwt token" + " 验证失败"));
             }
         }
     }
@@ -70,7 +70,7 @@ public class JwtFilter implements Filter {
         response.setHeader("Content-type", "application/json;charset=UTF-8");
         response.setStatus(200);
         try {
-            response.getWriter().write(JSON.toJSONString(result));
+            response.getOutputStream().write(JSON.toJSONString(result).getBytes("UTF-8"));
         } catch (IOException ex) {
             LoggerUtils.error(getClass(), new Object[]{response, result}, ex);
         }

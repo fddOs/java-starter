@@ -40,6 +40,6 @@ public class EmailServiceImpl implements EmailService {
         }
         List<EmailModel> list = new ArrayList<>();
         list.add(emailModel);
-        return builder.target(EmailApi.class, ApolloBaseConfig.aesDecrypt("emailUrl", "")).sendEmail(list);
+        return builder.target(EmailApi.class, ApolloBaseConfig.getMessageCenterUrl()).sendEmail(list);
     }
 }

@@ -53,6 +53,17 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         converters.add(converter);
     }
 
+    // 解决跨域问题
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        if ("true".equals(ApolloBaseConfig.getWebCrossDomain())) {
+            registry.addMapping("/**")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    //放行哪些原始域(头部信息)
+                    .allowedHeaders("*")
+                    .allowedOrigins("*");
+        }
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
