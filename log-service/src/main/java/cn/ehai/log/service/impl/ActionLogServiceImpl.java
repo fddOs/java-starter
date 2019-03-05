@@ -47,10 +47,7 @@ public class ActionLogServiceImpl implements ActionLogService {
             throw new ServiceException(ResultCode.DATA_ERROR,
                 "oprTableName or traceId 不能为空");
         }
-        String[] optString = oprTableName.split("&");
-        if(optString==null || optString.length<1){
-
-        }
+        String[] optString = oprTableName.split(",");
         List<String> oprList  = Arrays.asList(optString);
         return actionLogMapper.selectByBusinessLog(oprList,traceId);
     }
