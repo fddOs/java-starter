@@ -17,6 +17,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -54,7 +55,7 @@ public class BusLogAspect {
      * @author lixiao
      * @date 2019-02-14 14:47
      */
-    @After(value = "@annotation(cn.ehai.log.log.business.BusinessLog)")
+    @AfterReturning(value = "@annotation(cn.ehai.log.log.business.BusinessLog)")
     public void bussLogAction(JoinPoint pjp) throws Throwable {
         //获取且面方法的参数信息
         Method method = ((MethodSignature)pjp.getSignature()).getMethod();
@@ -80,8 +81,8 @@ public class BusLogAspect {
         BusinessLog businessLog =  method.getAnnotation(BusinessLog.class);
         int actionType = businessLog.actionType();
         //获取操作人
-        String orderID = (String)methodParams(arguments,params,businessLog.oprNo(),businessLog
-            .referNoNum());
+        String orderID = String.valueOf(methodParams(arguments,params,businessLog.oprNo(),businessLog
+            .referNoNum()));
         if(StringUtils.isEmpty(orderID)){
             HttpServletRequest request = null;
             try {
@@ -93,10 +94,10 @@ public class BusLogAspect {
             }
         }
         //关联单号
-        String referId = (String)methodParams(arguments,params,businessLog.referNo(),
-            businessLog.referNoNum());
+        String referId = String.valueOf(methodParams(arguments,params,businessLog.referNo(),
+            businessLog.referNoNum()));
         //用户id
-        String userId = (String)methodParams(arguments,params,businessLog.userId(),businessLog.userIdNum());
+        String userId = String.valueOf(methodParams(arguments,params,businessLog.userId(),businessLog.userIdNum()));
         //要记录的表名
         String oprTableName = businessLog.oprTableName();
         //附加信息-JSON

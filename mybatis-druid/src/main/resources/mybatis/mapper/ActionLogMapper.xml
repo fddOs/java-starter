@@ -33,7 +33,7 @@
     </select>
     <select id="selectByBusinessLog" resultType="cn.ehai.log.entity.BusinessLogValue">
       SELECT original_value originalValue ,new_value newValue,opr_table_name oprTableName,trace_id traceId
-      FROM `action_log` WHERE trace_id = #{traceId} and opr_table_name IN
+      FROM `action_log_common` WHERE trace_id = #{traceId} and opr_table_name IN
       <foreach collection = "oprTableNameList" item="item" index = "index" open="(" separator="," close=")">
           #{item}
       </foreach>

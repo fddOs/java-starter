@@ -1,5 +1,6 @@
 package cn.ehai.redis.config;
 
+import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.redis.lock.DistributedLockService;
 import cn.ehai.redis.lock.SingleDistributedLockImpl;
 import cn.ehai.redis.model.RedisInfo;
@@ -32,7 +33,7 @@ public class RedissonConfig {
     if (redisInfoService != null) {
       ClusterServersConfig clusterServersConfig = config.useClusterServers()
           // 集群状态扫描间隔时间，单位是毫秒
-          .setScanInterval(2000);
+          .setScanInterval(500);
       String redisClusterUrl = redisInfoService.redisInfo().getRedisClusterUrl();
       if(StringUtils.isEmpty(redisClusterUrl)){
         return null;
@@ -48,7 +49,14 @@ public class RedissonConfig {
     }else{
       throw  new IllegalArgumentException("需要配置redis连接信息");
     }
-    return Redisson.create(config);
+    RedissonClient redissonClient=null;
+    try{
+      redissonClient = Redisson.create(config);
+    }catch (Exception e){
+      LoggerUtils.error(RedissonConfig.class,new Object[]{
+          redisInfoService.redisInfo().getRedisClusterUrl()+"redis 连接失败"},e);
+    }
+    return redissonClient;
   }
 
 }
