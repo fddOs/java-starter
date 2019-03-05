@@ -19,7 +19,7 @@
         <module>rpc-feign</module>
         <module>util-redis-lock</module>
         <module>ehi-email</module>
-        <!--<module>ehi-authority</module>-->
+        <module>ehi-authority</module>
     </modules>
 
     <properties>
