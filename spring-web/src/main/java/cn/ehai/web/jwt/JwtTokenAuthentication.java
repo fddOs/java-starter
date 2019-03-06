@@ -1,6 +1,10 @@
 package cn.ehai.web.jwt;
 
+import cn.ehai.common.core.ApolloBaseConfig;
+import cn.ehai.common.core.ResultCode;
+import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.core.SpringContext;
+import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.web.config.EhiHeaderReqWrapper;
 
@@ -15,6 +19,8 @@ import javax.xml.bind.DatatypeConverter;
 
 import io.jsonwebtoken.*;
 import org.springframework.util.StringUtils;
+
+import static cn.ehai.common.utils.SignUtils.SECRET;
 
 /**
  * jwt 添加token验证
@@ -56,6 +62,42 @@ public class JwtTokenAuthentication {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @description 获取token的用户名和工号
+     * @param request
+     * @author weida
+     * @return
+     */
+    public String getUserInfoCombination(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        Stream<Cookie> streamCookies = Stream.of(cookies);
+        Optional<Cookie> streamCookie = streamCookies.filter(cookie -> "elc".equals(cookie.getName())).findFirst();
+        StringBuilder userName = new StringBuilder();
+        if (streamCookie.isPresent()) {
+            Cookie token = streamCookie.get();
+            try {
+                userName.append(Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET))
+                        .parseClaimsJws(token.getValue())
+                        .getBody()
+                        .getSubject());
+                userName.append("-");
+                String name = (String) Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET))
+                        .parseClaimsJws(token.getValue())
+                        .getBody()
+                        .get(ApolloBaseConfig.get("uniqueName", null));
+                if (name == null) {
+                    throw new ServiceException(ResultCode.UNAUTHORIZED, "用户姓名获取失败，请重新登录");
+                }
+                userName.append(name);
+
+            } catch (JwtException e) {
+                LoggerUtils.error(JwtTokenAuthentication.class, "解析用户信息失败");
+                throw new ServiceException(ResultCode.UNAUTHORIZED, "用户信息获取失败");
+            }
+        }
+        return userName.toString();
     }
 
     /**
