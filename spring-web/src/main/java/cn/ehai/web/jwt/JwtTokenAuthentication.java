@@ -70,7 +70,7 @@ public class JwtTokenAuthentication {
      * @author weida
      * @return
      */
-    public String getUserInfoCombination(HttpServletRequest request) {
+    public static String getUserInfoCombination(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         Stream<Cookie> streamCookies = Stream.of(cookies);
         Optional<Cookie> streamCookie = streamCookies.filter(cookie -> "elc".equals(cookie.getName())).findFirst();
