@@ -4,7 +4,6 @@ import cn.ehai.common.core.*;
 import cn.ehai.common.utils.AESUtils;
 import cn.ehai.common.utils.IOUtils;
 import cn.ehai.common.utils.LoggerUtils;
-import cn.ehai.common.utils.SignUtils;
 import cn.ehai.web.common.ExcludePathHandler;
 import com.alibaba.fastjson.JSON;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +14,6 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 
 /**
  * 解密过滤器
@@ -36,6 +33,10 @@ public class DecodeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        if("application/x-www-form-urlencoded".equalsIgnoreCase(request.getContentType())){
+            chain.doFilter(request, response);
+            return;
+        }
         boolean isDecode = Boolean.valueOf(ApolloBaseConfig.getReqDecode());
         if (!isDecode || ExcludePathHandler.contain(request, response, ApolloBaseConfig.getDecodeExcludePath())) {
             ServletRequest requestWrapper = null;
