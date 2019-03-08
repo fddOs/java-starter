@@ -2,6 +2,7 @@ package cn.ehai.common.utils;
 
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
@@ -26,11 +27,19 @@ public class ProjectInfoUtils {
     }
 
     public static String getBasePackage() {
-        return (String) ((Map) map.get("project")).get("base-package");
+        String basePackage = (String) ((Map) map.get("project")).get("base-package");
+        if(StringUtils.isEmpty(basePackage)){
+            throw new RuntimeException("缺少配置：project.base-package");
+        }
+        return basePackage;
     }
 
     public static String getProjectContext() {
-        return (String) ((Map) map.get("project")).get("context");
+        String projectContext = (String) ((Map) map.get("project")).get("context");
+        if(StringUtils.isEmpty(projectContext)){
+            throw new RuntimeException("缺少配置：project.context");
+        }
+        return projectContext;
     }
 
     /**
