@@ -1,6 +1,7 @@
 package cn.ehai.log.log.business;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -19,6 +20,13 @@ public class BusinessTableUtils {
          }
          tables.add(table);
      }
+
+    public static void addBusiTables(String[] strings){
+        if(strings!=null&&strings.length>0){
+            tables.addAll(Arrays.asList(strings));
+        }
+
+    }
 
     public static ArrayList<String> getBusiTables() {
         return tables;
