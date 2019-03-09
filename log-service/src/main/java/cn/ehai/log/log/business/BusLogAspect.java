@@ -45,8 +45,6 @@ public class BusLogAspect {
     @Autowired
     private BusinessLogMapper businessLogMapper;
 
-    @Autowired
-    private BusinessLogAsync businessLogAsync;
 
     /**
      * // TODO:
@@ -109,7 +107,7 @@ public class BusLogAspect {
 
         businessLogMapper.insert(createBusinessLog(actionType,orderID,referId,userId,oprTableName,extend,traceId));
 
-        businessLogAsync.handleLogUpdateData(oprTableName,traceId);
+        //businessLogAsync.handleLogUpdateData(oprTableName,traceId);
     }
 
 

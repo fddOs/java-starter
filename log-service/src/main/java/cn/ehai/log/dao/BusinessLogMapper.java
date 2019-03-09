@@ -13,4 +13,6 @@ public interface BusinessLogMapper {
     List<BusinessLog> selectAll();
 
     int updateByPrimaryKey(BusinessLog record);
+
+    List<BusinessLog> selectByOrderNo(String orderNo);
 }

@@ -13,6 +13,8 @@ import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
+import java.io.UnsupportedEncodingException;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,8 +188,13 @@ public class LoggingFilter extends OncePerRequestFilter {
             try {
                 return JSON.parse(new String(buf, 0, buf.length, "utf-8"));
             } catch (Exception e) {
-                return JSON.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
-                        request.getContentType() + "\"}");
+                try {
+                    return JSON.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
+                            request.getContentType() + "\"}"+ " requestBody:" + new String(buf, 0, buf.length, "utf-8")
+                         + "\"}");
+                } catch (UnsupportedEncodingException e1) {
+                    LoggerUtils.error(LoggingFilter.class,"字符串序列化失败:UnsupportedEncodingException");
+                }
             }
         }
         return new JSONObject();

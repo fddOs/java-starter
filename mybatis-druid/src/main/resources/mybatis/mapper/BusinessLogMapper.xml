@@ -71,4 +71,8 @@
     gmt_create, gmt_modified, extend_content
     from business_log
   </select>
+  <select id="selectByOrderNo" resultType="BaseResultMap">
+    select  id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime,
+    extend_content from business_log where refer_id = #{orderNo}
+  </select>
 </mapper>

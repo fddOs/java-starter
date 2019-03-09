@@ -11,16 +11,16 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class BusinessTableUtils {
 
-     private static ArrayList<String> busiTables = new ArrayList<>();
+     private static ArrayList<String> tables = new ArrayList<>();
 
      public static void addBusiTables(String table){
          if(StringUtils.isEmpty(table)){
              return;
          }
-         busiTables.add(table);
+         tables.add(table);
      }
 
     public static ArrayList<String> getBusiTables() {
-        return busiTables;
+        return tables;
     }
 }
