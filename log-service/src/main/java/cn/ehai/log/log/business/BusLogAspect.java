@@ -5,7 +5,6 @@ import brave.opentracing.BraveSpanContext;
 import brave.propagation.TraceContext;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.log.dao.BusinessLogMapper;
-import cn.ehai.log.service.impl.BusinessLogAsync;
 import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
@@ -15,14 +14,10 @@ import io.opentracing.Tracer;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -34,7 +29,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @date 2019-02-14 17:59
  */
 @Aspect
-@Order(1)
 @Component
 public class BusLogAspect {
     private static final String HEADER_JWT_USER_ID = "jwt-user-id";

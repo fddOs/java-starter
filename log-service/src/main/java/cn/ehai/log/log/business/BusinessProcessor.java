@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,12 +27,13 @@ public class BusinessProcessor implements BeanPostProcessor {
        Method[] methods =  classes.getDeclaredMethods();
         for (Method method :methods){
             //如果方法添加了注解，获取注解里面需要保存的表名
-            if(method.isAnnotationPresent(BusinessLog.class)){
-                BusinessLog businessLog =  method.getAnnotation(BusinessLog.class);
-                String[] strings = businessLog.oprTableName().split(",");
-                if(strings!=null&&strings.length>0){
-                    BusinessTableUtils.addBusiTables(strings);
-                }
+            BusinessLog businessLog = AnnotationUtils.findAnnotation(method,BusinessLog.class);
+            if(businessLog==null){
+                continue;
+            }
+            String[] strings = businessLog.oprTableName().split(",");
+            if(strings!=null&&strings.length>0){
+                BusinessTableUtils.addBusiTables(strings);
             }
         }
         return bean;

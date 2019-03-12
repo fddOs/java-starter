@@ -23,9 +23,12 @@ public class BusinessTableUtils {
 
     public static void addBusiTables(String[] strings){
         if(strings!=null&&strings.length>0){
-            tables.addAll(Arrays.asList(strings));
+            for (String s :strings){
+                if(!tables.contains(s)){
+                    tables.add(s);
+                }
+            }
         }
-
     }
 
     public static ArrayList<String> getBusiTables() {
