@@ -185,16 +185,14 @@ public class LoggingFilter extends OncePerRequestFilter {
         }
         byte[] buf = request.getContentAsByteArray();
         if (buf.length > 0) {
+            String requestString =null;
             try {
-                return JSON.parse(new String(buf, 0, buf.length, "utf-8"));
+                requestString= new String(buf, 0, buf.length, "utf-8");
+                return JSON.parse(requestString);
             } catch (Exception e) {
-                try {
                     return JSON.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
-                            request.getContentType() + "\"}"+ " requestBody:" + new String(buf, 0, buf.length, "utf-8")
+                            request.getContentType() + "\"}"+ " requestBody:" + requestString
                          + "\"}");
-                } catch (UnsupportedEncodingException e1) {
-                    LoggerUtils.error(LoggingFilter.class,"字符串序列化失败:UnsupportedEncodingException");
-                }
             }
         }
         return new JSONObject();

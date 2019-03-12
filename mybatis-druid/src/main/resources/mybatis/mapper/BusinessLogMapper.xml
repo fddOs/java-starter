@@ -12,6 +12,7 @@
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
     <result column="opr_table_name" jdbcType="VARCHAR" property="oprTableName" />
+    <result column="sys_name" jdbcType="VARCHAR" property="sysName" />
     <result column="action_datetime" jdbcType="TIMESTAMP" property="actionDatetime" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
@@ -51,7 +52,8 @@
       action_datetime = #{actionDatetime,jdbcType=TIMESTAMP},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
-      extend_content = #{extendContent,jdbcType=LONGVARCHAR}
+      extend_content = #{extendContent,jdbcType=LONGVARCHAR},
+      sys_name = #{sysName}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -74,5 +76,13 @@
   <select id="selectByOrderNo" resultMap="BaseResultMap">
     select  id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime,
     extend_content from business_log where refer_id = #{orderNo}
+  </select>
+  <select id="selectByOrderNoSys" resultMap="BaseResultMap">
+    select  id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime,
+    extend_content from business_log where refer_id = #{orderNo} and sys_name = #{sysName}
+  </select>
+  <select id="selectByOrderNoAction" resultMap="BaseResultMap">
+    select  id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime,
+    extend_content from business_log where refer_id = #{orderNo}  and action_type = #{actionType}
   </select>
 </mapper>

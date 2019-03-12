@@ -86,6 +86,19 @@ public class BusinessLog {
      */
     @ApiModelProperty("扩展字段，格式为JSON")
     private String extendContent;
+    /**
+     * 系统名称
+     */
+    @ApiModelProperty("系统名称")
+    private String sysName;
+
+    public String getSysName() {
+        return sysName;
+    }
+
+    public void setSysName(String sysName) {
+        this.sysName = sysName;
+    }
 
     public Integer getId() {
         return id;
