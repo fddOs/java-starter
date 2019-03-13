@@ -4,6 +4,7 @@ import brave.internal.HexCodec;
 import brave.opentracing.BraveSpanContext;
 import brave.propagation.TraceContext;
 import cn.ehai.common.utils.LoggerUtils;
+import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.log.dao.BusinessLogMapper;
 import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
@@ -114,6 +115,7 @@ public class BusLogAspect {
         businessLog.setReferId(referId);
         businessLog.setTraceId(traceId);
         businessLog.setUserId(userId);
+        businessLog.setSysName(ProjectInfoUtils.getProjectContext());
         return businessLog;
     }
 

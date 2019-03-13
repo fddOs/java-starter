@@ -33,10 +33,10 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into business_log (action_type, opr_no, refer_id,
-    user_id, trace_id, opr_table_name,extend_content)
+    user_id, trace_id, opr_table_name,extend_content,sys_name)
     values (#{actionType,jdbcType=INTEGER}, #{oprNo,jdbcType=VARCHAR}, #{referId,jdbcType=VARCHAR}, 
       #{userId,jdbcType=VARCHAR}, #{traceId,jdbcType=VARCHAR}, #{oprTableName,jdbcType=VARCHAR},
-      #{extendContent,jdbcType=VARCHAR})
+      #{extendContent,jdbcType=VARCHAR}), #{sysName,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="cn.ehai.log.entity.BusinessLog">
     <!--
