@@ -74,14 +74,14 @@ public class BusLogAspect {
         BusinessLog businessLog =  method.getAnnotation(BusinessLog.class);
         int actionType = businessLog.actionType();
         //获取操作人
-        String orderID = String.valueOf(methodParams(arguments,params,businessLog.oprNo(),businessLog
+        String optNo = String.valueOf(methodParams(arguments,params,businessLog.oprNo(),businessLog
             .referNoNum()));
-        if(StringUtils.isEmpty(orderID)){
+        if(StringUtils.isEmpty(optNo)){
             HttpServletRequest request = null;
             try {
                 request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                     .getRequest();
-                orderID = request.getHeader(HEADER_JWT_USER_ID);
+                optNo = request.getHeader(HEADER_JWT_USER_ID);
             }catch (Exception e){
                 LoggerUtils.error(getClass(), new Object[]{ arguments, params}, e);
             }
@@ -99,26 +99,31 @@ public class BusLogAspect {
 
         //traceId
         String traceId=requestTraceId();
-
-        businessLogMapper.insert(createBusinessLog(actionType,orderID,referId,userId,oprTableName,extend,traceId));
-
-        //businessLogAsync.handleLogUpdateData(oprTableName,traceId);
+        try{
+            businessLogMapper.insert(createBusinessLog(actionType,optNo,referId,userId,oprTableName,extend,traceId));
+        }catch (Exception e){
+            LoggerUtils.error(BusLogAspect.class,new Object[]{method.getName()},e);
+        }
     }
 
 
-    private cn.ehai.log.entity.BusinessLog createBusinessLog(int actionType,String orderId,String referId,String userId,String oprTableName,String extend,String traceId){
+    private cn.ehai.log.entity.BusinessLog createBusinessLog(int actionType,String optNo,String referId,String userId,String oprTableName,String extend,String traceId){
         cn.ehai.log.entity.BusinessLog businessLog = new cn.ehai.log.entity.BusinessLog();
         businessLog.setActionType(actionType);
-        businessLog.setOprNo(orderId);
+        businessLog.setOprNo(handleString(optNo));
         businessLog.setExtendContent(extend);
-        businessLog.setOprTableName(oprTableName);
-        businessLog.setReferId(referId);
-        businessLog.setTraceId(traceId);
-        businessLog.setUserId(userId);
-        businessLog.setSysName(ProjectInfoUtils.getProjectContext());
+        businessLog.setOprTableName(handleString(oprTableName));
+        businessLog.setReferId(handleString(referId));
+        businessLog.setTraceId(handleString(traceId));
+        businessLog.setUserId(handleString(userId));
+        businessLog.setSysName(handleString(ProjectInfoUtils.getProjectContext()));
         return businessLog;
     }
 
+
+    private String handleString(String string){
+        return string==null?"":string;
+    }
     /**
      * 获取这次请求的traceid
      * @param
