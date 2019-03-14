@@ -2,6 +2,7 @@ package cn.ehai.log.dao;
 
 import cn.ehai.log.entity.BusinessLog;
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface BusinessLogMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,5 +15,9 @@ public interface BusinessLogMapper {
 
     int updateByPrimaryKey(BusinessLog record);
 
-    List<BusinessLog> selectByOrderNo(String orderNo);
+    List<BusinessLog> selectByOrderNoSys(@Param("orderNo") String orderNo,@Param("sysName")String sysName);
+
+    List<BusinessLog> selectByOrderNoAction(@Param("orderNo") String orderNo,@Param("actionType")Integer actionType);
+
+    List<BusinessLog> selectByOrderNo( String orderNo);
 }
