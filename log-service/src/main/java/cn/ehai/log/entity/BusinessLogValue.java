@@ -55,6 +55,16 @@ public class BusinessLogValue {
     @ApiModelProperty("被动更新时间")
     private Date gmtModified;
 
+    public BusinessLogValue() {
+    }
+
+    public BusinessLogValue(String traceId, String oprTableName, String originalValue, String newValue) {
+        this.traceId = traceId;
+        this.oprTableName = oprTableName;
+        this.originalValue = originalValue;
+        this.newValue = newValue;
+    }
+
     public Integer getId() {
         return id;
     }

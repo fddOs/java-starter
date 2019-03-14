@@ -30,5 +30,18 @@
       #{item.newValue,jdbcType=CHAR}
     </foreach>
   </insert>
+  <insert id="insertBusinessLogValue" parameterType="cn.ehai.log.entity.BusinessLogValue">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into business_log_value (trace_id, opr_table_name, original_value,
+      new_value
+      )
+    values
+    (
+      #{item.traceId,jdbcType=VARCHAR}, #{item.oprTableName,jdbcType=VARCHAR}, #{item.originalValue,jdbcType=CHAR},
+      #{item.newValue,jdbcType=CHAR}
+    )
+  </insert>
 
 </mapper>
