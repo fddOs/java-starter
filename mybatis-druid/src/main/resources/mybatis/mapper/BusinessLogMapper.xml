@@ -14,6 +14,7 @@
     <result column="opr_table_name" jdbcType="VARCHAR" property="oprTableName" />
     <result column="sys_name" jdbcType="VARCHAR" property="sysName" />
     <result column="action_datetime" jdbcType="TIMESTAMP" property="actionDatetime" />
+    <result column="action_name" jdbcType="VARCHAR" property="actionName" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
     <result column="extend_content" jdbcType="VARCHAR" property="extendContent" />
@@ -74,15 +75,20 @@
     from business_log
   </select>
   <select id="selectByOrderNo" resultMap="BaseResultMap">
-    select  id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime,
-    extend_content from business_log where refer_id = #{orderNo}
+    select  bl.id, bl.action_type, bl.opr_no, bl.refer_id, bl.user_id, bl.trace_id, bl.opr_table_name,
+    bl.action_datetime,
+    bl.extend_content,ai.action_name from business_log bl left join action_item ai on bl.action_type = ai.id
+     where refer_id = #{orderNo}
   </select>
   <select id="selectByOrderNoSys" resultMap="BaseResultMap">
-    select  id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime,
-    extend_content from business_log where refer_id = #{orderNo} and sys_name = #{sysName}
+    select  bl.id, bl.action_type, bl.opr_no, bl.refer_id, bl.user_id, bl.trace_id, bl.opr_table_name,
+    bl.action_datetime,
+    bl.extend_content,ai.action_name from business_log bl left join action_item ai on bl.action_type = ai.id
+    where refer_id = #{orderNo} and sys_name = #{sysName}
   </select>
   <select id="selectByOrderNoAction" resultMap="BaseResultMap">
-    select  id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime,
-    extend_content from business_log where refer_id = #{orderNo}  and action_type = #{actionType}
+     select  bl.id, bl.action_type, bl.opr_no, bl.refer_id, bl.user_id, bl.trace_id, bl.opr_table_name,
+    bl.action_datetime,
+    bl.extend_content,ai.action_name from business_log bl left join action_item ai on bl.action_type = ai.id where refer_id = #{orderNo}  and action_type = #{actionType}
   </select>
 </mapper>
