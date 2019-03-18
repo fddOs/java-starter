@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.SpringContext;
 import cn.ehai.common.utils.AESUtils;
+import cn.ehai.log.dao.BusinessLogValueMapper;
 import cn.ehai.log.entity.ActionLog;
+import cn.ehai.log.entity.BusinessLogValue;
+import cn.ehai.log.log.business.BusinessTableUtils;
 import cn.ehai.log.service.ActionLogService;
 import cn.ehai.log.service.impl.ActionLogServiceAsync;
 import com.alibaba.druid.util.JdbcConstants;
@@ -58,6 +61,8 @@ public class LogAspect {
     private static final String NEED_AES_HANDLE = "needAesHandle";
     @Autowired
     private Tracer tracer;
+    @Autowired
+    private BusinessLogValueMapper businessLogValueMapper;
 
     /**
      * @param pjp void
@@ -168,7 +173,7 @@ public class LogAspect {
             stmt.accept(visitor);
         }
         map.put("items", visitor.getItems());
-        map.put("tables", StringUtils.arrayToDelimitedString(visitor.getTables().toArray(), ","));
+        map.put("tables", visitor.getTables());
         map.put("where", visitor.getWhere());
         map.put("complex", visitor.isComplex());
         map.put("replace", visitor.isReplace());
@@ -217,7 +222,7 @@ public class LogAspect {
         if (null == actionLog) {
             return targetRun(pjp, needAesHandle, sql, statement);
         }
-        boolean closeCommonServiceLog = !"true".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel());
+        boolean closeCommonServiceLog = "false".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel());
         boolean closeAnnotationServiceLog = (!"true".equalsIgnoreCase(ApolloBaseConfig.getServiceAnnotationLogLevel()
         ) || ("true".equalsIgnoreCase(ApolloBaseConfig.getServiceAnnotationLogLevel()) && (actionLog.getActionType()
                 == null || actionLog.getActionType().intValue() == 7)));
@@ -226,38 +231,67 @@ public class LogAspect {
             return targetRun(pjp, needAesHandle, sql, statement);
         }
         // 表名
-        String tables = (String) map.get("tables");
+        List<String> tableList = (List<String>) map.get("tables");
+        String tables = StringUtils.arrayToDelimitedString(tableList.toArray(), ",");
+        String originalValue;
+        String newValue;
         Object result;
         actionLog.setIsSuccess(true);
         actionLog.setOprTableName(tables);
         if (isReplace) {
-            actionLog.setOriginalValue("{\"type\": \"replace\"}");
-            actionLog.setNewValue("{\"type\": \"" + SQLUtils.formatMySql(sql, new SQLUtils.FormatOption(true, false))
-                    + "\"}");
+//            actionLog.setOriginalValue("{\"type\": \"replace\"}");
+            originalValue = "{\"type\": \"replace\"}";
+//            actionLog.setNewValue("{\"type\": \"" + SQLUtils.formatMySql(sql, new SQLUtils.FormatOption(true, false))
+//                    + "\"}");
+            newValue = "{\"type\": \"" + SQLUtils.formatMySql(sql, new SQLUtils.FormatOption(true, false))
+                    + "\"}";
             result = targetRun(pjp, needAesHandle, sql, statement);
         } else {
             // 获取查询老值的sql
             String selectSql = getSelectSQL(map);
             ActionLogService actionLogService = SpringContext.getApplicationContext().getBean(ActionLogService.class);
             List<Map<String, String>> oldParamList = actionLogService.selectBySql(selectSql);
-            actionLog.setOriginalValue(JSONArray.toJSONString(oldParamList));
+//            actionLog.setOriginalValue(JSONArray.toJSONString(oldParamList));
+            originalValue = JSONArray.toJSONString(oldParamList);
             result = targetRun(pjp, needAesHandle, sql, statement);
             if (!(boolean) map.get("complex")) {
                 // 非复杂SQL
-                actionLog.setNewValue(JSONObject.toJSONString(map.get("items")));
+//                actionLog.setNewValue(JSONObject.toJSONString(map.get("items")));
+                newValue = JSONObject.toJSONString(map.get("items"));
             } else {
                 List<Map<String, String>> newParamList = actionLogService.selectBySql(selectSql);
-                actionLog.setNewValue(JSONArray.toJSONString(newParamList));
+//                actionLog.setNewValue(JSONArray.toJSONString(newParamList));
+                newValue = JSONArray.toJSONString(newParamList);
             }
         }
         ActionLogServiceAsync actionLogServiceAsync = SpringContext.getApplicationContext().getBean
                 (ActionLogServiceAsync.class);
         if (!closeAnnotationServiceLog) {
+            actionLog.setNewValue(newValue);
+            actionLog.setOriginalValue(originalValue);
             actionLogServiceAsync.insertServiceLogAsync(actionLog);
         }
-        if (!closeCommonServiceLog) {
-            actionLogServiceAsync.insertServiceLogCommonAsync(actionLog);
+        if ("true".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel())) {
+            if (isBusiness(tableList)) {
+                //记录business_log_value
+                BusinessLogValue businessLogValue = new BusinessLogValue(requestTraceId(), tables, originalValue,
+                        newValue);
+                businessLogValueMapper.insertBusinessLogValue(businessLogValue);
+            } else {
+                actionLog.setNewValue(newValue);
+                actionLog.setOriginalValue(originalValue);
+                actionLogServiceAsync.insertServiceLogCommonAsync(actionLog);
+            }
         }
+        if ("business".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel())) {
+            //记录business_log_value
+            BusinessLogValue businessLogValue = new BusinessLogValue(requestTraceId(), tables, originalValue,
+                    newValue);
+            businessLogValueMapper.insertBusinessLogValue(businessLogValue);
+        }
+//        if (!closeCommonServiceLog) {
+//            actionLogServiceAsync.insertServiceLogCommonAsync(actionLog);
+//        }
         actionLogMap.remove(key);
         return result;
     }
@@ -293,13 +327,14 @@ public class LogAspect {
 
     /**
      * 获取这次请求的traceid
+     *
      * @param
      * @return java.lang.String
      * @author lixiao
      * @date 2019-02-15 16:12
      */
-    private String requestTraceId(){
-        String traceId="";
+    private String requestTraceId() {
+        String traceId = "";
         Scope serverSpan = tracer.scopeManager().active();
         if (serverSpan != null) {
             SpanContext spanContext = serverSpan.span().context();
@@ -331,6 +366,23 @@ public class LogAspect {
             statement = statementHandle(statement, sql);
             return pjp.proceed(new Object[]{pjp.getArgs()[0], statement});
         }
+    }
+
+    /**
+     * 是否插入Business_log_value表
+     *
+     * @param tableList
+     * @return boolean
+     * @author 方典典
+     * @time 2019/3/14 16:07
+     */
+    private boolean isBusiness(List<String> tableList) {
+        for (String table : tableList) {
+            if (BusinessTableUtils.getBusiTables().contains(table)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
