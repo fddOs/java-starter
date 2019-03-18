@@ -39,8 +39,8 @@
       )
     values
     (
-      #{item.traceId,jdbcType=VARCHAR}, #{item.oprTableName,jdbcType=VARCHAR}, #{item.originalValue,jdbcType=CHAR},
-      #{item.newValue,jdbcType=CHAR}
+      #{traceId,jdbcType=VARCHAR}, #{oprTableName,jdbcType=VARCHAR}, #{originalValue,jdbcType=CHAR},
+      #{newValue,jdbcType=CHAR}
     )
   </insert>
 

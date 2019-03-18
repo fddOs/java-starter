@@ -151,7 +151,7 @@ public class LogAspect {
         String column = StringUtils.arrayToDelimitedString(items.keySet().toArray(), ",");
         sql.append(column);
         sql.append(" from ");
-        sql.append(map.get("tables"));
+        sql.append(StringUtils.arrayToDelimitedString(((List<String>) map.get("tables")).toArray(), ","));
         sql.append(" where ");
         sql.append(map.get("where"));
         return SQLUtils.format(sql.toString(), JdbcConstants.MYSQL);
