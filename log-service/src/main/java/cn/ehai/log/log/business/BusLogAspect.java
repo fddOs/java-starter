@@ -6,6 +6,7 @@ import brave.propagation.TraceContext;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.log.dao.BusinessLogMapper;
+import cn.ehai.log.log.OprNoUtils;
 import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
@@ -74,18 +75,21 @@ public class BusLogAspect {
         BusinessLog businessLog =  method.getAnnotation(BusinessLog.class);
         int actionType = businessLog.actionType();
         //获取操作人
-        String optNo = String.valueOf(methodParams(arguments,params,businessLog.oprNo(),businessLog
+        String oprNo = String.valueOf(methodParams(arguments,params,businessLog.oprNo(),businessLog
             .referNoNum()));
-        if(StringUtils.isEmpty(optNo)){
+        if(StringUtils.isEmpty(oprNo)){
             HttpServletRequest request = null;
             try {
                 request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                     .getRequest();
-                optNo = request.getHeader(HEADER_JWT_USER_ID);
+                oprNo = request.getHeader(HEADER_JWT_USER_ID);
             }catch (Exception e){
                 LoggerUtils.error(getClass(), new Object[]{ arguments, params}, e);
+            }finally {
+                oprNo=OprNoUtils.handlerOprNo(oprNo);
             }
         }
+
         //关联单号
         String referId = String.valueOf(methodParams(arguments,params,businessLog.referNo(),
             businessLog.referNoNum()));
@@ -100,7 +104,7 @@ public class BusLogAspect {
         //traceId
         String traceId=requestTraceId();
         try{
-            businessLogMapper.insert(createBusinessLog(actionType,optNo,referId,userId,oprTableName,extend,traceId));
+            businessLogMapper.insert(createBusinessLog(actionType,oprNo,referId,userId,oprTableName,extend,traceId));
         }catch (Exception e){
             LoggerUtils.error(BusLogAspect.class,new Object[]{method.getName()},e);
         }
