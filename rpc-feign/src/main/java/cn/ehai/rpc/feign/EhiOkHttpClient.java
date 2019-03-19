@@ -5,6 +5,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +51,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @EnableConfigurationProperties({FeignProperties.class})
 public class EhiOkHttpClient {
     private static Logger LOGGER = LoggerFactory.getLogger(EhiOkHttpClient.class);
-    private SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+//    private SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
     private final String HEADER_JWT_USER_ID = "jwt-user-id";
 
@@ -64,7 +67,7 @@ public class EhiOkHttpClient {
                 Request builderRequest = handleRequest(chain.request());
                 Response response;
                 String exceptionMsg = "";
-                String requestTime = simpleFormat.format(new Date());
+                String requestTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String responseTime;
                 Response resultResponse = null;
                 try {
@@ -76,7 +79,7 @@ public class EhiOkHttpClient {
                     if (resultResponse == null) {
                         throw new ServiceException(ResultCode.BAD_REQUEST, "请求异常" + builderRequest.url());
                     }
-                    responseTime = simpleFormat.format(new Date());
+                    responseTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                     response = sendHttpLog(builderRequest, handleResponse(resultResponse), exceptionMsg, requestTime,
                             responseTime);
                 }
@@ -195,6 +198,7 @@ public class EhiOkHttpClient {
             return response;
         }
         long totalTime = 0L;
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             totalTime = simpleFormat.parse(responseTime).getTime() - simpleFormat.parse(requestTime).getTime();
         } catch (Exception e) {
@@ -249,7 +253,7 @@ public class EhiOkHttpClient {
                         responseTime}, e);
             }
         }
-        Object requestBodyJSON = JSON.parse(bodyParams);
+        Object requestBodyJSON = JsonUtils.parse(bodyParams);
         if (requestBodyJSON == null) {
             requestBodyJSON = new JSONObject();
         }
@@ -257,7 +261,7 @@ public class EhiOkHttpClient {
         String bodyString = "";
         try {
             bodyString = responseBody.string();
-            responseBodyJSON = JSON.parse(bodyString);
+            responseBodyJSON = JsonUtils.parse(bodyString);
         } catch (Exception e) {
             exceptionMsg = "ResponseBody:" + bodyString + "\r\n Exception:" + exceptionMsg;
         } finally {

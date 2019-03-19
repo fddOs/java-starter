@@ -80,12 +80,12 @@ public class MybatisGenerarionConfigurer implements CommentGenerator {
 		}
 		String forceAnnotation = properties.getProperty("forceAnnotation");
 		if (StringUtility.stringHasValue(forceAnnotation)) {
-			this.forceAnnotation = forceAnnotation.equalsIgnoreCase("TRUE");
+			this.forceAnnotation = "TRUE".equalsIgnoreCase(forceAnnotation);
 		}
 
 		String swaggerAnnotation = properties.getProperty("swaggerAnnotation");
 		if (StringUtility.stringHasValue(swaggerAnnotation)) {
-			this.isSwaggerAnnotation = swaggerAnnotation.equalsIgnoreCase("TRUE");
+			this.isSwaggerAnnotation = "TRUE".equalsIgnoreCase(swaggerAnnotation);
 		}
 	}
 
@@ -177,6 +177,8 @@ public class MybatisGenerarionConfigurer implements CommentGenerator {
 			case Types.SMALLINT:
 				break;
 			case Types.BIGINT:
+				break;
+			default:
 				break;
 			}
 		}

@@ -26,7 +26,7 @@ public class EmailModel {
     @JsonProperty("OprNo")
     private String oprNo;
     @JsonProperty("confirmation_no")
-    private String confirmation_no;
+    private String confirmationNo;
     @JsonProperty("KeyValues")
     private List<EmailKeyValue> keyValues;
 
@@ -86,12 +86,12 @@ public class EmailModel {
         this.oprNo = oprNo;
     }
 
-    public String getConfirmation_no() {
-        return confirmation_no;
+    public String getConfirmationNo() {
+        return confirmationNo;
     }
 
-    public void setConfirmation_no(String confirmation_no) {
-        this.confirmation_no = confirmation_no;
+    public void setConfirmationNo(String confirmationNo) {
+        this.confirmationNo = confirmationNo;
     }
 
     public List<EmailKeyValue> getKeyValues() {

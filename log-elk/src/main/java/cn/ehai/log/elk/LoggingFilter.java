@@ -4,16 +4,15 @@ import brave.internal.HexCodec;
 import brave.opentracing.BraveSpanContext;
 import brave.propagation.TraceContext;
 import cn.ehai.common.core.*;
-import cn.ehai.common.utils.HeaderUtils;
-import cn.ehai.common.utils.LoggerUtils;
-import cn.ehai.common.utils.ProjectInfoUtils;
-import cn.ehai.common.utils.UuidUtils;
+import cn.ehai.common.utils.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
+
 import java.io.UnsupportedEncodingException;
+
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -32,6 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
 import java.util.Random;
@@ -46,7 +47,7 @@ import java.util.Random;
 public class LoggingFilter extends OncePerRequestFilter {
     @Autowired
     private Tracer tracer;
-    private static final SimpleDateFormat SIMPLE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+    //    private static final SimpleDateFormat SIMPLE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
     private static final String ATTRIBUTE_STOP_WATCH = LoggingFilter.class.getName()
             + ".StopWatch";
@@ -55,7 +56,7 @@ public class LoggingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain
             filterChain) throws IOException {
         StopWatch stopWatch = this.createStopWatchIfNecessary(request);
-        String requestTime = SIMPLE_FORMAT.format(new Date());
+        String requestTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         ContentCachingRequestWrapper wrapperRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrapperResponse = new ContentCachingResponseWrapper(response);
         String requestId = null;
@@ -113,7 +114,7 @@ public class LoggingFilter extends OncePerRequestFilter {
                 stopWatch.stop();
                 request.removeAttribute(ATTRIBUTE_STOP_WATCH);
             }
-            String responseTime = SIMPLE_FORMAT.format(new Date());
+            String responseTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             RequestLog requestLog = new RequestLog(requestId, requestTime, true,
                     ProjectInfoUtils.getProjectContext(), requestUrl, getRequestBody(wrapperRequest),
                     request.getMethod(), headerMap);
@@ -129,7 +130,7 @@ public class LoggingFilter extends OncePerRequestFilter {
      * getRequestHeaderMap
      *
      * @param request
-     * @return java.util.Map<java.lang.String       ,       java.lang.String>
+     * @return java.util.Map<java.lang.String               ,               java.lang.String>
      * @author 方典典
      * @time 2019/1/15 17:44
      */
@@ -181,18 +182,17 @@ public class LoggingFilter extends OncePerRequestFilter {
      */
     private Object getRequestBody(ContentCachingRequestWrapper request) {
         if (isBinaryContent(request) || isMultipart(request)) {
-            return JSON.parse("{\"content\":\"二进制\"}");
+            return JsonUtils.parse("{\"content\":\"二进制\"}");
         }
         byte[] buf = request.getContentAsByteArray();
         if (buf.length > 0) {
-            String requestString =null;
+            String requestString = null;
             try {
-                requestString= new String(buf, 0, buf.length, "utf-8");
-                return JSON.parse(requestString);
+                requestString = new String(buf, 0, buf.length, "utf-8");
+                return JsonUtils.parse(requestString);
             } catch (Exception e) {
-                    return JSON.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
-                            request.getContentType() + "\"}"+ " requestBody:" + requestString
-                         + "\"}");
+                return JsonUtils.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
+                        request.getContentType() + " requestBody:" + requestString + "\"}");
             }
         }
         return new JSONObject();
@@ -212,10 +212,10 @@ public class LoggingFilter extends OncePerRequestFilter {
         if (buf.length > 0) {
             try {
                 bodyString = new String(buf, 0, buf.length, "utf-8");
-                return JSON.parse(bodyString);
+                return JsonUtils.parse(bodyString);
             } catch (Exception e) {
-                return JSON.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
-                        response.getContentType() + "\"}");
+                return JsonUtils.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
+                        response.getContentType() + " responseBody:" + bodyString + "\"}");
             }
         }
         return new JSONObject();

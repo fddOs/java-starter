@@ -85,8 +85,8 @@ public class SignUtils {
 		while (ret) {
 			clazzs.add(oo);
 			oo = oo.getSuperclass();
-			if (oo == null || oo == Object.class)
-				break;
+			if (oo == null || oo == Object.class){
+				break;}
 		}
 
 		Map<String, Object> map = new HashMap<String, Object>();

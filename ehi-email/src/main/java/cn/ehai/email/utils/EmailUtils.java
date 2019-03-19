@@ -37,7 +37,7 @@ public class EmailUtils {
         emailModel.setEmailBcc("");
         emailModel.setEmailCc("");
         emailModel.setOprNo("27894");
-        emailModel.setConfirmation_no("");
+        emailModel.setConfirmationNo("");
         emailModel.setKeyValues(params);
         return emailModel;
     }
