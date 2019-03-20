@@ -118,6 +118,7 @@ public class LogAspect {
         if (StringUtils.isEmpty(oprNo)) {
             oprNo = request.getHeader(HEADER_JWT_USER_ID);
         }
+        oprNo=OprNoUtils.handlerOprNo(oprNo);
         if (actionLog != null && url.equals(actionLog.getUrl())) {
             return pjp.proceed();
         }

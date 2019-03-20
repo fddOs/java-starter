@@ -91,6 +91,16 @@ public class BusinessLog {
      */
     @ApiModelProperty("系统名称")
     private String sysName;
+    @ApiModelProperty("actionName")
+    private String actionName;
+
+    public String getActionName() {
+        return actionName;
+    }
+
+    public void setActionName(String actionName) {
+        this.actionName = actionName;
+    }
 
     public String getSysName() {
         return sysName;
