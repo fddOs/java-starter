@@ -33,7 +33,7 @@ public class AuthorityConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        String authUrl = ApolloBaseConfig.getCommonConfig("authUrl", null);
+        String authUrl = ApolloBaseConfig.getAuthUrl();
         if (StringUtils.isEmpty(authUrl)) {
             throw new IllegalArgumentException("authUrl参数获取失败，请在ApolloCommonConfig中检查该配置项");
         }

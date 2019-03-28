@@ -59,7 +59,7 @@ public class CodeGenerator {
         // genCode("City", "District", "Stock", "WorkStation", "Province");
 //        genCode("label_config", "LabelConfig", "会话标签");
 //		Map<String, String> tables = new HashMap<>();
-        CodeGenerator.genCode("label_config", "LabelConfig", "会话标签", "yd_onlineservice", "app_yd_onlineservice",
+        CodeGenerator.genCode("label_config", "LabelConfig", "会话标签", "jdbc:mysql://192.168.9.82:3306/yd_onlineservice?useInformationSchema=true", "app_yd_onlineservice",
                 "Es@4mF^XmzEjouhvrn8*", "test");
         // map 表明 :备注（swagger）
         // tables.put("City", "城市");
@@ -109,14 +109,14 @@ public class CodeGenerator {
      * @param modelName 自定义的 Model 名称
      * @param remark    controller中swagger的注释
      */
-    public static void genCode(String tableName, String modelName, String remark, String dbBase, String dbUsername,
+    public static void genCode(String tableName, String modelName, String remark, String dbUrl, String dbUsername,
                                String dbPassword, String businessName) {
-        JDBC_URL = "jdbc:mysql://192.168.9.82:3306/" + dbBase + "?useInformationSchema=true";
+        JDBC_URL = dbUrl;
         JDBC_USERNAME = dbUsername;
         JDBC_PASSWORD = dbPassword;
         BUSINESS_NAME = businessName;
         PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
-        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE)+".impl";
+        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE+"impl");
         PACKAGE_PATH_CONTROLLER = packageConvertPath(BASE_PACKAGE + "." + businessName + ".controller");
         genModelAndMapper(tableName, modelName);
         genService(tableName, modelName);

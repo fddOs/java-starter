@@ -1,13 +1,13 @@
 package ${basePackage}.${businessName}.controller;
 
-import ${basePackage}.core.Result;
-import ${basePackage}.core.ResultGenerator;
+import cn.ehai.common.core.Result;
+import cn.ehai.common.core.ResultList;
+import cn.ehai.common.core.ResultGenerator;
 import ${basePackage}.entity.${modelNameUpperCamel};
 import ${basePackage}.${businessName}.service.${modelNameUpperCamel}Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
-import ${basePackage}.core.ResultList;
 import javax.annotation.Resource;
 import java.util.List;
 import io.swagger.annotations.Api;

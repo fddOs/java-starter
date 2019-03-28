@@ -1,6 +1,6 @@
 package ${basePackage}.${businessName}.service;
 import ${basePackage}.entity.${modelNameUpperCamel};
-import ${basePackage}.core.Service;
+import cn.ehai.common.core.Service;
 
 
 /**
