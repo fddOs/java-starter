@@ -28,8 +28,8 @@
             <artifactId>pagehelper</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>ehai.generator</artifactId>
+            <groupId>org.mybatis.generator</groupId>
+            <artifactId>mybatis-generator-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>

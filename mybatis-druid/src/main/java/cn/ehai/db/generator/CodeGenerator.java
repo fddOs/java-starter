@@ -152,6 +152,12 @@ public class CodeGenerator {
 
         TableConfiguration tableConfiguration = new TableConfiguration(context);
         tableConfiguration.setTableName(tableName);
+        tableConfiguration.addIgnoredColumn(new IgnoredColumn("gmt_create"));
+        tableConfiguration.addIgnoredColumn(new IgnoredColumn("gmt_modified"));
+        tableConfiguration.setDeleteByPrimaryKeyStatementEnabled(false);
+        tableConfiguration.setUpdateByPrimaryKeyStatementEnabled(false);
+        tableConfiguration.setInsertStatementEnabled(false);
+        tableConfiguration.setSelectByPrimaryKeyStatementEnabled(false);
         if (StringUtils.isNotEmpty(modelName)) {tableConfiguration.setDomainObjectName(modelName);}
         tableConfiguration.setGeneratedKey(new GeneratedKey("id", "MySql", true,
                 null));
