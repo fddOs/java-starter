@@ -47,7 +47,9 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                 // boolean null
                 SerializerFeature.WriteNullBooleanAsFalse,
                 // ->false
-                SerializerFeature.WriteDateUseDateFormat);
+                SerializerFeature.WriteDateUseDateFormat,
+                // array->[]
+                SerializerFeature.WriteNullListAsEmpty);
         converter.setFastJsonConfig(config);
         converter.setDefaultCharset(Charset.forName("UTF-8"));
         converters.add(converter);

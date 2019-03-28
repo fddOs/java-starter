@@ -22,7 +22,11 @@ public enum HttpCodeEnum {
     /*
      *  服务响应成功
      */
-    CODE_200(200);
+    CODE_200(200),
+    /**
+     * http成功code
+     */
+    CODE_SUCCESS(200);
     private int code;
 
     HttpCodeEnum(int code) {
