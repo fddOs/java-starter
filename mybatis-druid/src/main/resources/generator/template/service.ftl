@@ -1,13 +1,10 @@
 package ${basePackage}.${businessName}.service;
-import ${basePackage}.entity.${modelNameUpperCamel};
-import ${basePackage}.core.Service;
-
 
 /**
- * @description:${modelNameUpperCamel}Service
+ * ${swaagerRemark}
  * @author ${author}
- * @time ${date}
+ * @date ${date}
  **/
-public interface ${modelNameUpperCamel}Service extends Service<${modelNameUpperCamel}> {
+public interface ${modelNameUpperCamel}Service{
 
 }
