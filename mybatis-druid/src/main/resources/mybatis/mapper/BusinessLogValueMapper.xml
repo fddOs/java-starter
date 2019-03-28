@@ -12,6 +12,8 @@
     <result column="new_value" jdbcType="CHAR" property="newValue" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="action_datetime" jdbcType="TIMESTAMP" property="actionDatetime" />
+    <result column="opr_no" jdbcType="TIMESTAMP" property="oprNo" />
   </resultMap>
 
   <insert id="insertList" parameterType="cn.ehai.log.entity.BusinessLogValue">
@@ -22,12 +24,12 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into business_log_value (trace_id, opr_table_name, original_value, 
-      new_value
+      new_value, action_datetime, opr_no
       )
     values
     <foreach collection="list" item="item" close=")" open="(" index="index" separator=",">
       #{item.traceId,jdbcType=VARCHAR}, #{item.oprTableName,jdbcType=VARCHAR}, #{item.originalValue,jdbcType=CHAR},
-      #{item.newValue,jdbcType=CHAR}
+      #{item.newValue,jdbcType=CHAR}, #{item.actionDatetime,jdbcType=TIMESTAMP}, #{item.oprNo,jdbcType=VARCHAR}
     </foreach>
   </insert>
   <insert id="insertBusinessLogValue" parameterType="cn.ehai.log.entity.BusinessLogValue">
@@ -35,12 +37,12 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into business_log_value (trace_id, opr_table_name, original_value,
-      new_value
+      new_value, action_datetime, opr_no
       )
     values
     (
       #{traceId,jdbcType=VARCHAR}, #{oprTableName,jdbcType=VARCHAR}, #{originalValue,jdbcType=CHAR},
-      #{newValue,jdbcType=CHAR}
+      #{newValue,jdbcType=CHAR}, #{actionDatetime,jdbcType=TIMESTAMP}, #{oprNo,jdbcType=VARCHAR}
     )
   </insert>
 
