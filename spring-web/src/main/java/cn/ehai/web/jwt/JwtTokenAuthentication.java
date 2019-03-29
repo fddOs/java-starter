@@ -110,7 +110,7 @@ public class JwtTokenAuthentication {
      */
     public static void setJwtHeader(EhiHeaderReqWrapper request) {
         String userCode = getUserCode(request);
-        if (StringUtils.isEmpty(userCode)) {
+        if (!StringUtils.isEmpty(userCode)) {
             request.putHeader(HEADER_JWT_USER_ID, userCode);
         }
     }

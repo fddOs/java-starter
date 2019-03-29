@@ -37,14 +37,8 @@ public class CodeGenerator {
     public static String BUSINESS_NAME;// Model所在包
     public static final String MODEL_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".entity";// Model所在包
     public static final String MAPPER_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".dao";// Mapper所在包
-//    public static final String SERVICE_PACKAGE = BASE_PACKAGE + "." + BUSINESS_NAME + ".service";// Service所在包
-//    public static final String SERVICE_IMPL_PACKAGE = SERVICE_PACKAGE + ".impl";// ServiceImpl所在包
-//    public static final String CONTROLLER_PACKAGE = BASE_PACKAGE + "." + BUSINESS_NAME + ".controller";//
-// Controller所在包
 
     private static final String PROJECT_PATH = System.getProperty("user.dir");// 项目在硬盘上的基础路径
-    private static final String TEMPLATE_FILE_PATH = CodeGenerator.class.getResource("").getPath().replace
-            ("/generator/", "") + "/src/main/resources/generator/template";// 模板位置
 
     private static final String JAVA_PATH = "/src/main/java"; // java文件路径
     private static final String RESOURCES_PATH = "/src/main/resources";// 资源文件路径
@@ -52,7 +46,7 @@ public class CodeGenerator {
     private static String PACKAGE_PATH_SERVICE_IMPL;// 生成的Service实现存放路径
     private static String PACKAGE_PATH_CONTROLLER;// 生成的Controller存放路径
 
-    private static final String AUTHOR = "方典典";// @author
+    private static  String AUTHOR = "方典典";// @author
     private static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());// @date
 
     public static void main(String[] args) {
@@ -110,16 +104,17 @@ public class CodeGenerator {
      * @param remark    controller中swagger的注释
      */
     public static void genCode(String tableName, String modelName, String remark, String dbUrl, String dbUsername,
-                               String dbPassword, String businessName) {
+                               String dbPassword, String businessName, String author) {
         JDBC_URL = dbUrl;
         JDBC_USERNAME = dbUsername;
         JDBC_PASSWORD = dbPassword;
         BUSINESS_NAME = businessName;
+        AUTHOR=author;
         PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
         PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE+"impl");
         PACKAGE_PATH_CONTROLLER = packageConvertPath(BASE_PACKAGE + "." + businessName + ".controller");
         genModelAndMapper(tableName, modelName);
-        genService(tableName, modelName);
+        genService(tableName, modelName,remark);
         genController(tableName, modelName, remark);
     }
 
@@ -152,6 +147,13 @@ public class CodeGenerator {
 
         TableConfiguration tableConfiguration = new TableConfiguration(context);
         tableConfiguration.setTableName(tableName);
+        tableConfiguration.addIgnoredColumn(new IgnoredColumn("gmt_create"));
+        tableConfiguration.addIgnoredColumn(new IgnoredColumn("gmt_modified"));
+        tableConfiguration.setDeleteByPrimaryKeyStatementEnabled(false);
+        tableConfiguration.setUpdateByPrimaryKeyStatementEnabled(false);
+        tableConfiguration.setSelectByPrimaryKeyStatementEnabled(false);
+        tableConfiguration.setCountByExampleStatementEnabled(false);
+        tableConfiguration.setInsertStatementEnabled(false);
         if (StringUtils.isNotEmpty(modelName)) {tableConfiguration.setDomainObjectName(modelName);}
         tableConfiguration.setGeneratedKey(new GeneratedKey("id", "MySql", true,
                 null));
@@ -202,7 +204,7 @@ public class CodeGenerator {
         System.out.println(modelName + "Mapper.xml 生成成功");
     }
 
-    public static void genService(String tableName, String modelName) {
+    public static void genService(String tableName, String modelName,String tableRemark) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
 

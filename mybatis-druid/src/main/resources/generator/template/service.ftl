@@ -4,10 +4,10 @@ import cn.ehai.common.core.Service;
 
 
 /**
- * @description:${modelNameUpperCamel}Service
+ * ${swaagerRemark}
  * @author ${author}
- * @time ${date}
+ * @date ${date}
  **/
-public interface ${modelNameUpperCamel}Service extends Service<${modelNameUpperCamel}> {
+public interface ${modelNameUpperCamel}Service{
 
 }

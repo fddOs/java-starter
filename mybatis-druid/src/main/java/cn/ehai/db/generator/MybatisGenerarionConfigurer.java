@@ -3,11 +3,13 @@ package cn.ehai.db.generator;
 import java.sql.Types;
 import java.util.Properties;
 
+import java.util.Set;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.CompilationUnit;
 import org.mybatis.generator.api.dom.java.Field;
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.InnerClass;
 import org.mybatis.generator.api.dom.java.InnerEnum;
 import org.mybatis.generator.api.dom.java.JavaElement;
@@ -66,6 +68,34 @@ public class MybatisGenerarionConfigurer implements CommentGenerator {
 	@Override
 	public void addRootComment(XmlElement rootElement) {
 		return;
+	}
+
+	@Override
+	public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable,
+		Set<FullyQualifiedJavaType> set) {
+
+	}
+
+	@Override
+	public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable,
+		IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> set) {
+
+	}
+
+	@Override public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable,
+		Set<FullyQualifiedJavaType> set) {
+
+	}
+
+	@Override public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable,
+		IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> set) {
+
+	}
+
+	@Override
+	public void addClassAnnotation(InnerClass innerClass, IntrospectedTable introspectedTable,
+		Set<FullyQualifiedJavaType> set) {
+
 	}
 
 	@Override
@@ -148,6 +178,7 @@ public class MybatisGenerarionConfigurer implements CommentGenerator {
 			// 添加swagger注解
 			if (isSwaggerAnnotation) {
 				field.addAnnotation("@ApiModelProperty(\"" + introspectedColumn.getRemarks() + "\")");
+
 			}
 			handleValidator(field, introspectedColumn);
 		} else if (isSwaggerAnnotation) {
@@ -203,6 +234,8 @@ public class MybatisGenerarionConfigurer implements CommentGenerator {
 			topLevelClass.addAnnotation("@ApiModel(value=\"" + remarks + "\")");
 			topLevelClass.addImportedType("io.swagger.annotations.*");
 			topLevelClass.addImportedType("javax.validation.constraints.*");
+			topLevelClass.addAnnotation("@Repository");
+			topLevelClass.addImportedType("org.springframework.stereotype.Repository");
 		}
 		// topLevelClass.addImportedType("javax.persistence.*;");
 	}
