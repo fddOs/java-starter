@@ -28,9 +28,9 @@ public class CodeGenerator {
 
     // JDBC配置，请修改为你项目的实际配置
 
-    private static String JDBC_URL = "jdbc:mysql://192.168.9.82:3306/yd_onlineservice?useInformationSchema=true";
-    private static String JDBC_USERNAME = "app_yd_onlineservice";
-    private static String JDBC_PASSWORD = "Es@4mF^XmzEjouhvrn8*";
+    private static String JDBC_URL;
+    private static String JDBC_USERNAME;
+    private static String JDBC_PASSWORD;
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 
     public static final String BASE_PACKAGE = ProjectInfoUtils.getProjectPackage();// Model所在包

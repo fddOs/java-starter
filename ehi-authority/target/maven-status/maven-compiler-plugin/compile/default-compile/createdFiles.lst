@@ -1,0 +1,5 @@
+cn\ehai\authority\annotation\EHiAuthentication.class
+cn\ehai\authority\http\api\AuthApi.class
+cn\ehai\authority\config\AuthorityConfiguration.class
+cn\ehai\authority\interceptor\AuthenticationInterceptor.class
+cn\ehai\authority\EHiAuthorityApplication.class
