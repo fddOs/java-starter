@@ -32,7 +32,7 @@ import static org.springframework.http.HttpMethod.GET;
  */
 @Order(Integer.MIN_VALUE + 2)
 @Component
-@WebFilter(filterName = "signFilter", urlPatterns = "/**")
+//@WebFilter(filterName = "signFilter", urlPatterns = "/**")
 public class SignFilter implements Filter {
 
     @Override

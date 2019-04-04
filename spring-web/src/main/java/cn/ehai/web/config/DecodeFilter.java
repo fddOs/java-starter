@@ -25,7 +25,7 @@ import java.io.IOException;
  */
 @Order(Integer.MIN_VALUE)
 @Component
-@WebFilter(filterName = "decodeFilter", urlPatterns = "/**")
+//@WebFilter(filterName = "decodeFilter", urlPatterns = "/**")
 public class DecodeFilter implements Filter {
 
     @Override
