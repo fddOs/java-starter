@@ -71,6 +71,34 @@ public class MybatisGenerarionConfigurer implements CommentGenerator {
 	}
 
 	@Override
+	public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable,
+		Set<FullyQualifiedJavaType> imports) {
+
+	}
+
+	@Override
+	public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable,
+		IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> imports) {
+
+	}
+
+	@Override public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable,
+		Set<FullyQualifiedJavaType> imports) {
+
+	}
+
+	@Override public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable,
+		IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> imports) {
+
+	}
+
+	@Override
+	public void addClassAnnotation(InnerClass innerClass, IntrospectedTable introspectedTable,
+		Set<FullyQualifiedJavaType> imports) {
+
+	}
+
+	@Override
 	public void addConfigurationProperties(Properties properties) {
 		String beginningDelimiter = properties.getProperty("beginningDelimiter");
 		if (StringUtility.stringHasValue(beginningDelimiter)) {
