@@ -46,9 +46,9 @@ public class JwtFilter implements Filter {
         } else {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             EhiHeaderReqWrapper contentCachingRequestWrapper = new EhiHeaderReqWrapper(httpServletRequest);
-            JwtTokenAuthentication.setJwtHeader(contentCachingRequestWrapper);
             String loginUrl = ApolloBaseConfig.getWebLoginUrl();
             if (JwtTokenAuthentication.getAuthentication(httpServletRequest)) {
+                JwtTokenAuthentication.setJwtHeader(contentCachingRequestWrapper);
                 chain.doFilter(contentCachingRequestWrapper, response);
             } else {
                 if (!StringUtils.isEmpty(loginUrl)) {
