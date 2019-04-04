@@ -88,6 +88,9 @@ public class ApolloBaseConfig {
         return getCommonConfig("messageCenterUrl", "false");
     }
 
+    public static String getRedisOptionalUrl() {
+        return getCommonConfig("redis.optional.url", null);
+    }
 
     private ApolloBaseConfig(LoggingSystem loggingSystem) {
         Assert.notNull(loggingSystem, "LoggingSystem must not be null");
