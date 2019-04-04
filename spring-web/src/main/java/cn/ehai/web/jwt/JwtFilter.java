@@ -20,6 +20,7 @@ import cn.ehai.web.config.EhiHttpServletResponseWrapper;
 import com.alibaba.fastjson.JSON;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -29,8 +30,9 @@ import org.springframework.util.StringUtils;
  * @date 2018-12-20 15:34
  */
 @Order(1)
-@Configuration
-@WebFilter(filterName = "jwtFilter", urlPatterns = "/**")
+//@Configuration
+//@WebFilter(filterName = "jwtFilter", urlPatterns = "/**")
+@Component
 public class JwtFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {

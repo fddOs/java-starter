@@ -8,6 +8,7 @@ import cn.ehai.web.common.ExcludePathHandler;
 import com.alibaba.fastjson.JSON;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.*;
@@ -23,7 +24,7 @@ import java.io.IOException;
  * @time 2019/3/1 16:02
  */
 @Order(Integer.MIN_VALUE)
-@Configuration
+@Component
 @WebFilter(filterName = "decodeFilter", urlPatterns = "/**")
 public class DecodeFilter implements Filter {
 

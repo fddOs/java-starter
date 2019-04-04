@@ -9,6 +9,7 @@ import cn.ehai.web.common.ExcludePathHandler;
 import com.alibaba.fastjson.JSON;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 
@@ -30,7 +31,7 @@ import static org.springframework.http.HttpMethod.GET;
  * @time 2019/3/1 15:57
  */
 @Order(Integer.MIN_VALUE + 2)
-@Configuration
+@Component
 @WebFilter(filterName = "signFilter", urlPatterns = "/**")
 public class SignFilter implements Filter {
 
