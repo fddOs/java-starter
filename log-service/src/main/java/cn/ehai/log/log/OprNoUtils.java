@@ -17,7 +17,7 @@ public class OprNoUtils {
      */
     public static String  handlerOprNo(String oprNo){
         if(oprNo!=null&&oprNo.length()>5){
-            oprNo = oprNo.substring(0,4);
+            oprNo = oprNo.substring(0,5);
         }
         return oprNo==null?"":oprNo;
     }
