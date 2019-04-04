@@ -1,3 +1,0 @@
-feign:
-  connect-timeout-millis: 30000
-  read-timeout-millis: 30000

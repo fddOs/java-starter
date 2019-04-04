@@ -1,5 +1,5 @@
-/Users/lixiao/IdeaProjects/java-starter/ehi-authority/src/main/java/cn/ehai/authority/http/api/AuthApi.java
-/Users/lixiao/IdeaProjects/java-starter/ehi-authority/src/main/java/cn/ehai/authority/EHiAuthorityApplication.java
-/Users/lixiao/IdeaProjects/java-starter/ehi-authority/src/main/java/cn/ehai/authority/interceptor/AuthenticationInterceptor.java
-/Users/lixiao/IdeaProjects/java-starter/ehi-authority/src/main/java/cn/ehai/authority/annotation/EHiAuthentication.java
-/Users/lixiao/IdeaProjects/java-starter/ehi-authority/src/main/java/cn/ehai/authority/config/AuthorityConfiguration.java
+D:\git\java-starter\ehi-authority\src\main\java\cn\ehai\authority\config\AuthorityConfiguration.java
+D:\git\java-starter\ehi-authority\src\main\java\cn\ehai\authority\http\api\AuthApi.java
+D:\git\java-starter\ehi-authority\src\main\java\cn\ehai\authority\annotation\EHiAuthentication.java
+D:\git\java-starter\ehi-authority\src\main\java\cn\ehai\authority\EHiAuthorityApplication.java
+D:\git\java-starter\ehi-authority\src\main\java\cn\ehai\authority\interceptor\AuthenticationInterceptor.java

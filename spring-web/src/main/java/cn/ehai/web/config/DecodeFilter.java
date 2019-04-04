@@ -8,6 +8,7 @@ import cn.ehai.web.common.ExcludePathHandler;
 import com.alibaba.fastjson.JSON;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -33,7 +34,8 @@ public class DecodeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        if("application/x-www-form-urlencoded".equalsIgnoreCase(request.getContentType())){
+        if (StringUtils.isEmpty(request.getContentType()) || !request.getContentType().contains
+                ("application/json")) {
             chain.doFilter(request, response);
             return;
         }

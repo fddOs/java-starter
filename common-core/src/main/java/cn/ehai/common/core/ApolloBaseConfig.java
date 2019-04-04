@@ -76,6 +76,9 @@ public class ApolloBaseConfig {
     public static String getDecodeExcludePath() {
         return getCommonConfig("decodeExcludePath", "");
     }
+    public static String getAuthUrl() {
+        return getCommonConfig("authUrl", null);
+    }
 
     public static String getWebCrossDomain() {
         return getCommonConfig("webCrossDomain", "false");
@@ -133,7 +136,7 @@ public class ApolloBaseConfig {
      * @author 方典典
      * @time 2019/2/28 17:30
      */
-    public static String getCommonConfig(String key, String defaultValue) {
+    private static String getCommonConfig(String key, String defaultValue) {
         String prefix = ProjectInfoUtils.getProjectContext() + ".";
         String value = aesDecrypt(commonConfig, prefix + key, "");
         if (StringUtils.isEmpty(value)) {
