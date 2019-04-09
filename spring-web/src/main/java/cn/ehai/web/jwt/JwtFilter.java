@@ -20,6 +20,7 @@ import cn.ehai.web.config.EhiHttpServletResponseWrapper;
 import com.alibaba.fastjson.JSON;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -29,8 +30,9 @@ import org.springframework.util.StringUtils;
  * @date 2018-12-20 15:34
  */
 @Order(1)
-@Configuration
-@WebFilter(filterName = "jwtFilter", urlPatterns = "/**")
+//@Configuration
+//@WebFilter(filterName = "jwtFilter", urlPatterns = "/**")
+@Component
 public class JwtFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
@@ -40,15 +42,16 @@ public class JwtFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        LoggerUtils.info(JwtFilter.class,"doFilter  "+((HttpServletRequest) request).getServletPath());
         if (!Boolean.valueOf(ApolloBaseConfig.getJwtEnable()) || ExcludePathHandler.contain(request,
                 response, ApolloBaseConfig.getJwtExcludePath())) {
             chain.doFilter(request, response);
         } else {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             EhiHeaderReqWrapper contentCachingRequestWrapper = new EhiHeaderReqWrapper(httpServletRequest);
-            JwtTokenAuthentication.setJwtHeader(contentCachingRequestWrapper);
             String loginUrl = ApolloBaseConfig.getWebLoginUrl();
             if (JwtTokenAuthentication.getAuthentication(httpServletRequest)) {
+                JwtTokenAuthentication.setJwtHeader(contentCachingRequestWrapper);
                 chain.doFilter(contentCachingRequestWrapper, response);
             } else {
                 if (!StringUtils.isEmpty(loginUrl)) {
