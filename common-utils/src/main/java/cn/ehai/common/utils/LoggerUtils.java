@@ -35,6 +35,25 @@ public class LoggerUtils {
         logger.error(ExceptionUtils.getStackTrace(e));
     }
 
+    /**
+     * ELK记录error 控制台仅打印摘要信息
+     *
+     * @param clazz
+     * @param objects
+     * @param e
+     * @return void
+     * @author 方典典
+     * @time 2019/4/9 15:12
+     */
+    public static void errorSummary(Class<? extends Object> clazz, Object[] objects, Exception e) {
+        Logger logger = LoggerFactory.getLogger(clazz);
+        LogstashMarker marker = new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(clazz
+                .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
+                .getStackTrace(e)));
+        logger.error(marker, null);
+        logger.error(e.getMessage());
+    }
+
 
     /**
      * Debug 输出
