@@ -52,7 +52,15 @@ public class ServiceExpUtils {
     }
 
 
-    private static void throwExp(ResultCode code,String msg){
+    /**
+     * 直接抛出异常
+     * @param code
+     * @param msg
+     * @return void
+     * @author lixiao
+     * @date 2019-04-09 20:49
+     */
+    public static void throwExp(ResultCode code,String msg) throws ServiceException{
         throw new ServiceException(code,msg);
     }
 }
