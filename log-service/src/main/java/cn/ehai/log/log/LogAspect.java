@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.SpringContext;
 import cn.ehai.common.utils.AESUtils;
+import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.log.dao.BusinessLogValueMapper;
 import cn.ehai.log.entity.ActionLog;
 import cn.ehai.log.entity.BusinessLogValue;
@@ -118,7 +119,7 @@ public class LogAspect {
         if (StringUtils.isEmpty(oprNo)) {
             oprNo = request.getHeader(HEADER_JWT_USER_ID);
         }
-        oprNo=OprNoUtils.handlerOprNo(oprNo);
+        oprNo = OprNoUtils.handlerOprNo(oprNo);
         if (actionLog != null && url.equals(actionLog.getUrl())) {
             return pjp.proceed();
         }
@@ -277,7 +278,11 @@ public class LogAspect {
                 //记录business_log_value
                 BusinessLogValue businessLogValue = new BusinessLogValue(requestTraceId(), tables, originalValue,
                         newValue, actionLog.getActionDatetime(), actionLog.getOprNo());
-                businessLogValueMapper.insertBusinessLogValue(businessLogValue);
+                try {
+                    businessLogValueMapper.insertBusinessLogValue(businessLogValue);
+                } catch (Exception e) {
+                    LoggerUtils.error(getClass(), new Object[]{}, e);
+                }
             } else {
                 actionLog.setNewValue(newValue);
                 actionLog.setOriginalValue(originalValue);
@@ -288,7 +293,11 @@ public class LogAspect {
             //记录business_log_value
             BusinessLogValue businessLogValue = new BusinessLogValue(requestTraceId(), tables, originalValue,
                     newValue, actionLog.getActionDatetime(), actionLog.getOprNo());
-            businessLogValueMapper.insertBusinessLogValue(businessLogValue);
+            try {
+                businessLogValueMapper.insertBusinessLogValue(businessLogValue);
+            } catch (Exception e) {
+                LoggerUtils.error(getClass(), new Object[]{}, e);
+            }
         }
 //        if (!closeCommonServiceLog) {
 //            actionLogServiceAsync.insertServiceLogCommonAsync(actionLog);
