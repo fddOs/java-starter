@@ -140,7 +140,7 @@ public class EhiOkHttpClient {
         }
         String userId = request.getHeader(HEADER_JWT_USER_ID);
         if(StringUtils.isEmpty(userId)){
-            userId = request.getParameter("oprNo");
+            userId = String.valueOf(request.getAttribute("oprNo"));
         }
         return userId == null ? "" : userId;
     }
