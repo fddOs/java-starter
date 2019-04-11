@@ -205,7 +205,7 @@ public class EhiOkHttpClient {
             // ignore
             LoggerUtils.error(getClass(), new Object[]{response, request, exceptionMsg, requestTime, responseTime}, e);
         }
-        String requestUrl = request.url().encodedPath();
+        String requestUrl = request.url().url().toString();
         RequestBody requestBody = request.body();
         ResponseBody responseBody = response.body();
         String requestUrlQuery = request.url().encodedQuery();
