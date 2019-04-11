@@ -82,10 +82,15 @@ public class BusLogAspect {
             try {
                 request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                     .getRequest();
-                oprNo = request.getHeader(HEADER_JWT_USER_ID);
             }catch (Exception e){
                 LoggerUtils.error(getClass(), new Object[]{ arguments, params}, e);
             }finally {
+                if(request!=null){
+                    oprNo = request.getHeader(HEADER_JWT_USER_ID);
+                    if(StringUtils.isEmpty(oprNo)){
+                        oprNo = request.getParameter("oprNo");
+                    }
+                }
                 oprNo=OprNoUtils.handlerOprNo(oprNo);
             }
         }

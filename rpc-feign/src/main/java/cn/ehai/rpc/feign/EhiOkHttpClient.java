@@ -139,6 +139,9 @@ public class EhiOkHttpClient {
             return "";
         }
         String userId = request.getHeader(HEADER_JWT_USER_ID);
+        if(StringUtils.isEmpty(userId)){
+            userId = String.valueOf(request.getAttribute("oprNo"));
+        }
         return userId == null ? "" : userId;
     }
 

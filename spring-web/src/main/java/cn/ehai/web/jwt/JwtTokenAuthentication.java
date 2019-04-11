@@ -113,6 +113,7 @@ public class JwtTokenAuthentication {
         LoggerUtils.info(JwtTokenAuthentication.class,"setJwtHeader  "+userCode);
         if (!StringUtils.isEmpty(userCode)) {
             request.putHeader(HEADER_JWT_USER_ID, userCode);
+            request.setAttribute("oprNo",userCode);
         }
     }
 
