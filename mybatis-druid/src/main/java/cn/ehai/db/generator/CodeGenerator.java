@@ -46,15 +46,15 @@ public class CodeGenerator {
     private static String PACKAGE_PATH_SERVICE_IMPL;// 生成的Service实现存放路径
     private static String PACKAGE_PATH_CONTROLLER;// 生成的Controller存放路径
 
-    private static  String AUTHOR = "方典典";// @author
+    private static String AUTHOR = "方典典";// @author
     private static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());// @date
 
     public static void main(String[] args) {
         // genCode("City", "District", "Stock", "WorkStation", "Province");
 //        genCode("label_config", "LabelConfig", "会话标签");
 //		Map<String, String> tables = new HashMap<>();
-        CodeGenerator.genCode("label_config", "LabelConfig", "会话标签", "jdbc:mysql://192.168.9.82:3306/yd_onlineservice?useInformationSchema=true", "app_yd_onlineservice",
-                "Es@4mF^XmzEjouhvrn8*", "test");
+        CodeGenerator.initDBInfo("","","");
+        CodeGenerator.genCode("label_config", "LabelConfig", "会话标签", "test", "27894");
         // map 表明 :备注（swagger）
         // tables.put("City", "城市");
         // tables.put("District", "区域");
@@ -70,18 +70,18 @@ public class CodeGenerator {
 
     }
 
-    private static void genCode(Map<String, String> tables) {
-        Set<Entry<String, String>> entries = tables.entrySet();
-        Iterator<Entry<String, String>> iterator = entries.iterator();
-        while (iterator.hasNext()) {
-            Entry<String, String> entry = iterator.next();
-            genCode(entry.getKey(), null, entry.getValue());
-        }
-
-        // for (String tableName : tableNames) {
-        // genCode(tableName, null,null);
-        // }
-    }
+//    private static void genCode(Map<String, String> tables) {
+//        Set<Entry<String, String>> entries = tables.entrySet();
+//        Iterator<Entry<String, String>> iterator = entries.iterator();
+//        while (iterator.hasNext()) {
+//            Entry<String, String> entry = iterator.next();
+//            genCode(entry.getKey(), null, entry.getValue());
+//        }
+//
+//        // for (String tableName : tableNames) {
+//        // genCode(tableName, null,null);
+//        // }
+//    }
 
     /**
      * 通过数据表名称生成代码，Model 名称通过解析数据表名称获得，下划线转大驼峰的形式。 如输入表名称 "t_user_detail" 将生成
@@ -89,10 +89,15 @@ public class CodeGenerator {
      *
      * @param tableNames 数据表名称...
      */
-    private static void genCode(String... tableNames) {
-        for (String tableName : tableNames) {
-            genCode(tableName, null, null);
-        }
+//    private static void genCode(String... tableNames) {
+//        for (String tableName : tableNames) {
+//            genCode(tableName, null, null);
+//        }
+//    }
+    public static void initDBInfo(String dbUrl, String dbUsername, String dbPassword) {
+        JDBC_URL = dbUrl;
+        JDBC_USERNAME = dbUsername;
+        JDBC_PASSWORD = dbPassword;
     }
 
     /**
@@ -103,18 +108,15 @@ public class CodeGenerator {
      * @param modelName 自定义的 Model 名称
      * @param remark    controller中swagger的注释
      */
-    public static void genCode(String tableName, String modelName, String remark, String dbUrl, String dbUsername,
-                               String dbPassword, String businessName, String author) {
-        JDBC_URL = dbUrl;
-        JDBC_USERNAME = dbUsername;
-        JDBC_PASSWORD = dbPassword;
+    public static void genCode(String tableName, String modelName, String remark, String businessName, String author) {
+
         BUSINESS_NAME = businessName;
-        AUTHOR=author;
+        AUTHOR = author;
         PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
-        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE+"impl");
+        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE + "impl");
         PACKAGE_PATH_CONTROLLER = packageConvertPath(BASE_PACKAGE + "." + businessName + ".controller");
         genModelAndMapper(tableName, modelName);
-        genService(tableName, modelName,remark);
+        genService(tableName, modelName, remark);
         genController(tableName, modelName, remark);
     }
 
@@ -154,7 +156,9 @@ public class CodeGenerator {
         tableConfiguration.setSelectByPrimaryKeyStatementEnabled(false);
         tableConfiguration.setCountByExampleStatementEnabled(false);
         tableConfiguration.setInsertStatementEnabled(false);
-        if (StringUtils.isNotEmpty(modelName)) {tableConfiguration.setDomainObjectName(modelName);}
+        if (StringUtils.isNotEmpty(modelName)) {
+            tableConfiguration.setDomainObjectName(modelName);
+        }
         tableConfiguration.setGeneratedKey(new GeneratedKey("id", "MySql", true,
                 null));
 //		tableConfiguration.setGeneratedKey(new GeneratedKey("shopId", "SqlServer", true, null));
@@ -197,14 +201,15 @@ public class CodeGenerator {
         if (generator.getGeneratedJavaFiles().isEmpty() || generator.getGeneratedXmlFiles().isEmpty()) {
             throw new RuntimeException("生成Model和Mapper失败：" + warnings);
         }
-        if (StringUtils.isEmpty(modelName)){
-            modelName = tableNameConvertUpperCamel(tableName);}
+        if (StringUtils.isEmpty(modelName)) {
+            modelName = tableNameConvertUpperCamel(tableName);
+        }
         System.out.println(modelName + ".java 生成成功");
         System.out.println(modelName + "Mapper.java 生成成功");
         System.out.println(modelName + "Mapper.xml 生成成功");
     }
 
-    public static void genService(String tableName, String modelName,String tableRemark) {
+    public static void genService(String tableName, String modelName, String tableRemark) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
 
