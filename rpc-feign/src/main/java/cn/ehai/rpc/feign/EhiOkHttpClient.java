@@ -211,7 +211,6 @@ public class EhiOkHttpClient {
         String requestUrl = request.url().url().toString();
         RequestBody requestBody = request.body();
         ResponseBody responseBody = response.body();
-        String requestUrlQuery = request.url().encodedQuery();
         Headers requestHeaders = request.headers();
         int httpStatus = response.code() == HttpCodeEnum.CODE_200.getCode() ? HttpCodeEnum.CODE_200.getCode() :
                 HttpCodeEnum.CODE_517.getCode();
@@ -234,16 +233,6 @@ public class EhiOkHttpClient {
                 responseHeaderMap.put(headerName, response.header(headerName));
             }
             responseHeaderMap.put("response.code", String.valueOf(httpStatus));
-        }
-        if (requestUrlQuery != null) {
-            try {
-                requestUrlQuery = URLDecoder.decode(request.url().encodedQuery(), "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                LoggerUtils.error(getClass(), new Object[]{response, request, exceptionMsg, requestTime,
-                        responseTime}, e);
-            }
-        } else {
-            requestUrlQuery = "";
         }
         String bodyParams = null;
         if (requestBody != null) {
@@ -274,7 +263,7 @@ public class EhiOkHttpClient {
             responseBody = null;
         }
         RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
-                .getProjectContext(), requestUrl + "?" + requestUrlQuery, requestBodyJSON, request.method(),
+                .getProjectContext(), requestUrl, requestBodyJSON, request.method(),
                 requestHeaderMap);
 
         ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, exceptionMsg, totalTime,

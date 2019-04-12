@@ -51,7 +51,7 @@ public class LoggerUtils {
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
                 .getStackTrace(e)));
         logger.error(marker, null);
-        logger.error(e.getMessage());
+        logger.error(e.getClass().getName());
     }
 
 
