@@ -100,6 +100,21 @@ public class CodeGenerator {
         JDBC_PASSWORD = dbPassword;
     }
 
+    public static void genCode(String tableName, String modelName, String remark, String dbUrl, String dbUsername,
+                               String dbPassword, String businessName, String author) {
+        JDBC_URL = dbUrl;
+        JDBC_USERNAME = dbUsername;
+        JDBC_PASSWORD = dbPassword;
+        BUSINESS_NAME = businessName;
+        AUTHOR=author;
+        PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
+        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE+"impl");
+        PACKAGE_PATH_CONTROLLER = packageConvertPath(BASE_PACKAGE + "." + businessName + ".controller");
+        genModelAndMapper(tableName, modelName);
+        genService(tableName, modelName,remark);
+        genController(tableName, modelName, remark);
+    }
+
     /**
      * 通过数据表名称，和自定义的 Model 名称生成代码 如输入表名称 "t_user_detail" 和自定义的 Model 名称 "User" 将生成
      * User、UserMapper、UserService ...
