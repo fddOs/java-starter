@@ -9,42 +9,42 @@ package cn.ehai.db.config;
  * @time:2018年5月29日 下午4:47:17
  */
 public class DBInfo {
-	private String dbConfigUrl;
-	private String dbConfigName;
-	private String dbConfigKey;
+	private String url;
+	private String userName;
+	private String password;
 
 	public DBInfo() {
 		super();
 	}
 
-	public DBInfo(String dbConfigUrl, String dbConfigName, String dbConfigKey) {
+	public DBInfo(String dbConfigUrl, String dbConfigName, String password) {
 		super();
-		this.dbConfigUrl = dbConfigUrl;
-		this.dbConfigName = dbConfigName;
-		this.dbConfigKey = dbConfigKey;
+		this.url = dbConfigUrl;
+		this.userName = dbConfigName;
+		this.password = password;
 	}
 
-	public String getDbConfigUrl() {
-		return dbConfigUrl;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setDbConfigUrl(String dbConfigUrl) {
-		this.dbConfigUrl = dbConfigUrl;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
-	public String getDbConfigName() {
-		return dbConfigName;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setDbConfigName(String dbConfigName) {
-		this.dbConfigName = dbConfigName;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
-	public String getDbConfigKey() {
-		return dbConfigKey;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setDbConfigKey(String dbConfigKey) {
-		this.dbConfigKey = dbConfigKey;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

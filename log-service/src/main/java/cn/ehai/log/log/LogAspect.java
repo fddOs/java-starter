@@ -13,7 +13,7 @@ import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.SpringContext;
 import cn.ehai.common.utils.AESUtils;
 import cn.ehai.common.utils.LoggerUtils;
-import cn.ehai.log.dao.BusinessLogValueMapper;
+import cn.ehai.log.dao.master.BusinessLogValueMapper;
 import cn.ehai.log.entity.ActionLog;
 import cn.ehai.log.entity.BusinessLogValue;
 import cn.ehai.log.log.business.BusinessTableUtils;

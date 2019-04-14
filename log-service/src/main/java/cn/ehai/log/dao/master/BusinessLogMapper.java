@@ -1,4 +1,4 @@
-package cn.ehai.log.dao;
+package cn.ehai.log.dao.master;
 
 import cn.ehai.log.entity.BusinessLog;
 import java.util.List;

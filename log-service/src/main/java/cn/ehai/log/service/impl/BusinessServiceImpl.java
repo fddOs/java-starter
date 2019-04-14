@@ -3,15 +3,13 @@ package cn.ehai.log.service.impl;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.ProjectInfoUtils;
-import cn.ehai.log.dao.BusinessLogMapper;
+import cn.ehai.log.dao.master.BusinessLogMapper;
 import cn.ehai.log.entity.BusinessLog;
 import cn.ehai.log.service.BusinessService;
 import java.util.List;
-import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 /**
  * TODO

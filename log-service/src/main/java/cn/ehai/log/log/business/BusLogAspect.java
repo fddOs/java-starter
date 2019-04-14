@@ -5,7 +5,7 @@ import brave.opentracing.BraveSpanContext;
 import brave.propagation.TraceContext;
 import cn.ehai.common.utils.LoggerUtils;
 import cn.ehai.common.utils.ProjectInfoUtils;
-import cn.ehai.log.dao.BusinessLogMapper;
+import cn.ehai.log.dao.master.BusinessLogMapper;
 import cn.ehai.log.log.OprNoUtils;
 import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;

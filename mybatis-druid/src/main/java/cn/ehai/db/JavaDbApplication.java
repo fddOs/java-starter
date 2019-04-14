@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 //@EnableAutoConfiguration
 @Configuration
-@MapperScan(basePackages = "cn.ehai.**.dao")
 @ComponentScan(basePackageClasses = JavaDbApplication.class)
 public class JavaDbApplication {
 }

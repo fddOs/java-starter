@@ -1,15 +1,25 @@
 package cn.ehai.db.config;
 
+import cn.ehai.common.core.ServiceExpUtils;
+import cn.ehai.common.utils.ProjectInfoUtils;
+import com.github.pagehelper.PageHelper;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
+import java.util.Properties;
 import javax.sql.DataSource;
 
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
-import cn.ehai.common.utils.LoggerUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +27,9 @@ import org.springframework.context.annotation.Primary;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 /**
  * druid 数据连接池配置
@@ -25,45 +38,60 @@ import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
  *
  */
 @Configuration
+@MapperScan(basePackages = "cn.ehai.**.dao.master",sqlSessionTemplateRef = "masterSqlSessionTemplate")
 public class DruidConfigution {
-	// 指向druid的连接池，作为切换数据库使用，暂不支持多数据源
-	private DruidDataSource dataSource;
-	@Autowired
-	private DBInfo dbInfo;
 	private List<String> initSql = Arrays.asList("set names utf8mb4;");
 
-	@Bean
+	private DruidDataSource dataSource;
+
+	@Bean("masterDataSource")
 	@Primary
-	@ConfigurationProperties("spring.datasource.druid")
-	public DataSource getDataSource() {
-		dataSource = DruidDataSourceBuilder.create().build();
-		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		dataSource.setUrl(dbInfo.getDbConfigUrl());
-		dataSource.setUsername(dbInfo.getDbConfigName());
-		dataSource.setPassword(dbInfo.getDbConfigKey());
+	public DataSource masterDataSource(@Qualifier("masterDB") DBInfo dbInfo) {
+		dataSource = DruidUtils.getDataSource(dbInfo);
 		return dataSource;
 	}
+
+	@Bean(name = "masterTransactionManager")
+	@Primary
+	public DataSourceTransactionManager masterTransactionManager(@Qualifier("masterDataSource") DataSource dataSource) {
+		return new DataSourceTransactionManager(dataSource);
+	}
+	@Bean(name = "masterSqlSessionTemplate")
+	@Primary
+	public SqlSessionTemplate masterSqlSessionTemplate(@Qualifier("masterSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws Exception {
+		return new SqlSessionTemplate(sqlSessionFactory);
+	}
+
+	@Bean(name = "masterSqlSessionFactory")
+	@Primary
+	public SqlSessionFactory masterSqlSessionFactory(@Qualifier("masterDataSource") DataSource dataSource) throws Exception {
+		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+		SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
+		factory.setDataSource(dataSource);
+		factory.setTypeAliasesPackage(ProjectInfoUtils.getBasePackage() + ".entity,cn.ehai.log.entity");
+		factory.setConfigLocation(resolver.getResources("classpath*:mybatis/mybatis-config.xml")[0]);
+		//添加插件
+		factory.setPlugins(new Interceptor[]{PageHelperUtils.pageHelper()});
+		//添加XML目录
+		factory.setMapperLocations(resolver.getResources("classpath*:mybatis/mapper/master/*.xml"));
+		return factory.getObject();
+	}
+
+
+
 
 	/**
 	 * 重新初始化数据库连接池
 	 * 
-	 * @param dataDruidSource
 	 * @param dbInfo
 	 *            1433;DatabaseName=
 	 */
 	public void resetDataBase(DBInfo dbInfo) {
-		try {
-			dataSource.restart();
-			dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-			dataSource.setUrl(dbInfo.getDbConfigUrl());
-			dataSource.setUsername(dbInfo.getDbConfigName());
-			dataSource.setPassword(dbInfo.getDbConfigKey());
-			dataSource.configFromPropety(System.getProperties());
-			dataSource.setConnectionInitSqls(initSql);
-			dataSource.init();
-		} catch (SQLException e) {
-			throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "获取数据信息失败！");
-		}
+		ServiceExpUtils.notNull(dataSource,dbInfo.getUrl()+"数据源错误");
+		DruidUtils.restart(dataSource,dbInfo,initSql);
 	}
+
+
+
 
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import cn.ehai.common.core.*;
 import cn.ehai.common.utils.AESUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,8 @@ public class ApolloDBConfig {
     @ApolloConfig("EHI.DBConfig")
     private Config dbConfig;
     private String key;
+    @Value("archive-key")
+    private String archiveKey;
 
     /**
      * @return String
@@ -37,11 +40,11 @@ public class ApolloDBConfig {
      * @author: 方典典
      * @time:2018年5月22日 下午5:26:44
      */
-    public String getDBConfig() {
-        if (StringUtils.isEmpty(key)) {
+    public String getDBConfig(String dbKey) {
+        if (StringUtils.isEmpty(dbKey)) {
             throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请设置apollo数据库配置的Key!");
         }
-        String dbConfigInfo = dbConfig.getProperty(key, "");
+        String dbConfigInfo = dbConfig.getProperty(dbKey, "");
         try {
             return AESUtils.aesDecryptString(dbConfigInfo);
         } catch (Exception e) {
@@ -60,18 +63,42 @@ public class ApolloDBConfig {
     private void configChangeListen(ConfigChangeEvent changeEvent) {
         if (changeEvent.isChanged(key)) {
             DruidConfigution druidConfigution = SpringContext.getApplicationContext().getBean(DruidConfigution.class);
-            druidConfigution.resetDataBase(initDBInfo());
+            druidConfigution.resetDataBase(masterDBInfo());
+        }else if(changeEvent.isChanged(archiveKey)){
+            ArchiveDruidConfigution druidConfigution = SpringContext.getApplicationContext().getBean(ArchiveDruidConfigution.class);
+            druidConfigution.resetArchiveDataBase(archiveDBInfo());
         }
     }
 
-    @Bean
-    public DBInfo initDBInfo() {
+    @Bean("masterDB")
+    public DBInfo masterDBInfo() {
+        String jdbcUrl = getDBConfig(key);
+        return initDBInfo(jdbcUrl);
+    }
+
+    @Bean("archiveDB")
+    public DBInfo archiveDBInfo() {
+        String jdbcUrl = getDBConfig(archiveKey);
+        return initDBInfo(jdbcUrl);
+    }
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    private DBInfo initDBInfo(String jdbcUrl){
+
         String separator = "\\|";
-        String jdbcUrl = getDBConfig();
-        if (!jdbcUrl.contains("user") || !jdbcUrl.contains("password") || !jdbcUrl.contains("?")) {
+        String user = "user";
+        String pass = "password";
+        String urlFlag = "?";
+        if (!jdbcUrl.contains(user) || !jdbcUrl.contains(pass) || !jdbcUrl.contains(urlFlag)) {
             throw new ServiceException(ResultCode.FAIL, "jdbcURL格式错误，请检查url" + jdbcUrl);
         }
-        int index = jdbcUrl.indexOf('?') + 1;
+        int index = jdbcUrl.indexOf(urlFlag) + 1;
         if (index >= jdbcUrl.length()) {
             throw new ServiceException(ResultCode.FAIL, "jdbcURL--? 位置错误，请检查url" + jdbcUrl);
         }
@@ -86,8 +113,8 @@ public class ApolloDBConfig {
                 }
             }
         }
-        String userName = signMap.get("user");
-        String password = signMap.get("password");
+        String userName = signMap.get(user);
+        String password = signMap.get(pass);
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
             throw new ServiceException(ResultCode.FAIL, "jdbcURL用户名或密码为空--" + jdbcUrl);
         }
@@ -96,11 +123,12 @@ public class ApolloDBConfig {
         return new DBInfo(jdbcUrl, userName, password);
     }
 
-    public String getKey() {
-        return key;
+
+    public String getArchiveKey() {
+        return archiveKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setArchiveKey(String archiveKey) {
+        this.archiveKey = archiveKey;
     }
 }

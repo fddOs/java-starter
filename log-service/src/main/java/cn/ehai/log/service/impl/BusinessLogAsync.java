@@ -1,8 +1,7 @@
 package cn.ehai.log.service.impl;
 
 import cn.ehai.common.utils.LoggerUtils;
-import cn.ehai.log.dao.BusinessLogMapper;
-import cn.ehai.log.dao.BusinessLogValueMapper;
+import cn.ehai.log.dao.master.BusinessLogValueMapper;
 import cn.ehai.log.entity.BusinessLogValue;
 import cn.ehai.log.service.ActionLogService;
 import java.util.List;
