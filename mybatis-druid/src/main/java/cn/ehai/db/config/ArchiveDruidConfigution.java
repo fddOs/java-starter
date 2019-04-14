@@ -20,6 +20,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +37,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
  */
 @Configuration
 @MapperScan(basePackages = "cn.ehai.**.dao.archive" ,sqlSessionTemplateRef = "archiveSqlSessionTemplate")
+@ConditionalOnProperty(value = "db.archive-enabled", havingValue = "true")
 public class ArchiveDruidConfigution {
 
     private final String ARCHIVE_DB = "archive";
