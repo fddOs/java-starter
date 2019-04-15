@@ -6,12 +6,7 @@ import cn.ehai.common.core.ApolloBaseConfig;
 import cn.ehai.common.core.Result;
 import feign.Feign;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.Future;
 
 /**
  * @author xianglong.chen
