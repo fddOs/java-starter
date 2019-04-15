@@ -40,7 +40,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 @ConditionalOnProperty(value = "db.archive-enabled", havingValue = "true")
 public class ArchiveDruidConfigution {
 
-    private final String ARCHIVE_DB = "archive";
     private List<String> initSql = Arrays.asList("set names utf8mb4;");
     private DruidDataSource dataSource;
 
@@ -81,7 +80,7 @@ public class ArchiveDruidConfigution {
      *            1433;DatabaseName=
      */
     public void resetArchiveDataBase(DBInfo dbInfo) {
-        ServiceExpUtils.notNull(dataSource,ARCHIVE_DB+"数据源错误");
+        ServiceExpUtils.notNull(dataSource,dbInfo.getUrl()+"数据源错误");
         DruidUtils.restart(dataSource,dbInfo,initSql);
     }
 

@@ -70,14 +70,16 @@ public class EhiOkHttpClient {
                 String requestTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String responseTime;
                 Response resultResponse = null;
+                Exception exception=null;
                 try {
                     resultResponse = chain.proceed(builderRequest);
                 } catch (IOException e) {
+                    exception=e;
                     exceptionMsg = ExceptionUtils.getStackTrace(e);
                     LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
                 } finally {
                     if (resultResponse == null) {
-                        throw new ServiceException(ResultCode.BAD_REQUEST, "请求异常" + builderRequest.url());
+                        throw new ServiceException(ResultCode.BAD_REQUEST, "请求异常" + builderRequest.url(),exception);
                     }
                     responseTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                     response = sendHttpLog(builderRequest, handleResponse(resultResponse), exceptionMsg, requestTime,
