@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ehi-authority</artifactId>
+    <artifactId>web-authority</artifactId>
 
     <dependencies>
         <dependency>
