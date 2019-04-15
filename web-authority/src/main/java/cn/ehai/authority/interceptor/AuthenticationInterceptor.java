@@ -1,7 +1,8 @@
 package cn.ehai.authority.interceptor;
 
-import cn.ehai.authority.annotation.EHiAuthentication;
+import cn.ehai.authority.annotation.WebAuthentication;
 import cn.ehai.authority.http.api.AuthApi;
+import cn.ehai.authority.service.WebAuthority;
 import cn.ehai.common.core.Result;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
@@ -11,15 +12,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
 /**
@@ -37,32 +40,33 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private AuthApi authApi;
+    private WebAuthority webAuthority;
 
-    public AuthenticationInterceptor(AuthApi authApi) {
-        Objects.requireNonNull(authApi);
-        this.authApi = authApi;
+    public AuthenticationInterceptor(WebAuthority webAuthority) {
+        Objects.requireNonNull(webAuthority);
+        this.webAuthority = webAuthority;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         if (handler instanceof HandlerMethod) {
-            EHiAuthentication eHiAuthentication = ((HandlerMethod) handler).getMethodAnnotation
-                    (EHiAuthentication.class);
-            if (eHiAuthentication != null) {
-                String systemCode = eHiAuthentication.systemCode();
-                String moduleId = eHiAuthentication.moduleId();
+            WebAuthentication webAuthentication = ((HandlerMethod) handler).getMethodAnnotation
+                    (WebAuthentication.class);
+            if (webAuthentication != null) {
                 String userCode = getUserCode(request);
                 if (StringUtils.isEmpty(userCode)) {
                     throw new ServiceException(ResultCode.BAD_REQUEST, "未获取到登录用户信息，请求失败");
                 }
-                Result<Boolean> booleanResult = authApi.verifyAuth(userCode, systemCode, moduleId);
-                if (booleanResult != null && booleanResult.getErrorCode() == 0 && booleanResult.getResult() == true) {
-                    return true;
-                } else {
-                    logger.debug("userCode[{}],systemCode[{}],moduleId[{}] 权限验证失败",userCode,systemCode,moduleId);
-                    throw new ServiceException(ResultCode.BAD_REQUEST, "权限验证失败");
+                String systemCode = webAuthentication.systemCode();
+                String[] moduleIds = webAuthentication.moduleIds();
+
+                for (String moduleId : moduleIds) {
+                    Result<Boolean> booleanResult = webAuthority.verifyAuth(userCode, systemCode, moduleId);
+                    if (booleanResult == null || booleanResult.getErrorCode() != 0 || booleanResult.getResult() == false) {
+                        logger.debug("权限验证失败 : userCode[{}],systemCode[{}],moduleId[{}],result[{}]", userCode, systemCode, moduleId,booleanResult);
+                        throw new ServiceException(ResultCode.BAD_REQUEST, "权限验证失败");
+                    }
                 }
             }
         }

@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
  * 权限验证注解
  *
  * @author xianglong.chen
- * @description EHiAuthentication
+ * @description WebAuthentication
  * @time 2019/2/21 上午9:56
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface EHiAuthentication {
+public @interface WebAuthentication {
 
     /**
      *
@@ -26,5 +26,5 @@ public @interface EHiAuthentication {
      *
      * 模块id
      */
-    String moduleId();
+    String[] moduleIds();
 }

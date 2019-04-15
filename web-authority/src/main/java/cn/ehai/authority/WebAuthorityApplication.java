@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Configuration;
  * @time 2019/2/21 下午2:06
  */
 @Configuration
-@ComponentScan(basePackageClasses = EHiAuthorityApplication.class)
-public class EHiAuthorityApplication {
+@ComponentScan(basePackageClasses = WebAuthorityApplication.class)
+public class WebAuthorityApplication {
 }
