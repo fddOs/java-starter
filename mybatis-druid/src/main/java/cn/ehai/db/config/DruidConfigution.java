@@ -2,31 +2,25 @@ package cn.ehai.db.config;
 
 import cn.ehai.common.core.ServiceExpUtils;
 import cn.ehai.common.utils.ProjectInfoUtils;
-import com.github.pagehelper.PageHelper;
-import java.sql.SQLException;
+import cn.ehai.db.utils.DruidUtils;
+import cn.ehai.db.utils.SqlSessionFactoryUtils;
+import cn.ehai.db.utils.SqlPlugins;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
-import java.util.Map;
-import java.util.Properties;
 import javax.sql.DataSource;
 
-import cn.ehai.common.core.ResultCode;
-import cn.ehai.common.core.ServiceException;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -41,6 +35,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 @MapperScan(basePackages = "cn.ehai.**.dao.master",sqlSessionTemplateRef = "masterSqlSessionTemplate")
 public class DruidConfigution {
 	private List<String> initSql = Arrays.asList("set names utf8mb4;");
+	private String masterLocation = "classpath*:mybatis/mapper/master/*.xml";
 
 	private DruidDataSource dataSource;
 
@@ -65,16 +60,8 @@ public class DruidConfigution {
 	@Bean(name = "masterSqlSessionFactory")
 	@Primary
 	public SqlSessionFactory masterSqlSessionFactory(@Qualifier("masterDataSource") DataSource dataSource) throws Exception {
-		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-		SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
-		factory.setDataSource(dataSource);
-		factory.setTypeAliasesPackage(ProjectInfoUtils.getBasePackage() + ".entity,cn.ehai.log.entity");
-		factory.setConfigLocation(resolver.getResources("classpath*:mybatis/mybatis-config.xml")[0]);
-		//添加插件
-		factory.setPlugins(new Interceptor[]{PageHelperUtils.pageHelper()});
-		//添加XML目录
-		factory.setMapperLocations(resolver.getResources("classpath*:mybatis/mapper/master/*.xml"));
-		return factory.getObject();
+
+		return SqlSessionFactoryUtils.create(dataSource,masterLocation);
 	}
 
 

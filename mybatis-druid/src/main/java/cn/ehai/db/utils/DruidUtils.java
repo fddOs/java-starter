@@ -1,7 +1,8 @@
-package cn.ehai.db.config;
+package cn.ehai.db.utils;
 
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
+import cn.ehai.db.config.DBInfo;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import java.sql.SQLException;
