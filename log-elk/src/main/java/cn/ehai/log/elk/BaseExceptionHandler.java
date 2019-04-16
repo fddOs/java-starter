@@ -29,7 +29,7 @@ public class BaseExceptionHandler {
     @ExceptionHandler(ServiceException.class)
     @ResponseBody
     private <T> Result<T> serviceExceptionHandler(HttpServletRequest request, ServiceException e) {
-        LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+        LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e),e.getCause());
         return ResultGenerator.genFailResult(e.getCode(), e.getMessage());
     }
 

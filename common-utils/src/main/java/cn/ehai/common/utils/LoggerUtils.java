@@ -123,7 +123,7 @@ public class LoggerUtils {
      * @param message 输出信息
      * @param e       异常类
      */
-    public static void error(Class<? extends Object> clazz, String message, Exception e) {
+    public static void error(Class<? extends Object> clazz, String message, Throwable e) {
         Logger logger = LoggerFactory.getLogger(clazz);
         if (null == e) {
             logger.error(message);
