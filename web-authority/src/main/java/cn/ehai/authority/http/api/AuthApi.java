@@ -1,8 +1,11 @@
 package cn.ehai.authority.http.api;
 
+import cn.ehai.authority.model.BtnAuthResult;
 import cn.ehai.common.core.Result;
 import feign.Param;
 import feign.RequestLine;
+
+import java.util.List;
 
 /**
  * 权限相关接口
@@ -23,4 +26,17 @@ public interface AuthApi {
     @RequestLine("GET auth/verifyAuth?userCode={userCode}&systemCode={systemCode}&moduleId={moduleId}")
     Result<Boolean> verifyAuth(@Param("userCode") String userCode,
                                @Param("systemCode") String systemCode, @Param("moduleId") String moduleId);
+
+    /**
+     * 根据用户工号，系统编码，模块ID，获取该页面的所有按钮
+     * @param userCode
+     * @param systemCode
+     * @param moduleId
+     * @return
+     */
+    @RequestLine("GET auth/btnAuth?userCode={userCode}&systemCode={systemCode}&moduleId={moduleId}")
+    Result<List<BtnAuthResult>> btnAuth(@Param("userCode") String userCode,
+                                        @Param("systemCode") String systemCode, @Param("moduleId") String moduleId);
+
+
 }

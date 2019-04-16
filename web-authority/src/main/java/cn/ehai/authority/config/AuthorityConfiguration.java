@@ -2,6 +2,7 @@ package cn.ehai.authority.config;
 
 import cn.ehai.authority.http.api.AuthApi;
 import cn.ehai.authority.interceptor.AuthenticationInterceptor;
+import cn.ehai.authority.service.WebAuthority;
 import cn.ehai.common.core.ApolloBaseConfig;
 import feign.Feign;
 import org.apache.commons.lang3.StringUtils;
@@ -24,11 +25,11 @@ public class AuthorityConfiguration extends WebMvcConfigurerAdapter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Feign.Builder builder;
+    private WebAuthority webAuthority;
 
-    public AuthorityConfiguration(Feign.Builder builder) {
-        Objects.requireNonNull(builder);
-        this.builder = builder;
+    public AuthorityConfiguration(WebAuthority webAuthority) {
+        Objects.requireNonNull(webAuthority);
+        this.webAuthority = webAuthority;
     }
 
     @Override
@@ -39,8 +40,7 @@ public class AuthorityConfiguration extends WebMvcConfigurerAdapter {
         }
         String userEHiAuthority = ApolloBaseConfig.get("userEHiAuthority", "false");
         if ("true".equals(userEHiAuthority)) {
-            AuthApi authApi = builder.target(AuthApi.class, authUrl);
-            registry.addInterceptor(new AuthenticationInterceptor(authApi));
+            registry.addInterceptor(new AuthenticationInterceptor(webAuthority));
         } else {
             logger.warn("当前项目未读取到userEHiAuthority配置项，权限验证功能未启用！");
         }
