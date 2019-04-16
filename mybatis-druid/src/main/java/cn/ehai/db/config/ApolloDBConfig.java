@@ -33,7 +33,7 @@ public class ApolloDBConfig {
     @Value("archive-key")
     private String archiveKey;
     @Value("archive-enabled")
-    private boolean archiveEnable;
+    private String archiveEnable;
     /**
      * @return String
      * @Description:获取数据库链接
@@ -65,7 +65,7 @@ public class ApolloDBConfig {
         if (changeEvent.isChanged(key)) {
             DruidConfigution druidConfigution = SpringContext.getApplicationContext().getBean(DruidConfigution.class);
             druidConfigution.resetDataBase(masterDBInfo());
-        }else if(archiveEnable&&changeEvent.isChanged(archiveKey)){
+        }else if(Boolean.valueOf(archiveEnable)&&changeEvent.isChanged(archiveKey)){
             ArchiveDruidConfigution druidConfigution = SpringContext.getApplicationContext().getBean(ArchiveDruidConfigution.class);
             druidConfigution.resetArchiveDataBase(archiveDBInfo());
         }
@@ -79,7 +79,7 @@ public class ApolloDBConfig {
 
     @Bean("archiveDB")
     public DBInfo archiveDBInfo() {
-        if(archiveEnable){
+        if(Boolean.valueOf(archiveEnable)){
             String jdbcUrl = getDBConfig(archiveKey);
             return initDBInfo(jdbcUrl);
         }
