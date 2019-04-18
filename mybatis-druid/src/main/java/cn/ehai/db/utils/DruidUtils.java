@@ -25,7 +25,6 @@ public class DruidUtils {
      */
     public static  DruidDataSource getDataSource(DBInfo dbInfo) {
         DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         dataSource.setUrl(dbInfo.getUrl());
         dataSource.setUsername(dbInfo.getUserName());
         dataSource.setPassword(dbInfo.getPassword());
@@ -45,7 +44,6 @@ public class DruidUtils {
     public static void restart (DruidDataSource dataSource,DBInfo dbInfo, List<String> initSql) {
         try {
             dataSource.restart();
-            dataSource.setDriverClassName("com.mysql.jdbc.Driver");
             dataSource.setUrl(dbInfo.getUrl());
             dataSource.setUsername(dbInfo.getUserName());
             dataSource.setPassword(dbInfo.getPassword());
