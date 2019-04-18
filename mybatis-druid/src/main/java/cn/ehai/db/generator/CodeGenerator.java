@@ -2,22 +2,33 @@ package cn.ehai.db.generator;
 
 import cn.ehai.common.utils.ProjectInfoUtils;
 import com.google.common.base.CaseFormat;
-
 import freemarker.template.TemplateExceptionHandler;
-
-import org.apache.commons.lang3.StringUtils;
-import org.mybatis.generator.api.MyBatisGenerator;
-import org.mybatis.generator.config.*;
-import org.mybatis.generator.internal.DefaultShellCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.mybatis.generator.api.MyBatisGenerator;
+import org.mybatis.generator.config.CommentGeneratorConfiguration;
+import org.mybatis.generator.config.Configuration;
+import org.mybatis.generator.config.Context;
+import org.mybatis.generator.config.GeneratedKey;
+import org.mybatis.generator.config.IgnoredColumn;
+import org.mybatis.generator.config.JDBCConnectionConfiguration;
+import org.mybatis.generator.config.JavaClientGeneratorConfiguration;
+import org.mybatis.generator.config.JavaModelGeneratorConfiguration;
+import org.mybatis.generator.config.ModelType;
+import org.mybatis.generator.config.PropertyRegistry;
+import org.mybatis.generator.config.SqlMapGeneratorConfiguration;
+import org.mybatis.generator.config.TableConfiguration;
+import org.mybatis.generator.internal.DefaultShellCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 代码生成器，根据数据表名称生成对应的Model、Mapper、Service、Controller简化开发。
@@ -35,8 +46,10 @@ public class CodeGenerator {
 
     public static final String BASE_PACKAGE = ProjectInfoUtils.getProjectPackage();// Model所在包
     public static String BUSINESS_NAME;// Model所在包
-    public static final String MODEL_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".entity";// Model所在包
-    public static final String MAPPER_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".dao";// Mapper所在包
+    // Model所在包
+    public static final String MODEL_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".entity";
+    // Mapper所在包
+    public static final String MAPPER_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".dao.master";
 
     private static final String PROJECT_PATH = System.getProperty("user.dir");// 项目在硬盘上的基础路径
 
@@ -155,7 +168,7 @@ public class CodeGenerator {
 
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
         sqlMapGeneratorConfiguration.setTargetProject(PROJECT_PATH + RESOURCES_PATH);
-        sqlMapGeneratorConfiguration.setTargetPackage("mybatis/mapper");
+        sqlMapGeneratorConfiguration.setTargetPackage("mybatis/mapper/master");
 
         JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
         javaClientGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH);
@@ -237,6 +250,7 @@ public class CodeGenerator {
             data.put("modelNameLowerCamel", tableNameConvertLowerCamel(tableName));
             data.put("basePackage", BASE_PACKAGE);
             data.put("businessName", BUSINESS_NAME);
+            data.put("swaagerRemark", tableRemark == null ? tableName : tableRemark);
 
             File file = new File(
                     PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_SERVICE + modelNameUpperCamel + "Service.java");
