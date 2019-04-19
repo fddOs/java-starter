@@ -3,7 +3,7 @@ package cn.ehai.log.service.impl;
 import cn.ehai.common.core.ResultCode;
 import cn.ehai.common.core.ServiceException;
 import cn.ehai.common.utils.ProjectInfoUtils;
-import cn.ehai.log.dao.master.BusinessLogMapper;
+import cn.ehai.log.dao.BusinessLogMapper;
 import cn.ehai.log.entity.BusinessLog;
 import cn.ehai.log.service.BusinessService;
 import java.util.List;

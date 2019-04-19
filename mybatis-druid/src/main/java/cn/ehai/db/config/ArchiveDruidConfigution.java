@@ -23,13 +23,13 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
  * @date 2019-04-14 16:40
  */
 @Configuration
-@MapperScan(basePackages = "cn.ehai.**.dao.archive" ,sqlSessionTemplateRef = "archiveSqlSessionTemplate")
+@MapperScan(basePackages = "cn.ehai.**.archive" ,sqlSessionTemplateRef = "archiveSqlSessionTemplate")
 @ConditionalOnProperty(value = "db.archive-enabled", havingValue = "true")
 public class ArchiveDruidConfigution {
 
     private List<String> initSql = Arrays.asList("set names utf8mb4;");
     private DruidDataSource dataSource;
-    private String archiveLocation = "classpath*:mybatis/mapper/archive/*.xml";
+    private String archiveLocation = "classpath*:mybatis/archive/*.xml";
 
     @Bean("archiveDataSource")
     public DataSource archiveDataSource(@Qualifier("archiveDB")DBInfo archiveDBInfo) {

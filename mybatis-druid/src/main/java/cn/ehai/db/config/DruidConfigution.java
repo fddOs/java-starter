@@ -1,28 +1,19 @@
 package cn.ehai.db.config;
 
 import cn.ehai.common.core.ServiceExpUtils;
-import cn.ehai.common.utils.ProjectInfoUtils;
 import cn.ehai.db.utils.DruidUtils;
 import cn.ehai.db.utils.SqlSessionFactoryUtils;
-import cn.ehai.db.utils.SqlPlugins;
+import com.alibaba.druid.pool.DruidDataSource;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.sql.DataSource;
-
-import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-
-import com.alibaba.druid.pool.DruidDataSource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 /**
@@ -32,10 +23,10 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
  *
  */
 @Configuration
-@MapperScan(basePackages = "cn.ehai.**.dao.master",sqlSessionTemplateRef = "masterSqlSessionTemplate")
+@MapperScan(basePackages = "cn.ehai.**.dao",sqlSessionTemplateRef = "masterSqlSessionTemplate")
 public class DruidConfigution {
 	private List<String> initSql = Arrays.asList("set names utf8mb4;");
-	private String masterLocation = "classpath*:mybatis/mapper/master/*.xml";
+	private String masterLocation = "classpath*:mybatis/mapper/**/*.xml";
 
 	private DruidDataSource dataSource;
 
