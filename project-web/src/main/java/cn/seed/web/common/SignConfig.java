@@ -13,5 +13,5 @@ public class SignConfig {
      * @author lixiao
      * @date 2018/12/15 11:00
      */
-    public static final String SIGN_HEADER = "x-ehi-sign";
+    public static final String SIGN_HEADER = "x-seed-sign";
 }

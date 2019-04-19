@@ -29,7 +29,6 @@ import static org.springframework.http.HttpMethod.GET;
  */
 @Order(Integer.MIN_VALUE + 2)
 @Component
-//@WebFilter(filterName = "signFilter", urlPatterns = "/**")
 public class SignFilter implements Filter {
 
     @Override
@@ -67,7 +66,7 @@ public class SignFilter implements Filter {
             try {
                 String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
                 String resSign = SignUtils.signResponse(respStr);
-                ((HttpServletResponse) response).setHeader("x-ehi-sign", resSign);
+                ((HttpServletResponse) response).setHeader("x-seed-sign", resSign);
                 ServletOutputStream out = response.getOutputStream();
                 out.write(respStr.getBytes("UTF-8"));
                 out.flush();
