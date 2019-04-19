@@ -75,9 +75,7 @@ public class CodeGenerator {
         // tables.put("WorkStation", "维修厂工位");
         // tables.put("Province", "省份");
         // tables.put("UserCar", "用户车辆");
-        // tables.put("VehicleBrand", "车辆品牌");
-        // tables.put("VehicleSeries", "车系品牌");
-        //tables.put("CarRepairShop", "维修厂信息");
+
 
         // genCode(tables);
 

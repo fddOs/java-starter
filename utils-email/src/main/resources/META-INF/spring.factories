@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.seed.email.EhiEmailApplication
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.seed.email.EmailApplication

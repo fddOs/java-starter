@@ -5,7 +5,7 @@ import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.LoggerUtils;
 import cn.seed.common.utils.ProjectInfoUtils;
-import cn.seed.web.config.EhiHeaderReqWrapper;
+import cn.seed.web.config.BaseHeaderReqWrapper;
 
 import java.util.Date;
 import java.util.Optional;
@@ -105,7 +105,7 @@ public class JwtTokenAuthentication {
      * @author lixiao
      * @date 2018-12-24 16:46
      */
-    public static void setJwtHeader(EhiHeaderReqWrapper request) {
+    public static void setJwtHeader(BaseHeaderReqWrapper request) {
         String userCode = getUserCode(request);
         LoggerUtils.info(JwtTokenAuthentication.class,"setJwtHeader  "+userCode);
         if (!StringUtils.isEmpty(userCode)) {

@@ -11,7 +11,7 @@ import java.io.*;
  * @author:闵豪
  * @time:18-8-8 下午5:19
  */
-public class EhiHttpServletResponseWrapper extends HttpServletResponseWrapper {
+public class BaseHttpServletResponseWrapper extends HttpServletResponseWrapper {
 
     /**
      * 我们的分支流
@@ -20,7 +20,7 @@ public class EhiHttpServletResponseWrapper extends HttpServletResponseWrapper {
 
     private WrapperOutputStream wrapperOutputStream;
 
-    public EhiHttpServletResponseWrapper(HttpServletResponse response) {
+    public BaseHttpServletResponseWrapper(HttpServletResponse response) {
         super(response);
         output = new ByteArrayOutputStream();
         wrapperOutputStream = new WrapperOutputStream(output);

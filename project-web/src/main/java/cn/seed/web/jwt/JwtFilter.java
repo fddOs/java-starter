@@ -6,7 +6,7 @@ import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ResultGenerator;
 import cn.seed.common.utils.LoggerUtils;
 import cn.seed.web.common.ExcludePathHandler;
-import cn.seed.web.config.EhiHeaderReqWrapper;
+import cn.seed.web.config.BaseHeaderReqWrapper;
 
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -48,7 +48,7 @@ public class JwtFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-            EhiHeaderReqWrapper contentCachingRequestWrapper = new EhiHeaderReqWrapper(httpServletRequest);
+            BaseHeaderReqWrapper contentCachingRequestWrapper = new BaseHeaderReqWrapper(httpServletRequest);
             String loginUrl = ApolloBaseConfig.getWebLoginUrl();
             if (JwtTokenAuthentication.getAuthentication(httpServletRequest)) {
                 JwtTokenAuthentication.setJwtHeader(contentCachingRequestWrapper);

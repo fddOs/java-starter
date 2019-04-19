@@ -24,7 +24,7 @@ import static org.springframework.http.HttpMethod.GET;
  * @author lixiao
  * @date 2019-02-12 14:24
  */
-public class EhiDecodeServletRequestWrapper extends HttpServletRequestWrapper {
+public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
 
     private byte[] requestBody;
 
@@ -33,7 +33,7 @@ public class EhiDecodeServletRequestWrapper extends HttpServletRequestWrapper {
     private static final String CHARSE = "UTF-8";
 
 
-    public EhiDecodeServletRequestWrapper(HttpServletRequest request) {
+    public BaseDecodeServletRequestWrapper(HttpServletRequest request) {
 
         super(request);
         //解密url的参数

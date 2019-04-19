@@ -45,7 +45,7 @@ public class DecodeFilter implements Filter {
         if (!isDecode || ExcludePathHandler.contain(request, response, ApolloBaseConfig.getDecodeExcludePath())) {
             ServletRequest requestWrapper = null;
             if (request instanceof HttpServletRequest) {
-                requestWrapper = new EhiHttpServletRequestWrapper((HttpServletRequest) request);
+                requestWrapper = new BaseHttpServletRequestWrapper((HttpServletRequest) request);
             }
             if (requestWrapper == null) {
                 chain.doFilter(request, response);
@@ -53,11 +53,12 @@ public class DecodeFilter implements Filter {
                 chain.doFilter(requestWrapper, response);
             }
         } else {
-            EhiHttpServletResponseWrapper contentCachingResponseWrapper = new EhiHttpServletResponseWrapper(
+            BaseHttpServletResponseWrapper
+                contentCachingResponseWrapper = new BaseHttpServletResponseWrapper(
                     (HttpServletResponse) response);
-            EhiDecodeServletRequestWrapper ehiDecodeServletRequestWrapper;
+            BaseDecodeServletRequestWrapper baseDecodeServletRequestWrapper;
             try {
-                ehiDecodeServletRequestWrapper = new EhiDecodeServletRequestWrapper(
+                baseDecodeServletRequestWrapper = new BaseDecodeServletRequestWrapper(
                         (HttpServletRequest) request);
             } catch (Exception e) {
                 String exceptionMsg = "";
@@ -71,10 +72,10 @@ public class DecodeFilter implements Filter {
                         (ResultCode.BAD_REQUEST, exceptionMsg)));
                 return;
             }
-            if (ehiDecodeServletRequestWrapper == null) {
+            if (baseDecodeServletRequestWrapper == null) {
                 chain.doFilter(request, contentCachingResponseWrapper);
             } else {
-                chain.doFilter(ehiDecodeServletRequestWrapper, contentCachingResponseWrapper);
+                chain.doFilter(baseDecodeServletRequestWrapper, contentCachingResponseWrapper);
             }
             String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
             responseResult((HttpServletResponse) response, respStr);

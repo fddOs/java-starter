@@ -20,10 +20,10 @@ import org.springframework.util.StreamUtils;
  * @author 方典典
  * @time 2019/3/1 16:25
  */
-public class EhiHttpServletRequestWrapper extends HttpServletRequestWrapper {
+public class BaseHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private byte[] requestBody = null;
 
-    public EhiHttpServletRequestWrapper(HttpServletRequest request) {
+    public BaseHttpServletRequestWrapper(HttpServletRequest request) {
 
         super(request);
 

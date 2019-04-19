@@ -52,8 +52,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @Configuration
 @EnableConfigurationProperties({FeignProperties.class})
-public class EhiOkHttpClient {
-    private static Logger LOGGER = LoggerFactory.getLogger(EhiOkHttpClient.class);
+public class BaseOkHttpClient {
+    private static Logger LOGGER = LoggerFactory.getLogger(BaseOkHttpClient.class);
 //    private SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
     private final String HEADER_JWT_USER_ID = "jwt-user-id";

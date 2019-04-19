@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
  * @author lixiao
  * @date 2018-12-20 13:49
  */
-public class EhiHeaderReqWrapper extends HttpServletRequestWrapper {
+public class BaseHeaderReqWrapper extends HttpServletRequestWrapper {
     private final Map<String, String> customHeaders;
 
     /**
@@ -24,7 +24,7 @@ public class EhiHeaderReqWrapper extends HttpServletRequestWrapper {
      * @param request The request to wrap
      * @throws IllegalArgumentException if the request is null
      */
-    public EhiHeaderReqWrapper(HttpServletRequest request) {
+    public BaseHeaderReqWrapper(HttpServletRequest request) {
         super(request);
         this.customHeaders = new HashMap<>();
     }

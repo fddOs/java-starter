@@ -42,11 +42,11 @@ public class SignFilter implements Filter {
         if (!isSign || ExcludePathHandler.contain(request, response, ApolloBaseConfig.getSignExcludePath())) {
             chain.doFilter(request, response);
         } else {
-            EhiHttpServletResponseWrapper contentCachingResponseWrapper;
-            if (response instanceof EhiHttpServletResponseWrapper) {
-                contentCachingResponseWrapper = (EhiHttpServletResponseWrapper) response;
+            BaseHttpServletResponseWrapper contentCachingResponseWrapper;
+            if (response instanceof BaseHttpServletResponseWrapper) {
+                contentCachingResponseWrapper = (BaseHttpServletResponseWrapper) response;
             } else {
-                contentCachingResponseWrapper = new EhiHttpServletResponseWrapper((HttpServletResponse) response);
+                contentCachingResponseWrapper = new BaseHttpServletResponseWrapper((HttpServletResponse) response);
             }
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             String requestBody = "";
