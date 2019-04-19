@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.ehai.web.JavaWebApplication
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.seed.web.JavaWebApplication

@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.ehai.common.CommonCoreApplication
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.seed.common.CommonCoreApplication
