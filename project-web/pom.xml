@@ -8,9 +8,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>spring-web</artifactId>
+    <artifactId>project-web</artifactId>
     <packaging>jar</packaging>
-    <name>spring-web</name>
+    <name>project-web</name>
     <description>Java project for Java Web</description>
     <dependencies>
         <dependency>

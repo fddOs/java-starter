@@ -8,10 +8,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cn.seed</groupId>
-    <artifactId>ehi-email</artifactId>
+    <artifactId>utils-email</artifactId>
     <packaging>jar</packaging>
-    <name>ehi-email</name>
+    <name>utils-email</name>
     <description>EHI Email for Spring Boot</description>
 
 </project>

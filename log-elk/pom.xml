@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>cn.seed</groupId>
-            <artifactId>ehi-email</artifactId>
+            <artifactId>utils-email</artifactId>
         </dependency>
 
     </dependencies>

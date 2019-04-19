@@ -15,10 +15,10 @@
         <module>log-service</module>
         <module>log-elk</module>
         <module>mybatis-druid</module>
-        <module>spring-web</module>
+        <module>project-web</module>
         <module>rpc-feign</module>
         <module>util-redis-lock</module>
-        <module>ehi-email</module>
+        <module>utils-email</module>
         <module>web-authority</module>
     </modules>
 
@@ -180,12 +180,12 @@
             </dependency>
             <dependency>
                 <groupId>cn.seed</groupId>
-                <artifactId>spring-web</artifactId>
+                <artifactId>project-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.seed</groupId>
-                <artifactId>ehi-email</artifactId>
+                <artifactId>utils-email</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
