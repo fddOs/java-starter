@@ -31,11 +31,13 @@ import java.util.TimeZone;
 public class FeignConfig {
     @Autowired
     private FeignProperties feignProperties;
+    @Autowired
+    private FeignRequestInterceptor feignRequestInterceptor;
 
     @Bean
     public Feign.Builder create(okhttp3.OkHttpClient okHttpClient, Tracer tracer) {
         TracingClient tracingClient = new TracingClient(new OkHttpClient(okHttpClient), tracer);
-        return Feign.builder()
+        return Feign.builder().requestInterceptor(feignRequestInterceptor)
                 .client(tracingClient).retryer(Retryer.NEVER_RETRY)
                 .errorDecoder(new ErrorExceptionDecoder())
                 .encoder(new JacksonEncoder(new ObjectMapper().setSerializationInclusion(JsonInclude.Include
@@ -55,7 +57,7 @@ public class FeignConfig {
      * @author xianglong.chen
      * @time 2019/1/7 10:46
      */
-    private static ObjectMapper createObjectMapper(){
+    private static ObjectMapper createObjectMapper() {
         return new ObjectMapper()
                 .setTimeZone(TimeZone.getTimeZone("GMT+8:00"))
                 .setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))
