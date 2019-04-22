@@ -1,21 +1,17 @@
-package cn.ehai.rpc.feign;
+package cn.seed.rpc.feign;
 
-import cn.ehai.common.core.ResultCode;
-import cn.ehai.common.core.ServiceException;
-import cn.ehai.common.utils.LoggerUtils;
+import cn.seed.common.core.ResultCode;
+import cn.seed.common.core.ServiceException;
+import cn.seed.common.utils.LoggerUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
