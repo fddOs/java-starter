@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.ehai.log.JavaLogApplication
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.seed.log.JavaLogApplication

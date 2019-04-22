@@ -1,4 +1,4 @@
-package cn.ehai.javautils;
+package cn.seed.javautils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

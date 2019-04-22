@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cn.ehai</groupId>
+    <groupId>cn.seed</groupId>
     <artifactId>java-starter</artifactId>
-    <version>0.7.1-SNAPSHOT</version>
+    <version>0.7.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>java-starter</name>
@@ -15,10 +15,10 @@
         <module>log-service</module>
         <module>log-elk</module>
         <module>mybatis-druid</module>
-        <module>spring-web</module>
+        <module>project-web</module>
         <module>rpc-feign</module>
         <module>util-redis-lock</module>
-        <module>ehi-email</module>
+        <module>utils-email</module>
         <module>web-authority</module>
     </modules>
 
@@ -149,43 +149,43 @@
                 <version>1.75.0</version>
             </dependency>
             <dependency>
-                <groupId>cn.ehai</groupId>
+                <groupId>cn.seed</groupId>
                 <artifactId>common-utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.ehai</groupId>
+                <groupId>cn.seed</groupId>
                 <artifactId>common-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.ehai</groupId>
+                <groupId>cn.seed</groupId>
                 <artifactId>mybatis-druid</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.ehai</groupId>
+                <groupId>cn.seed</groupId>
                 <artifactId>log-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.ehai</groupId>
+                <groupId>cn.seed</groupId>
                 <artifactId>log-elk</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.ehai</groupId>
+                <groupId>cn.seed</groupId>
                 <artifactId>rpc-feign</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.ehai</groupId>
-                <artifactId>spring-web</artifactId>
+                <groupId>cn.seed</groupId>
+                <artifactId>project-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.ehai</groupId>
-                <artifactId>ehi-email</artifactId>
+                <groupId>cn.seed</groupId>
+                <artifactId>utils-email</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

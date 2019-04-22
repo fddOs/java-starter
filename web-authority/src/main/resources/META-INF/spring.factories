@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.ehai.authority.WebAuthorityApplication
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.seed.authority.WebAuthorityApplication

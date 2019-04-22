@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>java-starter</artifactId>
-        <groupId>cn.ehai</groupId>
-        <version>0.7.1-SNAPSHOT</version>
+        <groupId>cn.seed</groupId>
+        <version>0.7.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.ehai</groupId>
+            <groupId>cn.seed</groupId>
             <artifactId>rpc-feign</artifactId>
         </dependency>
         <dependency>
