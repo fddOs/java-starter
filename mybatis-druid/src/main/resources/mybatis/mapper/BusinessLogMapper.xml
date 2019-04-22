@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BusinessLogMapper">
+  <resultMap id="BaseResultMap" type="BusinessLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="action_type" jdbcType="INTEGER" property="actionType" />
+    <result column="opr_no" jdbcType="VARCHAR" property="oprNo" />
+    <result column="refer_id" jdbcType="VARCHAR" property="referId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="opr_table_name" jdbcType="VARCHAR" property="oprTableName" />
+    <result column="sys_name" jdbcType="VARCHAR" property="sysName" />
+    <result column="action_datetime" jdbcType="TIMESTAMP" property="actionDatetime" />
+    <result column="action_name" jdbcType="VARCHAR" property="actionName" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="extend_content" jdbcType="VARCHAR" property="extendContent" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    delete from business_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="BusinessLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into business_log (action_type, opr_no, refer_id,
+    user_id, trace_id, opr_table_name,extend_content,sys_name)
+    values (#{actionType,jdbcType=INTEGER}, #{oprNo,jdbcType=VARCHAR}, #{referId,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{traceId,jdbcType=VARCHAR}, #{oprTableName,jdbcType=VARCHAR},
+      #{extendContent,jdbcType=VARCHAR}, #{sysName,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="BusinessLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    update business_log
+    set action_type = #{actionType,jdbcType=INTEGER},
+      opr_no = #{oprNo,jdbcType=VARCHAR},
+      refer_id = #{referId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      opr_table_name = #{oprTableName,jdbcType=VARCHAR},
+      action_datetime = #{actionDatetime,jdbcType=TIMESTAMP},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      extend_content = #{extendContent,jdbcType=LONGVARCHAR},
+      sys_name = #{sysName}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    select id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime, 
+    gmt_create, gmt_modified, extend_content
+    from business_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    select id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime, 
+    gmt_create, gmt_modified, extend_content
+    from business_log
+  </select>
+  <select id="selectByOrderNo" resultMap="BaseResultMap">
+    select  bl.id, bl.action_type, bl.opr_no, bl.refer_id, bl.user_id, bl.trace_id, bl.opr_table_name,
+    bl.action_datetime,
+    bl.extend_content,ai.action_name from business_log bl left join action_item ai on bl.action_type = ai.id
+     where refer_id = #{orderNo}
+  </select>
+  <select id="selectByOrderNoSys" resultMap="BaseResultMap">
+    select  bl.id, bl.action_type, bl.opr_no, bl.refer_id, bl.user_id, bl.trace_id, bl.opr_table_name,
+    bl.action_datetime,
+    bl.extend_content,ai.action_name from business_log bl left join action_item ai on bl.action_type = ai.id
+    where refer_id = #{orderNo} and sys_name = #{sysName}
+  </select>
+  <select id="selectByOrderNoAction" resultMap="BaseResultMap">
+     select  bl.id, bl.action_type, bl.opr_no, bl.refer_id, bl.user_id, bl.trace_id, bl.opr_table_name,
+    bl.action_datetime,
+    bl.extend_content,ai.action_name from business_log bl left join action_item ai on bl.action_type = ai.id where refer_id = #{orderNo}  and action_type = #{actionType}
+  </select>
+</mapper>
