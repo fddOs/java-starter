@@ -29,7 +29,7 @@ public class JwtTokenAuthentication {
     private static String SECRET = "AgQGCAoMDfASFAIEBggKDA4QETAdBAYICgwOE52UAgQ=";
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String HEADER_STRING = "Authorization";
-    private static final String SYSTEM_NAME = ProjectInfoUtils.getProjectContext();
+    private static final String SYSTEM_NAME = ProjectInfoUtils.PROJECT_CONTEXT;
     private static final String JWT_USER_ID = "sub";
     private static final String HEADER_JWT_USER_ID = "jwt-user-id";
     private static final String JWT_HEADER = "x-seed-sign";

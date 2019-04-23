@@ -16,7 +16,7 @@ public class EHIExceptionMsgWrapper {
     }
 
     public EHIExceptionMsgWrapper(String className, String methodName, Object[] objs, String exceptionMsg) {
-        this.projectContext = ProjectInfoUtils.getProjectContext();
+        this.projectContext = ProjectInfoUtils.PROJECT_CONTEXT;
         this.className = className;
         this.methodName = methodName;
         this.objs = objs;

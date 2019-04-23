@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="ActionLogMapper">
-    <insert id="insertActionLog" parameterType="ActionLog">
+<mapper namespace="cn.seed.log.dao.ActionLogMapper">
+    <insert id="insertActionLog" parameterType="cn.seed.log.entity.ActionLog">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -14,7 +14,7 @@
         #{referId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{isSuccess,jdbcType=BIT},
         #{url,jdbcType=VARCHAR}, #{methodName,jdbcType=VARCHAR}, #{traceId,jdbcType=VARCHAR})
     </insert>
-    <insert id="insertActionLogCommon" parameterType="ActionLog">
+    <insert id="insertActionLogCommon" parameterType="cn.seed.log.entity.ActionLog">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -28,11 +28,11 @@
     <select id="selectBySql" resultType="map">
     ${sql}
     </select>
-    <select id="selectByBusinessLog" resultType="BusinessLogValue">
-      SELECT original_value originalValue ,new_value newValue,opr_table_name oprTableName,trace_id traceId
-      FROM `action_log_common` WHERE trace_id = #{traceId} and opr_table_name IN
-      <foreach collection = "oprTableNameList" item="item" index = "index" open="(" separator="," close=")">
-          #{item}
-      </foreach>
+    <select id="selectByBusinessLog" resultType="cn.seed.log.entity.BusinessLogValue">
+        SELECT original_value originalValue ,new_value newValue,opr_table_name oprTableName,trace_id traceId
+        FROM `action_log_common` WHERE trace_id = #{traceId} and opr_table_name IN
+        <foreach collection="oprTableNameList" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 </mapper>

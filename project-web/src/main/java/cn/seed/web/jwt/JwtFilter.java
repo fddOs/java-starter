@@ -42,7 +42,7 @@ public class JwtFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        LoggerUtils.info(JwtFilter.class,"doFilter  "+((HttpServletRequest) request).getServletPath());
+//        LoggerUtils.info(JwtFilter.class,"doFilter  "+((HttpServletRequest) request).getServletPath());
         if (!Boolean.valueOf(ApolloBaseConfig.getJwtEnable()) || ExcludePathHandler.contain(request,
                 response, ApolloBaseConfig.getJwtExcludePath())) {
             chain.doFilter(request, response);

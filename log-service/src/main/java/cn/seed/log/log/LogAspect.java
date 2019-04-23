@@ -12,6 +12,7 @@ import cn.seed.log.entity.ActionLog;
 import cn.seed.log.entity.BusinessLogValue;
 import cn.seed.log.log.business.BusinessTableUtils;
 import cn.seed.log.service.ActionLogService;
+import cn.seed.log.service.BusinessService;
 import cn.seed.log.service.impl.ActionLogServiceAsync;
 import com.alibaba.druid.proxy.jdbc.JdbcParameter;
 import com.alibaba.druid.proxy.jdbc.PreparedStatementProxy;
@@ -24,6 +25,7 @@ import com.mysql.jdbc.JDBC4PreparedStatement;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
@@ -35,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -63,7 +66,7 @@ public class LogAspect {
     @Autowired
     private Tracer tracer;
     @Autowired
-    private BusinessLogValueMapper businessLogValueMapper;
+    private BusinessService businessService;
 
     /**
      * @param pjp void
@@ -72,9 +75,9 @@ public class LogAspect {
      * @Description:获取业务日志参数
      * @exception:
      * @author: 方典典
-     * @time:2017年12月18日 下午3:01:34
+     * @time:2017年12月18日 下午3:01:34 cn.ehai.report.api.service.impl.ReportServiceSettingServiceImpl
      */
-    @Around(value = "execution(* (cn.*.*.*.service.impl.* && !cn.seed.*.actionlog.service.impl.*).*(..)))")
+    @Around(value = "execution(* (cn.*.*.*.service.impl.* && !cn.seed.log.service.impl.*).*(..)))")
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
         Long key = Thread.currentThread().getId();
         ActionLog actionLog = actionLogMap.get(key);
@@ -184,11 +187,6 @@ public class LogAspect {
         return map;
     }
 
-    @Around(value = "execution(* com.alibaba.druid.filter.FilterChainImpl.connection_prepareStatement(..))")
-    public Object druidInterceptNew1(ProceedingJoinPoint pjp) throws Throwable {
-        return pjp.proceed();
-    }
-
     /**
      * @Description:拦截处理SQL
      * @params:[pjp]
@@ -277,13 +275,9 @@ public class LogAspect {
             if (isBusiness(tableList)) {
                 //记录business_log_value
                 BusinessLogValue
-                    businessLogValue = new BusinessLogValue(requestTraceId(), tables, originalValue,
+                        businessLogValue = new BusinessLogValue(requestTraceId(), tables, originalValue,
                         newValue, actionLog.getActionDatetime(), actionLog.getOprNo());
-                try {
-                    businessLogValueMapper.insertBusinessLogValue(businessLogValue);
-                } catch (Exception e) {
-                    LoggerUtils.error(getClass(), new Object[]{}, e);
-                }
+                businessService.insertBusinessLogValue(businessLogValue);
             } else {
                 actionLog.setNewValue(newValue);
                 actionLog.setOriginalValue(originalValue);
@@ -294,11 +288,7 @@ public class LogAspect {
             //记录business_log_value
             BusinessLogValue businessLogValue = new BusinessLogValue(requestTraceId(), tables, originalValue,
                     newValue, actionLog.getActionDatetime(), actionLog.getOprNo());
-            try {
-                businessLogValueMapper.insertBusinessLogValue(businessLogValue);
-            } catch (Exception e) {
-                LoggerUtils.error(getClass(), new Object[]{}, e);
-            }
+            businessService.insertBusinessLogValue(businessLogValue);
         }
 //        if (!closeCommonServiceLog) {
 //            actionLogServiceAsync.insertServiceLogCommonAsync(actionLog);

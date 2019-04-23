@@ -140,7 +140,7 @@ public class ApolloBaseConfig {
      * @time 2019/2/28 17:30
      */
     private static String getCommonConfig(String key, String defaultValue) {
-        String prefix = ProjectInfoUtils.getProjectContext() + ".";
+        String prefix = ProjectInfoUtils.PROJECT_CONTEXT + ".";
         String value = aesDecrypt(commonConfig, prefix + key, "");
         if (StringUtils.isEmpty(value)) {
             value = aesDecrypt(commonConfig, key, defaultValue);

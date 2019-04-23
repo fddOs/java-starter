@@ -30,7 +30,7 @@ public class SqlSessionFactoryUtils {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
         factory.setDataSource(dataSource);
-        factory.setTypeAliasesPackage(ProjectInfoUtils.getBasePackage() + ".entity,cn.seed.log.entity");
+        factory.setTypeAliasesPackage(ProjectInfoUtils.BASE_PACKAGE + ".entity,cn.seed.log.entity");
         factory.setConfigLocation(resolver.getResources("classpath*:mybatis/mybatis-config.xml")[0]);
         //添加插件
         SqlPlugins.INSTANCE.addSqlIntercepter(SqlSessionFactoryUtils.pageHelper());

@@ -121,7 +121,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             }
             String responseTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             RequestLog requestLog = new RequestLog(requestId, requestTime, true,
-                    ProjectInfoUtils.getProjectContext(), requestUrl, getRequestBody(wrapperRequest),
+                    ProjectInfoUtils.PROJECT_CONTEXT, requestUrl, getRequestBody(wrapperRequest),
                     request.getMethod(), headerMap);
             Map<String, String> responseHeaderMap = HeaderUtils.responseHeaderHandler(response);
             responseHeaderMap.put("response.code", String.valueOf(httpStatus));

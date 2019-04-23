@@ -8,5 +8,11 @@ public interface BusinessLogValueMapper {
 
     int insertList(List<BusinessLogValue> record);
 
+    /**
+     * 插入BusinessLogValue日志
+     *
+     * @param record
+     * @return
+     */
     int insertBusinessLogValue(BusinessLogValue record);
 }

@@ -125,7 +125,7 @@ public class BusLogAspect {
         businessLog.setReferId(handleString(referId));
         businessLog.setTraceId(handleString(traceId));
         businessLog.setUserId(handleString(userId));
-        businessLog.setSysName(handleString(ProjectInfoUtils.getProjectContext()));
+        businessLog.setSysName(handleString(ProjectInfoUtils.PROJECT_CONTEXT));
         return businessLog;
     }
 

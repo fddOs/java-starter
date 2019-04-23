@@ -1,8 +1,8 @@
 package ${basePackage}.${businessName}.controller;
 
-import Result;
-import ResultList;
-import ResultGenerator;
+import cn.seed.common.core.Result;
+import cn.seed.common.core.ResultList;
+import cn.seed.common.core.ResultGenerator;
 import ${basePackage}.entity.${modelNameUpperCamel};
 import ${basePackage}.${businessName}.service.${modelNameUpperCamel}Service;
 import org.springframework.web.bind.annotation.*;

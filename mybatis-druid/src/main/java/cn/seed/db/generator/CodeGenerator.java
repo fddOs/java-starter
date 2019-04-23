@@ -44,12 +44,12 @@ public class CodeGenerator {
     private static String JDBC_PASSWORD;
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 
-    public static final String BASE_PACKAGE = ProjectInfoUtils.getProjectPackage();// Model所在包
+    public static final String BASE_PACKAGE = ProjectInfoUtils.BASE_PACKAGE;// Model所在包
     public static String BUSINESS_NAME;// Model所在包
     // Model所在包
-    public static final String MODEL_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".entity";
+    public static final String MODEL_PACKAGE = ProjectInfoUtils.BASE_PACKAGE + ".entity";
     // Mapper所在包
-    public static final String MAPPER_PACKAGE = ProjectInfoUtils.getProjectPackage() + ".dao.master";
+    public static final String MAPPER_PACKAGE = ProjectInfoUtils.BASE_PACKAGE + ".dao.master";
 
     private static final String PROJECT_PATH = System.getProperty("user.dir");// 项目在硬盘上的基础路径
 
@@ -195,7 +195,7 @@ public class CodeGenerator {
          * <property name="suppressDate" value="true"/>
          */
         CommentGeneratorConfiguration commentGeneratorConfiguration = new CommentGeneratorConfiguration();
-        commentGeneratorConfiguration.setConfigurationType("MybatisGenerarionConfigurer");
+        commentGeneratorConfiguration.setConfigurationType("cn.seed.db.generator.MybatisGenerarionConfigurer");
         // commentGeneratorConfiguration.addProperty("suppressAllComments", "true");
         commentGeneratorConfiguration.addProperty("suppressDate", "true");
         commentGeneratorConfiguration.addProperty("addRemarkComments", "true");

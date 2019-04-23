@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -15,6 +16,9 @@ import java.util.Map;
  */
 public class ProjectInfoUtils {
     private static Map map;
+    private static final String CLASS_LOADER_NAME = "java.lang.ClassLoader";
+    public static final String BASE_PACKAGE;
+    public static final String PROJECT_CONTEXT;
 
     static {
         Yaml yaml = new Yaml();
@@ -24,22 +28,28 @@ public class ProjectInfoUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        BASE_PACKAGE = getBasePackage();
+        PROJECT_CONTEXT = getProjectContext();
     }
 
-    public static String getBasePackage() {
-        String basePackage = (String) ((Map) map.get("project")).get("base-package");
-        if(StringUtils.isEmpty(basePackage)){
-            throw new RuntimeException("缺少配置：project.base-package");
+    /**
+     * 获取包名前缀
+     *
+     * @param
+     * @return java.lang.String
+     * @author 方典典
+     * @time 2019/4/22 15:58
+     */
+    private static String getBasePackagePrefix() {
+        Map projectMap = (Map) map.get("project");
+        if (projectMap == null) {
+            return "cn.ehai";
         }
-        return basePackage;
-    }
-
-    public static String getProjectContext() {
-        String projectContext = (String) ((Map) map.get("project")).get("context");
-        if(StringUtils.isEmpty(projectContext)){
-            throw new RuntimeException("缺少配置：project.context");
+        String basePackagePrefix = (String) projectMap.get("base-package-prefix");
+        if (StringUtils.isEmpty(basePackagePrefix)) {
+            return "cn.ehai";
         }
-        return projectContext;
+        return basePackagePrefix;
     }
 
     /**
@@ -50,27 +60,45 @@ public class ProjectInfoUtils {
      * @author: 方典典
      * @time:2018/11/9 16:45
      */
-    public static String getProjectPackage() {
-        String className = getStackTopClassName();
-        return className.substring(0, className.indexOf(".", 8));
+    private static String getBasePackage() {
+        ClassLoader classLoader = ProjectInfoUtils.class.getClassLoader();
+        Class loadClass = classLoader.getClass();
+        while (!CLASS_LOADER_NAME.equals(loadClass.getName())) {
+            loadClass = loadClass.getSuperclass();
+        }
+        Package[] packages;
+        try {
+            Method getPackages = loadClass.getDeclaredMethod("getPackages");
+            getPackages.setAccessible(true);
+            packages = (Package[]) getPackages.invoke(classLoader);
+        } catch (Exception e) {
+            throw new RuntimeException("获取项目包名失败");
+        }
+        for (Package p : packages) {
+            if (p.getName().startsWith(getBasePackagePrefix())) {
+                String basePackage = p.getName();
+                return basePackage.substring(0, basePackage.indexOf(".", 8));
+            }
+        }
+        throw new RuntimeException("获取项目包名失败");
     }
 
     /**
+     * 获取项目名称
+     *
      * @param
      * @return java.lang.String
-     * @Description:获取栈顶类名
-     * @exception:
-     * @author: 方典典
-     * @time:2018/11/9 9:50
+     * @author 方典典
+     * @time 2019/4/22 15:59
      */
-    public static String getStackTopClassName() {
-        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-        for (int i = elements.length - 1; i >= 0; i--) {
-            String className = elements[i].getClassName();
-            if (className.startsWith("cn.seed")) {
-                return className;
-            }
+    private static String getProjectContext() {
+        try {
+            String path = ProjectInfoUtils.class.getResource("/").getPath();
+            String[] projectURL = path.split("/");
+            return projectURL[projectURL.length - 3];
+        } catch (Exception e) {
+            throw new RuntimeException("获取项目名称失败");
         }
-        throw new RuntimeException("获取栈顶类名失败，请联系管理员");
     }
+
 }

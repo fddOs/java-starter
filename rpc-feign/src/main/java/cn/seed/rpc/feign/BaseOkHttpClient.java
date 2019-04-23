@@ -268,7 +268,7 @@ public class BaseOkHttpClient {
             responseBody = null;
         }
         RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
-                .getProjectContext(), requestUrl, requestBodyJSON, request.method(),
+                .PROJECT_CONTEXT, requestUrl, requestBodyJSON, request.method(),
                 requestHeaderMap);
 
         ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, exceptionMsg, totalTime,

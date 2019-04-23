@@ -1,7 +1,4 @@
 package ${basePackage}.${businessName}.service;
-import ${basePackage}.entity.${modelNameUpperCamel};
-import Service;
-
 
 /**
  * ${swaagerRemark}

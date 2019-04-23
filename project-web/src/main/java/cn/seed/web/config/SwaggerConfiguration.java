@@ -21,7 +21,7 @@ public class SwaggerConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public Docket createApi() {
         return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
-                .apis(RequestHandlerSelectors.basePackage(ProjectInfoUtils.getBasePackage())).paths
+                .apis(RequestHandlerSelectors.basePackage(ProjectInfoUtils.BASE_PACKAGE)).paths
                         (PathSelectors.any()).build();
     }
 
@@ -34,7 +34,7 @@ public class SwaggerConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private ApiInfo apiInfo() {
-        String basePackage = ProjectInfoUtils.getBasePackage();
+        String basePackage = ProjectInfoUtils.BASE_PACKAGE;
         String service = basePackage.substring(basePackage.indexOf(".", 3) + 1) + "-service-api";
         return new ApiInfoBuilder().title(service).description(service).contact(basePackage).version("1.0").build();
     }
