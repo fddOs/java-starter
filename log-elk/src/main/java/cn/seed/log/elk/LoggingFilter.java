@@ -75,7 +75,7 @@ public class LoggingFilter extends OncePerRequestFilter {
                 e = (Exception) e.getCause();
             }
             if (e instanceof ServiceException) {
-                responseResult(wrapperResponse, ResultGenerator.genFailResult(((ServiceException) e).getCode(),
+                responseResult(wrapperResponse, ResultGenerator.genFailResult(((ServiceException) e).getResultCode(),
                         e.getMessage()));
                 return;
             }

@@ -24,6 +24,9 @@ public class ResultGenerator {
 	public static <T> Result<T> genFailResult(ResultCode errorCode,String message) {
 		return result(null, errorCode, message);
 	}
+	public static <T> Result<T> genFailResult(int errorCode,String message) {
+		return result(null, errorCode, message);
+	}
 	public static <T> Result<T> genFailResult(String message) {
 		return result(null, ResultCode.FAIL, message);
 	}
