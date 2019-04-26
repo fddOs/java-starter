@@ -77,6 +77,10 @@ public class ProjectInfoUtils {
         for (Package p : packages) {
             if (p.getName().startsWith(getBasePackagePrefix())) {
                 String basePackage = p.getName();
+                int lastChar = basePackage.indexOf(".", 8);
+                if (lastChar < 0) {
+                    return basePackage;
+                }
                 return basePackage.substring(0, basePackage.indexOf(".", 8));
             }
         }
