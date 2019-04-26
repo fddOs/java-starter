@@ -11,27 +11,30 @@ public class ServiceException extends RuntimeException {
 	 * @time:2018年1月9日 上午11:12:06
 	 */
 	private static final long serialVersionUID = 1L;
-	private ResultCode code = ResultCode.FAIL;
+	private int resultCode = ResultCode.FAIL.getCode();
 
 	public ServiceException() {
 	}
 
 	public ServiceException(ResultCode code, String message) {
 		super(message);
-		this.code = code;
+		this.resultCode = code.getCode();
 	}
 
+	public ServiceException(int code, String message) {
+		super(message);
+		this.resultCode = code;
+	}
 	public ServiceException(ResultCode code, String message, Throwable cause) {
 		super(message, cause);
-		this.code = code;
+		this.resultCode = code.getCode();
 	}
 
-	public ResultCode getCode() {
-		return code;
+	public int getResultCode() {
+		return resultCode;
 	}
 
-	public void setCode(ResultCode code) {
-		this.code = code;
+	public void setResultCode(int resultCode) {
+		this.resultCode = resultCode;
 	}
-
 }
