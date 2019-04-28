@@ -17,7 +17,7 @@ import java.util.Map;
  * @time:2018/11/7 10:35
  */
 public class ProjectInfoUtils {
-    private static PropertySource propertySource;
+    public static PropertySource applicationProperty;
     private static final String CLASS_LOADER_NAME = "java.lang.ClassLoader";
     public static final String BASE_PACKAGE;
     public static final String DEFAULT_BASE_PACKAGE_PREFIX = "cn.ehai";
@@ -26,7 +26,7 @@ public class ProjectInfoUtils {
     static {
         YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
         try {
-            propertySource = yamlPropertySourceLoader.load("application.yml", new
+            applicationProperty = yamlPropertySourceLoader.load("application.yml", new
                     PathMatchingResourcePatternResolver().getResource("classpath:application.yml"), null);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -44,7 +44,7 @@ public class ProjectInfoUtils {
      * @time 2019/4/22 15:58
      */
     private static String getBasePackagePrefix() {
-        String basePackagePrefix = (String) propertySource.getProperty("project.base-package-prefix");
+        String basePackagePrefix = (String) applicationProperty.getProperty("project.base-package-prefix");
         if (StringUtils.isEmpty(basePackagePrefix)) {
             return DEFAULT_BASE_PACKAGE_PREFIX;
         }
