@@ -1,5 +1,7 @@
 package cn.seed.common.utils;
 
+import org.springframework.boot.env.YamlPropertySourceLoader;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.StringUtils;
@@ -15,16 +17,17 @@ import java.util.Map;
  * @time:2018/11/7 10:35
  */
 public class ProjectInfoUtils {
-    private static Map map;
+    private static PropertySource propertySource;
     private static final String CLASS_LOADER_NAME = "java.lang.ClassLoader";
     public static final String BASE_PACKAGE;
+    public static final String DEFAULT_BASE_PACKAGE_PREFIX = "cn.ehai";
     public static final String PROJECT_CONTEXT;
 
     static {
-        Yaml yaml = new Yaml();
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
         try {
-            map = yaml.loadAs(resolver.getResource("classpath:application.yml").getInputStream(), Map.class);
+            propertySource = yamlPropertySourceLoader.load("application.yml", new
+                    PathMatchingResourcePatternResolver().getResource("classpath:application.yml"), null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -41,13 +44,9 @@ public class ProjectInfoUtils {
      * @time 2019/4/22 15:58
      */
     private static String getBasePackagePrefix() {
-        Map projectMap = (Map) map.get("project");
-        if (projectMap == null) {
-            return "cn.ehai";
-        }
-        String basePackagePrefix = (String) projectMap.get("base-package-prefix");
+        String basePackagePrefix = (String) propertySource.getProperty("project.base-package-prefix");
         if (StringUtils.isEmpty(basePackagePrefix)) {
-            return "cn.ehai";
+            return DEFAULT_BASE_PACKAGE_PREFIX;
         }
         return basePackagePrefix;
     }
