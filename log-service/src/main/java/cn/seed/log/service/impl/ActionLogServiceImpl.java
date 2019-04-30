@@ -3,7 +3,7 @@ package cn.seed.log.service.impl;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.LoggerUtils;
-import cn.seed.log.dao.ActionLogMapper;
+import cn.seed.log.dao.master.ActionLogMapper;
 import cn.seed.log.entity.ActionLog;
 import cn.seed.log.entity.BusinessLogValue;
 import cn.seed.log.service.ActionLogService;

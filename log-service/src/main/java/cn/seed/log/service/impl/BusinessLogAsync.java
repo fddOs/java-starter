@@ -1,7 +1,7 @@
 package cn.seed.log.service.impl;
 
 import cn.seed.common.utils.LoggerUtils;
-import cn.seed.log.dao.BusinessLogValueMapper;
+import cn.seed.log.dao.master.BusinessLogValueMapper;
 import cn.seed.log.entity.BusinessLogValue;
 import cn.seed.log.service.ActionLogService;
 import java.util.List;

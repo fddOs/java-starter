@@ -1,8 +1,8 @@
 package cn.seed.common.core;
 
-import cn.seed.common.utils.AESUtils;
 import cn.seed.common.utils.LoggerUtils;
 import cn.seed.common.utils.ProjectInfoUtils;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.LoggerFactory;
@@ -11,11 +11,8 @@ import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
-import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import org.springframework.util.StringUtils;
 
 /**
@@ -24,13 +21,8 @@ import org.springframework.util.StringUtils;
  * @time:2018年5月22日 下午5:26:58
  */
 @Component
-@EnableApolloConfig(value = {"application", "EHI.JavaCommon"})
 public class ApolloBaseConfig {
 
-    @ApolloConfig("application")
-    private static Config application;
-    @ApolloConfig("EHI.JavaCommon")
-    private static Config commonConfig;
     private LoggingSystem loggingSystem;
 
     public static String getPlatForm() {
@@ -76,6 +68,7 @@ public class ApolloBaseConfig {
     public static String getDecodeExcludePath() {
         return getCommonConfig("decodeExcludePath", "");
     }
+
     public static String getAuthUrl() {
         return getCommonConfig("authUrl", null);
     }
@@ -141,45 +134,11 @@ public class ApolloBaseConfig {
      */
     private static String getCommonConfig(String key, String defaultValue) {
         String prefix = ProjectInfoUtils.PROJECT_CONTEXT + ".";
-        String value = aesDecrypt(commonConfig, prefix + key, "");
+        String value = ApolloConfigWrapper.get(ProjectInfoUtils.PROJECT_APOLLO_COMMON_NAMESPACE, prefix + key, "");
         if (StringUtils.isEmpty(value)) {
-            value = aesDecrypt(commonConfig, key, defaultValue);
+            value = ApolloConfigWrapper.get(ProjectInfoUtils.PROJECT_APOLLO_COMMON_NAMESPACE, key, defaultValue);
         }
         return value;
-    }
-
-    /**
-     * 解密Apollo配置
-     *
-     * @param config
-     * @param key
-     * @param defaultValue
-     * @return java.lang.String
-     * @author 方典典
-     * @time 2019/2/28 17:07
-     */
-    private static String aesDecrypt(Config config, String key, String defaultValue) {
-        if (StringUtils.isEmpty(key)) {
-            throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请求失败:获取配置key为空，请稍后重试");
-        }
-        String str = config.getProperty(key, defaultValue);
-        try {
-            str = AESUtils.aesDecryptString(str);
-        } catch (Exception e) {
-            //IGNORE
-        }
-        return str;
-    }
-
-    /**
-     * 根据key获取配置
-     *
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    public static String get(String key, String defaultValue) {
-        return aesDecrypt(application, key, defaultValue);
     }
 
 }

@@ -1,6 +1,6 @@
 package ${basePackage}.${businessName}.service.impl;
 
-import ${basePackage}.dao.master.${modelNameUpperCamel}Mapper;
+import ${basePackage}.dao.${dbType}.${modelNameUpperCamel}Mapper;
 import ${basePackage}.entity.${modelNameUpperCamel};
 import ${basePackage}.${businessName}.service.${modelNameUpperCamel}Service;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package cn.seed.log.dao;
+package cn.seed.log.dao.master;
 
 import cn.seed.log.entity.BusinessLog;
 import java.util.List;

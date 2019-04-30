@@ -9,6 +9,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.rmi.ServerException;
 import java.util.Map;
 
 /**
@@ -22,6 +23,13 @@ public class ProjectInfoUtils {
     public static final String BASE_PACKAGE;
     public static final String DEFAULT_BASE_PACKAGE_PREFIX = "cn.ehai";
     public static final String PROJECT_CONTEXT;
+    public static final String PROJECT_APOLLO_COMMON_NAMESPACE;
+    public static final String PROJECT_APOLLO_DB_NAMESPACE;
+    public static final String PROJECT_APOLLO_DB_KEY;
+    public static final boolean PROJECT_APOLLO_ARCHIVE_ENABLED;
+    public static final String PROJECT_APOLLO_ARCHIVE_DB_KEY;
+    public static final int PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS;
+    public static final int PROJECT_FEIGN_READ_TIMEOUT_MILLIS;
 
     static {
         YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
@@ -33,6 +41,13 @@ public class ProjectInfoUtils {
         }
         BASE_PACKAGE = getBasePackage();
         PROJECT_CONTEXT = getProjectContext();
+        PROJECT_APOLLO_COMMON_NAMESPACE = getProjectCommonNamespace();
+        PROJECT_APOLLO_DB_NAMESPACE = getProjectDBNamespace();
+        PROJECT_APOLLO_DB_KEY = getProjectDBKey();
+        PROJECT_APOLLO_ARCHIVE_ENABLED = getProjectArchiveEnabled();
+        PROJECT_APOLLO_ARCHIVE_DB_KEY = getProjectArchiveDBKey();
+        PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS = getProjectFeignConnectTimeoutMillis();
+        PROJECT_FEIGN_READ_TIMEOUT_MILLIS = getProjectFeignReadTimeoutMillis();
     }
 
     /**
@@ -102,6 +117,111 @@ public class ProjectInfoUtils {
         } catch (Exception e) {
             throw new RuntimeException("获取项目名称失败");
         }
+    }
+
+    /**
+     * 获取项目所在的公共配置 不配置默认为EHI.JavaCommon
+     *
+     * @return java.lang.String
+     * @author 方典典
+     * @time 2019/4/29 16:42
+     */
+    private static String getProjectCommonNamespace() {
+        String commonNamespace = (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo" +
+                ".common-namespace");
+        if (StringUtils.isEmpty(commonNamespace)) {
+            return "EHI.JavaCommon";
+        }
+        return commonNamespace;
+    }
+
+    /**
+     * 获取项目所在的DB配置 不配置默认为EHI.DBConfig
+     *
+     * @return java.lang.String
+     * @author 方典典
+     * @time 2019/4/29 16:43
+     */
+    private static String getProjectDBNamespace() {
+        String dbNamespace = (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo.db-namespace");
+        if (StringUtils.isEmpty(dbNamespace)) {
+            return "EHI.DBConfig";
+        }
+        return dbNamespace;
+    }
+
+    /**
+     * 获取项目数据库key
+     *
+     * @return java.lang.String
+     * @author 方典典
+     * @time 2019/4/29 17:20
+     */
+    private static String getProjectDBKey() {
+        return (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo.db-key");
+    }
+
+    /**
+     * 获取是否启动归档数据库
+     *
+     * @return boolean
+     * @author 方典典
+     * @time 2019/4/29 17:20
+     */
+    private static boolean getProjectArchiveEnabled() {
+        Object obj = ProjectInfoUtils.applicationProperty.getProperty("project.apollo.archive.enabled");
+        if (StringUtils.isEmpty(obj)) {
+            return false;
+        }
+        return (boolean) obj;
+    }
+
+    /**
+     * 获取归档数据库KEY
+     *
+     * @return java.lang.String
+     * @author 方典典
+     * @time 2019/4/29 17:19
+     */
+    private static String getProjectArchiveDBKey() {
+        String archiveDBKey = (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo.archive" +
+                ".db-key");
+        if (PROJECT_APOLLO_ARCHIVE_ENABLED && StringUtils.isEmpty(archiveDBKey)) {
+            throw new RuntimeException("缺少配置项：project.apollo.archive.db-key");
+        }
+        return archiveDBKey;
+    }
+
+    /**
+     * feign连接超时
+     *
+     * @return int
+     * @author 方典典
+     * @time 2019/4/30 10:16
+     */
+    private static int getProjectFeignConnectTimeoutMillis() {
+        Object connectTimeoutMillis = ProjectInfoUtils.applicationProperty.getProperty("project.feign" +
+                ".connect-timeout-millis");
+        if (StringUtils.isEmpty(connectTimeoutMillis)) {
+            return 20000;
+        }
+        return (int) connectTimeoutMillis;
+    }
+
+    /**
+     * feign读取超时
+     *
+     * @return int
+     * @author 方典典
+     * @time 2019/4/30 10:17
+     */
+    private static int getProjectFeignReadTimeoutMillis() {
+        Object readTimeoutMillis = ProjectInfoUtils.applicationProperty.getProperty("project.feign" +
+                ".read-timeout-millis");
+        if (StringUtils.isEmpty(readTimeoutMillis)) {
+            return 20000;
+        }
+        return (int) readTimeoutMillis;
     }
 
 }

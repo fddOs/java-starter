@@ -1,6 +1,7 @@
 package cn.seed.web.jwt;
 
 import cn.seed.common.core.ApolloBaseConfig;
+import cn.seed.common.core.ApolloConfigWrapper;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.LoggerUtils;
@@ -83,7 +84,7 @@ public class JwtTokenAuthentication {
                 String name = (String) Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET))
                         .parseClaimsJws(token.getValue())
                         .getBody()
-                        .get(ApolloBaseConfig.get("uniqueName", null));
+                        .get(ApolloConfigWrapper.get("uniqueName", null));
                 if (name == null) {
                     throw new ServiceException(ResultCode.UNAUTHORIZED, "用户姓名获取失败，请重新登录");
                 }
