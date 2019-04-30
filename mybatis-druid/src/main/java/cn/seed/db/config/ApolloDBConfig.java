@@ -1,15 +1,15 @@
 package cn.seed.db.config;
 
-import cn.seed.common.core.ApolloConfigWrapper;
+import cn.seed.common.core.ConfigCenterWrapper;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
 import cn.seed.common.core.SpringContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import cn.seed.common.utils.ProjectInfoUtils;
-import com.ctrip.framework.apollo.ConfigChangeListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -38,7 +38,7 @@ public class ApolloDBConfig {
         if (StringUtils.isEmpty(key)) {
             throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请设置apollo数据库配置的Key!");
         }
-        String dbConfigInfo = ApolloConfigWrapper.get(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE, key, "");
+        String dbConfigInfo = ConfigCenterWrapper.get(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE, key, "");
         if (StringUtils.isEmpty(dbConfigInfo)) {
             throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "apollo数据库配置为空！");
         }
@@ -53,18 +53,12 @@ public class ApolloDBConfig {
      */
     @PostConstruct
     private void dbConfigChangeListen() {
-        ApolloConfigWrapper.registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE,
-                (ConfigChangeEvent changeEvent) -> {
-                    if (changeEvent.isChanged(ProjectInfoUtils.PROJECT_APOLLO_DB_KEY)) {
+        ConfigCenterWrapper.registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE,
+                (Set<String> keys) -> {
+                    if (keys.contains(ProjectInfoUtils.PROJECT_APOLLO_DB_KEY)) {
                         DruidConfiguration druidConfiguration = SpringContext.getApplicationContext().getBean
                                 (DruidConfiguration.class);
                         druidConfiguration.resetDataBase(masterDBInfo());
-                    } else if (ProjectInfoUtils.PROJECT_APOLLO_ARCHIVE_ENABLED && changeEvent.isChanged(ProjectInfoUtils
-                            .PROJECT_APOLLO_ARCHIVE_DB_KEY)) {
-                        ArchiveDruidConfiguration archiveDruidConfiguration = SpringContext.getApplicationContext()
-                                .getBean
-                                        (ArchiveDruidConfiguration.class);
-                        archiveDruidConfiguration.resetArchiveDataBase(archiveDBInfo());
                     }
                 });
 
@@ -72,17 +66,7 @@ public class ApolloDBConfig {
 
     @Bean("masterDB")
     public DBInfo masterDBInfo() {
-        String jdbcUrl = getDBConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_KEY);
-        return initDBInfo(jdbcUrl);
-    }
-
-    @Bean("archiveDB")
-    public DBInfo archiveDBInfo() {
-        if (ProjectInfoUtils.PROJECT_APOLLO_ARCHIVE_ENABLED) {
-            String jdbcUrl = getDBConfig(ProjectInfoUtils.PROJECT_APOLLO_ARCHIVE_DB_KEY);
-            return initDBInfo(jdbcUrl);
-        }
-        return new DBInfo();
+        return initDBInfo(getDBConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_KEY));
     }
 
     private DBInfo initDBInfo(String jdbcUrl) {

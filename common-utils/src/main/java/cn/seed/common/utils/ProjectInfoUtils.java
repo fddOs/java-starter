@@ -3,14 +3,10 @@ package cn.seed.common.utils;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.StringUtils;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.rmi.ServerException;
-import java.util.Map;
 
 /**
  * @Description:工具类
@@ -26,8 +22,6 @@ public class ProjectInfoUtils {
     public static final String PROJECT_APOLLO_COMMON_NAMESPACE;
     public static final String PROJECT_APOLLO_DB_NAMESPACE;
     public static final String PROJECT_APOLLO_DB_KEY;
-    public static final boolean PROJECT_APOLLO_ARCHIVE_ENABLED;
-    public static final String PROJECT_APOLLO_ARCHIVE_DB_KEY;
     public static final int PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS;
     public static final int PROJECT_FEIGN_READ_TIMEOUT_MILLIS;
 
@@ -44,8 +38,6 @@ public class ProjectInfoUtils {
         PROJECT_APOLLO_COMMON_NAMESPACE = getProjectCommonNamespace();
         PROJECT_APOLLO_DB_NAMESPACE = getProjectDBNamespace();
         PROJECT_APOLLO_DB_KEY = getProjectDBKey();
-        PROJECT_APOLLO_ARCHIVE_ENABLED = getProjectArchiveEnabled();
-        PROJECT_APOLLO_ARCHIVE_DB_KEY = getProjectArchiveDBKey();
         PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS = getProjectFeignConnectTimeoutMillis();
         PROJECT_FEIGN_READ_TIMEOUT_MILLIS = getProjectFeignReadTimeoutMillis();
     }
@@ -174,22 +166,6 @@ public class ProjectInfoUtils {
             return false;
         }
         return (boolean) obj;
-    }
-
-    /**
-     * 获取归档数据库KEY
-     *
-     * @return java.lang.String
-     * @author 方典典
-     * @time 2019/4/29 17:19
-     */
-    private static String getProjectArchiveDBKey() {
-        String archiveDBKey = (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo.archive" +
-                ".db-key");
-        if (PROJECT_APOLLO_ARCHIVE_ENABLED && StringUtils.isEmpty(archiveDBKey)) {
-            throw new RuntimeException("缺少配置项：project.apollo.archive.db-key");
-        }
-        return archiveDBKey;
     }
 
     /**

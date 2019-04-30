@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.seed.log.dao.master.ActionItemMapper">
+<mapper namespace="cn.seed.log.dao.ActionItemMapper">
   <resultMap id="BaseResultMap" type="cn.seed.log.entity.ActionItem">
     <!--
       WARNING - @mbg.generated

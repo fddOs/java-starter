@@ -51,9 +51,7 @@ public class CodeGenerator {
     // Model所在包
     public static final String MODEL_PACKAGE = ProjectInfoUtils.BASE_PACKAGE + ".entity";
     // Mapper所在包
-    public static String MAPPER_PACKAGE;
-    // dbType  master/archive
-    private static String DB_TYPE;
+    public static String MAPPER_PACKAGE = ProjectInfoUtils.BASE_PACKAGE + ".dao";
 
     private static final String PROJECT_PATH = System.getProperty("user.dir");// 项目在硬盘上的基础路径
 
@@ -65,10 +63,6 @@ public class CodeGenerator {
 
     private static String AUTHOR = "方典典";// @author
     private static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());// @date
-
-    public enum DBType {
-        MASTER, ARCHIVE;
-    }
 
     public static void main(String[] args) {
 //        CodeGenerator.initDBInfo("", "", "");
@@ -83,7 +77,7 @@ public class CodeGenerator {
     }
 
     public static void genCode(String tableName, String modelName, String remark, String dbUrl, String dbUsername,
-                               String dbPassword, String businessName, String author, Enum dbType) {
+                               String dbPassword, String businessName, String author) {
         JDBC_URL = dbUrl;
         JDBC_USERNAME = dbUsername;
         JDBC_PASSWORD = dbPassword;
@@ -92,8 +86,6 @@ public class CodeGenerator {
         PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
         PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE + "impl");
         PACKAGE_PATH_CONTROLLER = packageConvertPath(BASE_PACKAGE + "." + businessName + ".controller");
-        DB_TYPE = dbType.name().toLowerCase();
-        MAPPER_PACKAGE = ProjectInfoUtils.BASE_PACKAGE + ".dao." + DB_TYPE;
         genModelAndMapper(tableName, modelName);
         genService(tableName, modelName, remark);
         genController(tableName, modelName, remark);
@@ -107,15 +99,12 @@ public class CodeGenerator {
      * @param modelName 自定义的 Model 名称
      * @param remark    controller中swagger的注释
      */
-    public static void genCode(String tableName, String modelName, String remark, String businessName, String author,
-                               Enum dbType) {
+    public static void genCode(String tableName, String modelName, String remark, String businessName, String author) {
         BUSINESS_NAME = businessName;
         AUTHOR = author;
         PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
         PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE + "impl");
         PACKAGE_PATH_CONTROLLER = packageConvertPath(BASE_PACKAGE + "." + businessName + ".controller");
-        DB_TYPE = dbType.name().toLowerCase();
-        MAPPER_PACKAGE = ProjectInfoUtils.BASE_PACKAGE + ".dao." + DB_TYPE;
         genModelAndMapper(tableName, modelName);
         genService(tableName, modelName, remark);
         genController(tableName, modelName, remark);
@@ -141,7 +130,7 @@ public class CodeGenerator {
 
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
         sqlMapGeneratorConfiguration.setTargetProject(PROJECT_PATH + RESOURCES_PATH);
-        sqlMapGeneratorConfiguration.setTargetPackage("mybatis/mapper/" + DB_TYPE);
+        sqlMapGeneratorConfiguration.setTargetPackage("mybatis/mapper/");
 
         JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
         javaClientGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH);
@@ -223,7 +212,6 @@ public class CodeGenerator {
             data.put("modelNameLowerCamel", tableNameConvertLowerCamel(tableName));
             data.put("basePackage", BASE_PACKAGE);
             data.put("businessName", BUSINESS_NAME);
-            data.put("dbType", DB_TYPE);
             data.put("swaagerRemark", tableRemark == null ? tableName : tableRemark);
 
             File file = new File(

@@ -134,9 +134,9 @@ public class ApolloBaseConfig {
      */
     private static String getCommonConfig(String key, String defaultValue) {
         String prefix = ProjectInfoUtils.PROJECT_CONTEXT + ".";
-        String value = ApolloConfigWrapper.get(ProjectInfoUtils.PROJECT_APOLLO_COMMON_NAMESPACE, prefix + key, "");
+        String value = ConfigCenterWrapper.get(ProjectInfoUtils.PROJECT_APOLLO_COMMON_NAMESPACE, prefix + key, "");
         if (StringUtils.isEmpty(value)) {
-            value = ApolloConfigWrapper.get(ProjectInfoUtils.PROJECT_APOLLO_COMMON_NAMESPACE, key, defaultValue);
+            value = ConfigCenterWrapper.get(ProjectInfoUtils.PROJECT_APOLLO_COMMON_NAMESPACE, key, defaultValue);
         }
         return value;
     }

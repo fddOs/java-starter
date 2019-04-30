@@ -1,4 +1,4 @@
-package cn.seed.log.dao.master;
+package cn.seed.log.dao;
 
 import cn.seed.log.entity.ActionLog;
 import cn.seed.log.entity.BusinessLogValue;

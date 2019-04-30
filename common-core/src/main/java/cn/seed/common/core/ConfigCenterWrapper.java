@@ -4,14 +4,15 @@ import cn.seed.common.utils.AESUtils;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
+import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import org.springframework.util.StringUtils;
 
 /**
- * @Description:ApolloConfig
+ * @Description:ConfigCenterWrapper
  * @author:方典典
  * @time:2019/4/29 16:07
  */
-public class ApolloConfigWrapper {
+public class ConfigCenterWrapper {
     /**
      * 获取指定的namespace config
      *
@@ -32,13 +33,15 @@ public class ApolloConfigWrapper {
      * 注册apollo配置监听器
      *
      * @param namespace
-     * @param configChangeListener
+     * @param seedConfigChangeListener
      * @return void
      * @author 方典典
      * @time 2019/4/29 16:16
      */
-    public static void registerListenerConfig(String namespace, ConfigChangeListener configChangeListener) {
-        getNamespace(namespace).addChangeListener(configChangeListener);
+    public static void registerListenerConfig(String namespace, SeedConfigChangeListener seedConfigChangeListener) {
+        getNamespace(namespace).addChangeListener((ConfigChangeEvent changeEvent) -> {
+            seedConfigChangeListener.onChange(changeEvent.changedKeys());
+        });
     }
 
     /**

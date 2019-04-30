@@ -24,10 +24,10 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
  * @author 18834
  */
 @Configuration
-@MapperScan(basePackages = "cn.**.dao.master", sqlSessionTemplateRef = "masterSqlSessionTemplate")
+@MapperScan(basePackages = "cn.**.dao", sqlSessionTemplateRef = "masterSqlSessionTemplate")
 public class DruidConfiguration {
     private List<String> initSql = Arrays.asList("set names utf8mb4;");
-    private String masterLocation = "classpath*:mybatis/mapper/master/*.xml";
+    private String masterLocation = "classpath*:mybatis/mapper/*.xml";
 
     private DruidDataSource dataSource;
 
@@ -69,6 +69,5 @@ public class DruidConfiguration {
         ServiceExpUtils.notNull(dataSource, dbInfo.getUrl() + "数据源错误");
         DruidUtils.restart(dataSource, dbInfo, initSql);
     }
-
 
 }
