@@ -3,6 +3,7 @@ package cn.seed.authority.config;
 import cn.seed.authority.interceptor.AuthenticationInterceptor;
 import cn.seed.authority.service.WebAuthority;
 import cn.seed.common.core.ApolloBaseConfig;
+import cn.seed.common.core.ConfigCenterWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class AuthorityConfiguration extends WebMvcConfigurerAdapter {
         if (StringUtils.isEmpty(authUrl)) {
             throw new IllegalArgumentException("authUrl参数获取失败，请在ApolloCommonConfig中检查该配置项");
         }
-        String userEHiAuthority = ApolloBaseConfig.get("userEHiAuthority", "false");
+        String userEHiAuthority = ConfigCenterWrapper.get("userEHiAuthority", "false");
         if ("true".equals(userEHiAuthority)) {
             registry.addInterceptor(new AuthenticationInterceptor(webAuthority));
         } else {

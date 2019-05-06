@@ -3,6 +3,7 @@ package cn.seed.db.generator;
 import cn.seed.common.utils.ProjectInfoUtils;
 import com.google.common.base.CaseFormat;
 import freemarker.template.TemplateExceptionHandler;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.CommentGeneratorConfiguration;
@@ -49,7 +51,7 @@ public class CodeGenerator {
     // Model所在包
     public static final String MODEL_PACKAGE = ProjectInfoUtils.BASE_PACKAGE + ".entity";
     // Mapper所在包
-    public static final String MAPPER_PACKAGE = ProjectInfoUtils.BASE_PACKAGE + ".dao.master";
+    public static String MAPPER_PACKAGE = ProjectInfoUtils.BASE_PACKAGE + ".dao";
 
     private static final String PROJECT_PATH = System.getProperty("user.dir");// 项目在硬盘上的基础路径
 
@@ -63,48 +65,11 @@ public class CodeGenerator {
     private static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());// @date
 
     public static void main(String[] args) {
-        // genCode("City", "District", "Stock", "WorkStation", "Province");
-//        genCode("label_config", "LabelConfig", "会话标签");
-//		Map<String, String> tables = new HashMap<>();
-        CodeGenerator.initDBInfo("","","");
-        CodeGenerator.genCode("label_config", "LabelConfig", "会话标签", "test", "27894");
-        // map 表明 :备注（swagger）
-        // tables.put("City", "城市");
-        // tables.put("District", "区域");
-        // tables.put("Stock", "工位库存");
-        // tables.put("WorkStation", "维修厂工位");
-        // tables.put("Province", "省份");
-        // tables.put("UserCar", "用户车辆");
-
-
-        // genCode(tables);
+//        CodeGenerator.initDBInfo("", "", "");
+//        CodeGenerator.genCode("label_config", "LabelConfig", "会话标签", "test", "27894", DBType.MASTER);
 
     }
 
-//    private static void genCode(Map<String, String> tables) {
-//        Set<Entry<String, String>> entries = tables.entrySet();
-//        Iterator<Entry<String, String>> iterator = entries.iterator();
-//        while (iterator.hasNext()) {
-//            Entry<String, String> entry = iterator.next();
-//            genCode(entry.getKey(), null, entry.getValue());
-//        }
-//
-//        // for (String tableName : tableNames) {
-//        // genCode(tableName, null,null);
-//        // }
-//    }
-
-    /**
-     * 通过数据表名称生成代码，Model 名称通过解析数据表名称获得，下划线转大驼峰的形式。 如输入表名称 "t_user_detail" 将生成
-     * TUserDetail、TUserDetailMapper、TUserDetailService ...
-     *
-     * @param tableNames 数据表名称...
-     */
-//    private static void genCode(String... tableNames) {
-//        for (String tableName : tableNames) {
-//            genCode(tableName, null, null);
-//        }
-//    }
     public static void initDBInfo(String dbUrl, String dbUsername, String dbPassword) {
         JDBC_URL = dbUrl;
         JDBC_USERNAME = dbUsername;
@@ -117,12 +82,12 @@ public class CodeGenerator {
         JDBC_USERNAME = dbUsername;
         JDBC_PASSWORD = dbPassword;
         BUSINESS_NAME = businessName;
-        AUTHOR=author;
+        AUTHOR = author;
         PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
-        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE+"impl");
+        PACKAGE_PATH_SERVICE_IMPL = packageConvertPath(PACKAGE_PATH_SERVICE + "impl");
         PACKAGE_PATH_CONTROLLER = packageConvertPath(BASE_PACKAGE + "." + businessName + ".controller");
         genModelAndMapper(tableName, modelName);
-        genService(tableName, modelName,remark);
+        genService(tableName, modelName, remark);
         genController(tableName, modelName, remark);
     }
 
@@ -135,7 +100,6 @@ public class CodeGenerator {
      * @param remark    controller中swagger的注释
      */
     public static void genCode(String tableName, String modelName, String remark, String businessName, String author) {
-
         BUSINESS_NAME = businessName;
         AUTHOR = author;
         PACKAGE_PATH_SERVICE = packageConvertPath(BASE_PACKAGE + "." + businessName + ".service");
@@ -166,7 +130,7 @@ public class CodeGenerator {
 
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
         sqlMapGeneratorConfiguration.setTargetProject(PROJECT_PATH + RESOURCES_PATH);
-        sqlMapGeneratorConfiguration.setTargetPackage("mybatis/mapper/master");
+        sqlMapGeneratorConfiguration.setTargetPackage("mybatis/mapper/");
 
         JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
         javaClientGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH);

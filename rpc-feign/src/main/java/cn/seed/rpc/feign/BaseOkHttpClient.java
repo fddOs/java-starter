@@ -9,6 +9,7 @@ import cn.seed.common.utils.LoggerUtils;
 import cn.seed.common.utils.ProjectInfoUtils;
 import cn.seed.common.utils.SignUtils;
 import cn.seed.common.utils.UuidUtils;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -40,26 +41,22 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-/*
- * okhtt工具类
+/**
+ * BaseOkHttpClient
+ *
+ * @author 方典典
+ * @time 2019/4/30 10:17
  */
 @Configuration
-@EnableConfigurationProperties({FeignProperties.class})
 public class BaseOkHttpClient {
     private static Logger LOGGER = LoggerFactory.getLogger(BaseOkHttpClient.class);
-//    private SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
     private final String HEADER_JWT_USER_ID = "jwt-user-id";
-
-    @Autowired
-    private FeignProperties feignProperties;
 
     @Bean
     public OkHttpClient getOkHttpClient() {
@@ -73,16 +70,16 @@ public class BaseOkHttpClient {
                 String requestTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String responseTime;
                 Response resultResponse = null;
-                Exception exception=null;
+                Exception exception = null;
                 try {
                     resultResponse = chain.proceed(builderRequest);
                 } catch (IOException e) {
-                    exception=e;
+                    exception = e;
                     exceptionMsg = ExceptionUtils.getStackTrace(e);
                     LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
                 } finally {
                     if (resultResponse == null) {
-                        throw new ServiceException(ResultCode.BAD_REQUEST, "请求异常" + builderRequest.url(),exception);
+                        throw new ServiceException(ResultCode.BAD_REQUEST, "请求异常" + builderRequest.url(), exception);
                     }
                     responseTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                     response = sendHttpLog(builderRequest, handleResponse(resultResponse), exceptionMsg, requestTime,
@@ -90,8 +87,8 @@ public class BaseOkHttpClient {
                 }
                 return response;
             }
-        }).writeTimeout(feignProperties.getConnectTimeoutMillis(), TimeUnit.MILLISECONDS).pingInterval(1, TimeUnit
-                .SECONDS).retryOnConnectionFailure(false);
+        }).writeTimeout(ProjectInfoUtils.PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS).pingInterval(1,
+                TimeUnit.SECONDS).retryOnConnectionFailure(false);
         return builder.build();
     }
 
@@ -144,7 +141,7 @@ public class BaseOkHttpClient {
             return "";
         }
         String userId = request.getHeader(HEADER_JWT_USER_ID);
-        if(StringUtils.isEmpty(userId)){
+        if (StringUtils.isEmpty(userId)) {
             userId = String.valueOf(request.getAttribute("oprNo"));
         }
         return userId == null ? "" : userId;

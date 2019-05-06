@@ -1,5 +1,6 @@
 package cn.seed.rpc.feign;
 
+import cn.seed.common.utils.ProjectInfoUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +15,6 @@ import feign.opentracing.TracingClient;
 import feign.slf4j.Slf4jLogger;
 import io.opentracing.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,10 +27,7 @@ import java.util.TimeZone;
  * @time 2018/08/27
  **/
 @Configuration
-@EnableConfigurationProperties(FeignProperties.class)
 public class FeignConfig {
-    @Autowired
-    private FeignProperties feignProperties;
     @Autowired
     private FeignRequestInterceptor feignRequestInterceptor;
 
@@ -45,8 +42,8 @@ public class FeignConfig {
                 .decoder(new JacksonDecoder(createObjectMapper()))
                 .logger(new Slf4jLogger())
                 .logLevel(feign.Logger.Level.FULL)
-                .options(new Options(feignProperties.getConnectTimeoutMillis(), feignProperties.getReadTimeoutMillis
-                        ()));
+                .options(new Options(ProjectInfoUtils.PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS, ProjectInfoUtils
+                        .PROJECT_FEIGN_READ_TIMEOUT_MILLIS));
     }
 
     /**

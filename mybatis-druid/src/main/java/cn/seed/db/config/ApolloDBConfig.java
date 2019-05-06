@@ -1,103 +1,75 @@
 package cn.seed.db.config;
 
+import cn.seed.common.core.ConfigCenterWrapper;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
 import cn.seed.common.core.SpringContext;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-import cn.seed.common.utils.AESUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import cn.seed.common.utils.ProjectInfoUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
-import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
-import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+
+import javax.annotation.PostConstruct;
 
 /**
- * @Description:Apollo配置
+ * Apollo配置
+ *
  * @author:方典典
  * @time:2018年5月22日 下午5:26:58
  */
 @Component
-@ConfigurationProperties(prefix = "db")
-@EnableApolloConfig(value = {"EHI.DBConfig"})
 public class ApolloDBConfig {
 
-    @ApolloConfig("EHI.DBConfig")
-    private Config dbConfig;
-    private String key;
-    @Value("archive-key")
-    private String archiveKey;
-    @Value("archive-enabled")
-    private String archiveEnable;
-
     /**
+     * @param key
      * @return String
-     * @Description:获取数据库链接
-     * @exception:
+     * 获取数据库链接
      * @author: 方典典
      * @time:2018年5月22日 下午5:26:44
      */
-    public String getDBConfig(String dbKey) {
-        if (StringUtils.isEmpty(dbKey)) {
+    public String getDBConfig(String key) {
+        if (StringUtils.isEmpty(key)) {
             throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请设置apollo数据库配置的Key!");
         }
-        String dbConfigInfo = dbConfig.getProperty(dbKey, "");
-        try {
-            return AESUtils.aesDecryptString(dbConfigInfo);
-        } catch (Exception e) {
-            return dbConfigInfo;
+        String dbConfigInfo = ConfigCenterWrapper.get(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE, key, "");
+        if (StringUtils.isEmpty(dbConfigInfo)) {
+            throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "apollo数据库配置为空！");
         }
+        return dbConfigInfo;
     }
 
     /**
-     * @param changeEvent void
-     * @Description:监听数据库链接变化
-     * @exception:
+     * 监听数据库链接变化
+     *
      * @author: 方典典
      * @time:2018年5月22日 下午5:27:26
      */
-    @ApolloConfigChangeListener("EHI.DBConfig")
-    private void configChangeListen(ConfigChangeEvent changeEvent) {
-        if (changeEvent.isChanged(key)) {
-            DruidConfigution druidConfigution = SpringContext.getApplicationContext().getBean(DruidConfigution.class);
-            druidConfigution.resetDataBase(masterDBInfo());
-        }else if(Boolean.valueOf(archiveEnable)&&changeEvent.isChanged(archiveKey)){
-            ArchiveDruidConfigution druidConfigution = SpringContext.getApplicationContext().getBean(ArchiveDruidConfigution.class);
-            druidConfigution.resetArchiveDataBase(archiveDBInfo());
-        }
+    @PostConstruct
+    private void dbConfigChangeListen() {
+        ConfigCenterWrapper.registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE,
+                (Set<String> keys) -> {
+                    if (keys.contains(ProjectInfoUtils.PROJECT_APOLLO_DB_KEY)) {
+                        DruidConfiguration druidConfiguration = SpringContext.getApplicationContext().getBean
+                                (DruidConfiguration.class);
+                        druidConfiguration.resetDataBase(masterDBInfo());
+                    }
+                });
+
     }
 
     @Bean("masterDB")
     public DBInfo masterDBInfo() {
-        String jdbcUrl = getDBConfig(key);
-        return initDBInfo(jdbcUrl);
+        return initDBInfo(getDBConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_KEY));
     }
 
-    @Bean("archiveDB")
-    public DBInfo archiveDBInfo() {
-        if(Boolean.valueOf(archiveEnable)){
-            String jdbcUrl = getDBConfig(archiveKey);
-            return initDBInfo(jdbcUrl);
-        }
-        return new DBInfo();
-    }
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    private DBInfo initDBInfo(String jdbcUrl){
-
+    private DBInfo initDBInfo(String jdbcUrl) {
         String separator = "\\|";
         String user = "user";
         String pass = "password";
@@ -130,12 +102,4 @@ public class ApolloDBConfig {
         return new DBInfo(jdbcUrl, userName, password);
     }
 
-
-    public String getArchiveKey() {
-        return archiveKey;
-    }
-
-    public void setArchiveKey(String archiveKey) {
-        this.archiveKey = archiveKey;
-    }
 }
