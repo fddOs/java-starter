@@ -31,7 +31,6 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     private static final String HEADER_STRING = "Authorization";
     private static String SECRET = "AgQGCAoMDfASFAIEBggKDA4QETAdBAYICgwOE52UAgQ=";
-    private static final String HEADER_JWT_USER_ID = "jwt-user-id";
     private static final String JWT_USER_ID = "sub";
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -59,9 +58,9 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
                 for (String moduleId : moduleIds) {
                     Result<Boolean> booleanResult = webAuthority.verifyAuth(userCode, systemCode, moduleId);
-                    if (booleanResult == null || booleanResult.getErrorCode() != 0 || booleanResult.getResult() == false) {
-                        logger.debug("权限验证失败 : userCode[{}],systemCode[{}],moduleId[{}],result[{}]", userCode, systemCode, moduleId,booleanResult);
-                        throw new ServiceException(ResultCode.BAD_REQUEST, "权限验证失败");
+                    if (booleanResult == null || booleanResult.getErrorCode() != 0 || !booleanResult.getResult()) {
+                        logger.warn("权限验证失败 : userCode[{}],systemCode[{}],moduleId[{}],result[{}]", userCode, systemCode, moduleId,booleanResult);
+                        throw new ServiceException(ResultCode.UNAUTHORIZED, "权限验证失败");
                     }
                 }
             }

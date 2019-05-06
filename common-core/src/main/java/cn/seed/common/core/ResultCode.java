@@ -8,8 +8,8 @@ public enum ResultCode {
     SUCCESS(0),
     //失败
     FAIL(15000001),
-    //未认证（签名错误）
-    UNAUTHORIZED(15000401),
+    //未认证（签名错误、权限错误）
+    UNAUTHORIZED(401),
     //接口不存在
     NOT_FOUND(15000404),
     //服务器内部错误
