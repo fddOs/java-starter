@@ -28,7 +28,7 @@ public class LoggerUtils {
      */
     public static void error(Class<? extends Object> clazz, Object[] objects, Exception e) {
         Logger logger = LoggerFactory.getLogger(clazz);
-        LogstashMarker marker = new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(clazz
+        LogstashMarker marker = new ExceptionLogstashMarker(new ExceptionMsgWrapper(clazz
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
                 .getStackTrace(e)));
         logger.error(marker, null);
@@ -47,7 +47,7 @@ public class LoggerUtils {
      */
     public static void errorSummary(Class<? extends Object> clazz, Object[] objects, Exception e) {
         Logger logger = LoggerFactory.getLogger(clazz);
-        LogstashMarker marker = new EHIExceptionLogstashMarker(new EHIExceptionMsgWrapper(clazz
+        LogstashMarker marker = new ExceptionLogstashMarker(new ExceptionMsgWrapper(clazz
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
                 .getStackTrace(e)));
         logger.error(marker, null);

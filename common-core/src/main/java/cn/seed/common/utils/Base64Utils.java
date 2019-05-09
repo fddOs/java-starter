@@ -4,6 +4,13 @@ import java.util.Base64;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Base64Utils
+ *
+ * @author 方典典
+ * @return
+ * @time 2019/5/8 14:39
+ */
 public class Base64Utils {
 
     public static byte[] decryptBASE64(String base64String) {
@@ -11,7 +18,7 @@ public class Base64Utils {
         StringBuilder endStr = new StringBuilder();
         while (pad > 0 && pad < 4) {
             endStr.append('=');
-            pad --;
+            pad--;
         }
         return Base64.getDecoder().decode(base64String + endStr.toString());
     }

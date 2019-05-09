@@ -5,17 +5,17 @@ package cn.seed.common.utils;
  * @author:方典典
  * @time:2019/1/4 11:18
  */
-public class EHIExceptionMsgWrapper {
+public class ExceptionMsgWrapper {
     private String projectContext;
     private String className;
     private String methodName;
     private Object[] objs;
     private String exceptionMsg;
 
-    public EHIExceptionMsgWrapper() {
+    public ExceptionMsgWrapper() {
     }
 
-    public EHIExceptionMsgWrapper(String className, String methodName, Object[] objs, String exceptionMsg) {
+    public ExceptionMsgWrapper(String className, String methodName, Object[] objs, String exceptionMsg) {
         this.projectContext = ProjectInfoUtils.PROJECT_CONTEXT;
         this.className = className;
         this.methodName = methodName;

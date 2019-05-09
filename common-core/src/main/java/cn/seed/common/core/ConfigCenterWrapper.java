@@ -2,7 +2,6 @@ package cn.seed.common.core;
 
 import cn.seed.common.utils.AESUtils;
 import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import org.springframework.util.StringUtils;

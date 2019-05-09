@@ -10,7 +10,6 @@
     <name>java-starter</name>
     <description>java project for Spring Boot</description>
     <modules>
-        <module>common-utils</module>
         <module>common-core</module>
         <module>log-service</module>
         <module>log-elk</module>
@@ -147,11 +146,6 @@
                 <groupId>net.bull.javamelody</groupId>
                 <artifactId>javamelody-core</artifactId>
                 <version>1.75.0</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.seed</groupId>
-                <artifactId>common-utils</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.seed</groupId>

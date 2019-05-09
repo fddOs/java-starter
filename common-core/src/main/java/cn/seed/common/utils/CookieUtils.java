@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * cookie操作类
  *
- * @Description:TODO
  * @author:lixiao
  * @time:2018年1月31日 下午1:46:20
  */

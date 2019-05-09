@@ -117,11 +117,7 @@ public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
      * @date 2018/12/15 15:49
      */
     private String aesDecrypt(String string) {
-        try {
-            return AESUtils.aesDecryptString(string);
-        } catch (Exception e) {
-            throw new ServiceException(ResultCode.UNAUTHORIZED, "参数解密错误");
-        }
+        return AESUtils.aesDecryptString(string);
     }
 
     /**
@@ -154,24 +150,17 @@ public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
         } catch (UnsupportedEncodingException e) {
             throw new ServiceException(ResultCode.FAIL, "URLDecoder解码失败");
         }
-
-        try {
-            //对请求url的参数进行解密
-            String params = aesDecrypt(questSting);
-            if (!StringUtils.isEmpty(params)) {
-                String[] paramList = params.split("&");
-                for (String param : paramList) {
-                    String[] string = param.split("=");
-                    if (string.length == 2 && !StringUtils.isEmpty(string[1])) {
-                        paramsMap.put(string[0], new String[]{string[1]});
-                    }
+        //对请求url的参数进行解密
+        String params = aesDecrypt(questSting);
+        if (!StringUtils.isEmpty(params)) {
+            String[] paramList = params.split("&");
+            for (String param : paramList) {
+                String[] string = param.split("=");
+                if (string.length == 2 && !StringUtils.isEmpty(string[1])) {
+                    paramsMap.put(string[0], new String[]{string[1]});
                 }
             }
-        } catch (Exception e) {
-            LoggerUtils.error(getClass(), new Object[]{questSting}, e);
-            throw new ServiceException(ResultCode.FAIL, "Aes解密失败");
         }
-
         return paramsMap;
     }
 

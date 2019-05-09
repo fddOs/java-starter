@@ -19,13 +19,13 @@ import static cn.seed.log.log.SqlAesUtils.aesEncryptString;
 import static cn.seed.log.log.SqlAesUtils.isProperty;
 
 /**
- * EHISqlASTVisitor
+ * CustomizeSqlASTVisitor
  * 加密字段作为参数时暂认定为其不会被函数处理
  *
  * @author 方典典
  * @time 2019/1/21 17:23
  */
-public class EHISqlASTVisitor extends MySqlASTVisitorAdapter {
+public class CustomizeSqlASTVisitor extends MySqlASTVisitorAdapter {
     /**
      * update语句的set项
      */
@@ -118,10 +118,10 @@ public class EHISqlASTVisitor extends MySqlASTVisitorAdapter {
     @Override
     public boolean visit(MySqlSelectQueryBlock x) {
         List<SQLSelectItem> selectList = x.getSelectList();
-        EHISqlPropertyASTVisitor ehiSqlPropertyASTVisitor = new EHISqlPropertyASTVisitor();
+        SelectSqlPropertyASTVisitor selectSqlPropertyASTVisitor = new SelectSqlPropertyASTVisitor();
         selectList.forEach(sqlSelectItem -> {
-            sqlSelectItem.accept(ehiSqlPropertyASTVisitor);
-            needAesHandle = ehiSqlPropertyASTVisitor.isNeedAesHandle();
+            sqlSelectItem.accept(selectSqlPropertyASTVisitor);
+            needAesHandle = selectSqlPropertyASTVisitor.isNeedAesHandle();
         });
         sql = SQLUtils.toMySqlString(x);
         return super.visit(x);
@@ -203,7 +203,7 @@ public class EHISqlASTVisitor extends MySqlASTVisitorAdapter {
         String sql3 = "select id,name from test where name = HEX(AES_ENCRYPT('a','fdd'));";
         Map<String, Object> map = new HashMap<>();
         List<SQLStatement> stmtList = SQLUtils.parseStatements(sql, JdbcConstants.MYSQL);
-        EHISqlASTVisitor visitor = new EHISqlASTVisitor();
+        CustomizeSqlASTVisitor visitor = new CustomizeSqlASTVisitor();
         for (SQLStatement stmt : stmtList) {
             stmt.accept(visitor);
         }

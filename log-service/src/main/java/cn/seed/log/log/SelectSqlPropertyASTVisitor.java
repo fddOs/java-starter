@@ -9,12 +9,12 @@ import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlASTVisitorAdapter;
 import org.springframework.util.StringUtils;
 
 /**
- * EHISqlPropertyASTVisitor
+ * SelectSqlPropertyASTVisitor
  *
  * @author 方典典
  * @time 2019/1/21 17:23
  */
-public class EHISqlPropertyASTVisitor extends MySqlASTVisitorAdapter {
+public class SelectSqlPropertyASTVisitor extends MySqlASTVisitorAdapter {
     private boolean needAesHandle;
 
     @Override

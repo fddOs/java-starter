@@ -1,7 +1,5 @@
 package cn.seed.web;
 
-import cn.seed.common.utils.AESUtils;
-import cn.seed.common.utils.LoggerUtils;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -9,6 +7,9 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
+import cn.seed.common.utils.AESUtils;
+import cn.seed.common.utils.LoggerUtils;
 import org.junit.Test;
 
 //@RunWith(SpringRunner.class)

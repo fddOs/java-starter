@@ -171,7 +171,7 @@ public class LogAspect {
     public static Map<String, Object> convertSQL(String sql) {
         Map<String, Object> map = new HashMap<>();
         List<SQLStatement> stmtList = SQLUtils.parseStatements(sql, JdbcConstants.MYSQL);
-        EHISqlASTVisitor visitor = new EHISqlASTVisitor();
+        CustomizeSqlASTVisitor visitor = new CustomizeSqlASTVisitor();
         for (SQLStatement stmt : stmtList) {
             stmt.accept(visitor);
         }

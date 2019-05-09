@@ -16,8 +16,6 @@ public class BeanInitUtils {
      *
      * @param o
      * @return
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
      */
     public static <T> T init(Class<T> o) {
         T obj;
@@ -40,8 +38,6 @@ public class BeanInitUtils {
      * 将null附一个初始值
      *
      * @return
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
      */
     public static <T> T desNull(T t) {
 

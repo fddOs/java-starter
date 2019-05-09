@@ -10,11 +10,7 @@ import cn.seed.common.core.Result;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ResultGenerator;
 import cn.seed.common.core.ServiceException;
-import cn.seed.common.utils.HeaderUtils;
-import cn.seed.common.utils.JsonUtils;
-import cn.seed.common.utils.LoggerUtils;
-import cn.seed.common.utils.ProjectInfoUtils;
-import cn.seed.common.utils.UuidUtils;
+import cn.seed.common.utils.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
@@ -52,7 +48,6 @@ import java.util.Random;
 public class LoggingFilter extends OncePerRequestFilter {
     @Autowired
     private Tracer tracer;
-    //    private static final SimpleDateFormat SIMPLE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
     private static final String ATTRIBUTE_STOP_WATCH = LoggingFilter.class.getName()
             + ".StopWatch";

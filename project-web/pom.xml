@@ -47,10 +47,6 @@
         </dependency>
         <dependency>
             <groupId>cn.seed</groupId>
-            <artifactId>common-utils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.seed</groupId>
             <artifactId>common-core</artifactId>
             <scope>compile</scope>
         </dependency>

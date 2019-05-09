@@ -14,8 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-
 import javax.annotation.PostConstruct;
 
 /**

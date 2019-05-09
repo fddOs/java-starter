@@ -1,10 +1,9 @@
 package cn.seed.common.core;
 
-import cn.seed.common.utils.LoggerUtils;
-import cn.seed.common.utils.ProjectInfoUtils;
-
 import javax.annotation.PostConstruct;
 
+import cn.seed.common.utils.LoggerUtils;
+import cn.seed.common.utils.ProjectInfoUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
