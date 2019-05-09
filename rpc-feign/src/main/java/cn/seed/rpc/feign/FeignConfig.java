@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import feign.Feign;
 import feign.Request.Options;
 import feign.Retryer;
+import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.okhttp.OkHttpClient;
@@ -37,8 +38,8 @@ public class FeignConfig {
         return Feign.builder().requestInterceptor(feignRequestInterceptor)
                 .client(tracingClient).retryer(Retryer.NEVER_RETRY)
                 .errorDecoder(new ErrorExceptionDecoder())
-                .encoder(new JacksonEncoder(new ObjectMapper().setSerializationInclusion(JsonInclude.Include
-                        .NON_NULL).configure(SerializationFeature.INDENT_OUTPUT, false)))
+                .encoder(new FormEncoder(new JacksonEncoder(new ObjectMapper().setSerializationInclusion(JsonInclude.Include
+                        .NON_NULL).configure(SerializationFeature.INDENT_OUTPUT, false))))
                 .decoder(new JacksonDecoder(createObjectMapper()))
                 .logger(new Slf4jLogger())
                 .logLevel(feign.Logger.Level.FULL)
