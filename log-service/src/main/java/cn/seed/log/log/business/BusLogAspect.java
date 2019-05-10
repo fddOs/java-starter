@@ -76,7 +76,7 @@ public class BusLogAspect {
         int actionType = businessLog.actionType();
         //获取操作人
         String oprNo = String.valueOf(methodParams(arguments,params,businessLog.oprNo(),businessLog
-            .referNoNum()));
+            .oprNoNum()));
         if(StringUtils.isEmpty(oprNo)){
             HttpServletRequest request = null;
             try {
