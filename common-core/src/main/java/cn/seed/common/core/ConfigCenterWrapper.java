@@ -20,7 +20,7 @@ public class ConfigCenterWrapper {
      * @author 方典典
      * @time 2019/4/29 16:10
      */
-    public static Config getNamespace(String namespace) {
+    private static Config getNamespace(String namespace) {
         if (StringUtils.isEmpty(namespace)) {
             // return application config
             return ConfigService.getAppConfig();
@@ -52,6 +52,14 @@ public class ConfigCenterWrapper {
      */
     public static String get(String key, String defaultValue) {
         return aesDecrypt(getNamespace(null), key, defaultValue);
+    }
+
+    public static String getDefaultEmpty(String key) {
+        return aesDecrypt(getNamespace(null), key, "");
+    }
+
+    public static String getDefaultNull(String key) {
+        return aesDecrypt(getNamespace(null), key, null);
     }
 
     /**
