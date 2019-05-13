@@ -39,11 +39,6 @@ public class ActionLogServiceImpl implements ActionLogService {
     }
 
     @Override
-    public int insertActionLog(ActionLog actionLog) {
-        return actionLogMapper.insertActionLog(actionLog);
-    }
-
-    @Override
     public int insertActionLogCommon(ActionLog actionLog) {
         return actionLogMapper.insertActionLogCommon(actionLog);
     }

@@ -35,7 +35,7 @@
     </selectKey>
     insert into business_log (action_type, opr_no, refer_id,
     user_id, trace_id, opr_table_name,extend_content,sys_name)
-    values (#{actionType,jdbcType=INTEGER}, #{oprNo,jdbcType=VARCHAR}, #{referId,jdbcType=VARCHAR}, 
+    values (#{actionType,jdbcType=INTEGER}, #{oprNo,jdbcType=VARCHAR}, #{referId,jdbcType=VARCHAR},
       #{userId,jdbcType=VARCHAR}, #{traceId,jdbcType=VARCHAR}, #{oprTableName,jdbcType=VARCHAR},
       #{extendContent,jdbcType=VARCHAR}, #{sysName,jdbcType=VARCHAR})
   </insert>
@@ -61,7 +61,7 @@
     <!--
       WARNING - @mbg.generated
     -->
-    select id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime, 
+    select id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime,
     gmt_create, gmt_modified, extend_content
     from business_log
     where id = #{id,jdbcType=INTEGER}
@@ -70,7 +70,7 @@
     <!--
       WARNING - @mbg.generated
     -->
-    select id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime, 
+    select id, action_type, opr_no, refer_id, user_id, trace_id, opr_table_name, action_datetime,
     gmt_create, gmt_modified, extend_content
     from business_log
   </select>

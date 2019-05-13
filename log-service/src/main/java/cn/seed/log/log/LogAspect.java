@@ -27,9 +27,9 @@ import io.opentracing.Tracer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +39,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -58,87 +56,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Component
 public class LogAspect {
 
-    private Map<Long, ActionLog> actionLogMap = new HashMap<>();
     private static final String HEADER_JWT_USER_ID = "jwt-user-id";
     private static final String NEED_AES_HANDLE = "needAesHandle";
     @Autowired
     private Tracer tracer;
     @Autowired
     private BusinessService businessService;
-
-    /**
-     * @param pjp void
-     * @return
-     * @throws Throwable
-     * @Description:获取业务日志参数
-     * @exception:
-     * @author: 方典典
-     * @time:2017年12月18日 下午3:01:34 cn.ehai.report.api.service.impl.ReportServiceSettingServiceImpl
-     */
-    @Around(value = "execution(* (cn.*.*.*.service.impl.* && !cn.seed.log.service.impl.*).*(..)))")
-    public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
-        Long key = Thread.currentThread().getId();
-        ActionLog actionLog = actionLogMap.get(key);
-        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String actionDateTime = simpleFormat.format(new Date());
-        // 获取方法
-        MethodInvocationProceedingJoinPoint mjp = (MethodInvocationProceedingJoinPoint) pjp;
-        MethodSignature signature = (MethodSignature) mjp.getSignature();
-        Method method = signature.getMethod();
-        // 获取方法上的注解
-        ServiceAnnotation actionLogAnnotation = method.getAnnotation(ServiceAnnotation.class);
-        ServiceParamsAnnotation serviceParamsAnnotation = method.getAnnotation(ServiceParamsAnnotation.class);
-        StringBuilder methodName = new StringBuilder();
-        methodName.append(method.getName());
-        methodName.append("(");
-        methodName.append(")");
-        // 获取Request
-        HttpServletRequest request = null;
-        try {
-            request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        } catch (Exception e) {
-            return pjp.proceed();
-        }
-        if (request == null) {
-            return pjp.proceed();
-        }
-        String url = request.getServletPath();
-        String oprNo = request.getParameter("oprNo");
-        String referId = request.getParameter("referId");
-        String userId = request.getParameter("userId");
-        if (serviceParamsAnnotation != null) {
-            Object[] params = pjp.getArgs();
-            int referIdIndex = serviceParamsAnnotation.referIdIndex();
-            int userIdIndex = serviceParamsAnnotation.userIdIndex();
-            if (referIdIndex < params.length) {
-                referId = (String) params[referIdIndex];
-            }
-            if (userIdIndex < params.length) {
-                userId = (String) params[userIdIndex];
-            }
-        }
-        if (StringUtils.isEmpty(oprNo)) {
-            oprNo = request.getHeader(HEADER_JWT_USER_ID);
-        }
-        oprNo = OprNoUtils.handlerOprNo(oprNo);
-        if (actionLog != null && url.equals(actionLog.getUrl())) {
-            return pjp.proceed();
-        }
-        actionLog = new ActionLog();
-        actionLog.setOprNo(oprNo == null ? "" : oprNo);
-        actionLog.setReferId(referId == null ? "" : referId);
-        actionLog.setUrl(url);
-        actionLog.setUserId(userId == null ? "" : userId);
-        actionLog.setActionType(ServiceActionTypeEnum.OTHER_RECORD.getActionType());
-        actionLog.setTraceId(requestTraceId());
-        if (actionLogAnnotation != null) {
-            actionLog.setActionType(actionLogAnnotation.value());
-        }
-        actionLog.setMethodName(methodName.toString());
-        actionLog.setActionDatetime(actionDateTime);
-        actionLogMap.put(Thread.currentThread().getId(), actionLog);
-        return pjp.proceed();
-    }
 
     /**
      * @Description:将update转成select
@@ -195,7 +118,6 @@ public class LogAspect {
      */
     @Around(value = "execution(* com.alibaba.druid.filter.FilterEventAdapter.preparedStatement_execute(..))")
     public Object druidInterceptNew(ProceedingJoinPoint pjp) throws Throwable {
-        Long key = Thread.currentThread().getId();
         PreparedStatementProxy statement = (PreparedStatementProxy) pjp.getArgs()[1];
         // 无sql直接执行目标方法
         if (statement == null || statement.getSqlStat() == null) {
@@ -216,31 +138,19 @@ public class LogAspect {
         if (StringUtils.isEmpty(map.get("where")) && !isReplace) {
             return targetRun(pjp, needAesHandle, sql, statement);
         }
-        ActionLog actionLog = actionLogMap.get(key);
-        if (null == actionLog) {
+        if ("false".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel())) {
             return targetRun(pjp, needAesHandle, sql, statement);
         }
-        boolean closeCommonServiceLog = "false".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel());
-        boolean closeAnnotationServiceLog = (!"true".equalsIgnoreCase(ApolloBaseConfig.getServiceAnnotationLogLevel()
-        ) || ("true".equalsIgnoreCase(ApolloBaseConfig.getServiceAnnotationLogLevel()) && (actionLog.getActionType()
-                == null || actionLog.getActionType().intValue() == 7)));
-        if (closeCommonServiceLog && closeAnnotationServiceLog) {
-            actionLogMap.remove(key);
-            return targetRun(pjp, needAesHandle, sql, statement);
-        }
+        ActionLog actionLog = getCurrentRequestActionLog();
         // 表名
         List<String> tableList = (List<String>) map.get("tables");
         String tables = StringUtils.arrayToDelimitedString(tableList.toArray(), ",");
         String originalValue;
         String newValue;
         Object result;
-        actionLog.setIsSuccess(true);
         actionLog.setOprTableName(tables);
         if (isReplace) {
-//            actionLog.setOriginalValue("{\"type\": \"replace\"}");
             originalValue = "{\"type\": \"replace\"}";
-//            actionLog.setNewValue("{\"type\": \"" + SQLUtils.formatMySql(sql, new SQLUtils.FormatOption(true, false))
-//                    + "\"}");
             newValue = "{\"type\": \"" + SQLUtils.formatMySql(sql, new SQLUtils.FormatOption(true, false))
                     + "\"}";
             result = targetRun(pjp, needAesHandle, sql, statement);
@@ -249,52 +159,83 @@ public class LogAspect {
             String selectSql = getSelectSQL(map);
             ActionLogService actionLogService = SpringContext.getApplicationContext().getBean(ActionLogService.class);
             List<Map<String, String>> oldParamList = actionLogService.selectBySql(selectSql);
-//            actionLog.setOriginalValue(JSONArray.toJSONString(oldParamList));
             originalValue = JSONArray.toJSONString(oldParamList);
             result = targetRun(pjp, needAesHandle, sql, statement);
             if (!(boolean) map.get("complex")) {
                 // 非复杂SQL
-//                actionLog.setNewValue(JSONObject.toJSONString(map.get("items")));
                 newValue = JSONObject.toJSONString(map.get("items"));
             } else {
                 List<Map<String, String>> newParamList = actionLogService.selectBySql(selectSql);
-//                actionLog.setNewValue(JSONArray.toJSONString(newParamList));
                 newValue = JSONArray.toJSONString(newParamList);
             }
         }
+        actionLog.setNewValue(newValue);
+        actionLog.setOriginalValue(originalValue);
+        insertActionLog(tableList, actionLog);
+        return result;
+    }
+
+    /**
+     * 记录操作
+     *
+     * @param tableList
+     * @param actionLog
+     * @return void
+     * @author 方典典
+     * @time 2019/5/13 10:41
+     */
+    private void insertActionLog(List<String> tableList, ActionLog actionLog) {
         ActionLogServiceAsync actionLogServiceAsync = SpringContext.getApplicationContext().getBean
                 (ActionLogServiceAsync.class);
-        if (!closeAnnotationServiceLog) {
-            actionLog.setNewValue(newValue);
-            actionLog.setOriginalValue(originalValue);
-            actionLogServiceAsync.insertServiceLogAsync(actionLog);
-        }
         if ("true".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel())) {
             if (isBusiness(tableList)) {
                 //记录business_log_value
                 BusinessLogValue
-                        businessLogValue = new BusinessLogValue(requestTraceId(), tables, originalValue,
-                        newValue, actionLog.getActionDatetime(), actionLog.getOprNo());
+                        businessLogValue = new BusinessLogValue(requestTraceId(), actionLog.getOprTableName(),
+                        actionLog.getOriginalValue(),
+                        actionLog.getNewValue(), actionLog.getActionDatetime(), actionLog.getOprNo());
                 businessService.insertBusinessLogValue(businessLogValue);
             } else {
-                actionLog.setNewValue(newValue);
-                actionLog.setOriginalValue(originalValue);
                 actionLogServiceAsync.insertServiceLogCommonAsync(actionLog);
             }
         }
         if ("business".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel())) {
             //记录business_log_value
-            BusinessLogValue businessLogValue = new BusinessLogValue(requestTraceId(), tables, originalValue,
-                    newValue, actionLog.getActionDatetime(), actionLog.getOprNo());
+            BusinessLogValue businessLogValue = new BusinessLogValue(requestTraceId(), actionLog.getOprTableName(),
+                    actionLog.getOriginalValue(),
+                    actionLog.getNewValue(), actionLog.getActionDatetime(), actionLog.getOprNo());
             businessService.insertBusinessLogValue(businessLogValue);
         }
-//        if (!closeCommonServiceLog) {
-//            actionLogServiceAsync.insertServiceLogCommonAsync(actionLog);
-//        }
-        actionLogMap.remove(key);
-        return result;
     }
 
+    /**
+     * 获取当前请求的actionLog
+     *
+     * @param
+     * @return cn.seed.log.entity.ActionLog
+     * @author 方典典
+     * @time 2019/5/13 10:36
+     */
+    private ActionLog getCurrentRequestActionLog() {
+        // 获取Request
+        HttpServletRequest request = null;
+        String oprNo = "";
+        try {
+            request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            oprNo = request.getParameter("oprNo");
+            if (StringUtils.isEmpty(oprNo)) {
+                oprNo = request.getHeader(HEADER_JWT_USER_ID);
+            }
+        } catch (Exception e) {
+            //IGNORE
+        }
+        oprNo = OprNoUtils.handlerOprNo(oprNo);
+        ActionLog actionLog = new ActionLog();
+        actionLog.setTraceId(requestTraceId());
+        actionLog.setOprNo(oprNo);
+        actionLog.setActionDatetime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        return actionLog;
+    }
 
     /**
      * statement处理

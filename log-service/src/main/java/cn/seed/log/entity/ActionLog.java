@@ -15,11 +15,6 @@ public class ActionLog {
     private String actionDatetime;
 
     /**
-     * 操作类型
-     */
-    private Integer actionType;
-
-    /**
      * 操作人登录帐号
      */
     private String oprNo;
@@ -41,31 +36,6 @@ public class ActionLog {
      */
     private String newValue;
 
-    /**
-     * 该修改记录的唯一标记订单号
-     */
-    private String referId;
-
-    /**
-     * 用户id
-     */
-    private String userId;
-
-    /**
-     * 业务sql是否执行成功
-     */
-    @NotNull(message = "is_success参数不能为空")
-    private Boolean isSuccess;
-
-    /**
-     * 请求url
-     */
-    private String url;
-
-    /**
-     * 方法名字
-     */
-    private String methodName;
 
     /**
      * traceId
@@ -87,14 +57,6 @@ public class ActionLog {
 
     public void setActionDatetime(String actionDatetime) {
         this.actionDatetime = actionDatetime;
-    }
-
-    public Integer getActionType() {
-        return actionType;
-    }
-
-    public void setActionType(Integer actionType) {
-        this.actionType = actionType;
     }
 
     public String getOprNo() {
@@ -127,46 +89,6 @@ public class ActionLog {
 
     public void setNewValue(String newValue) {
         this.newValue = newValue;
-    }
-
-    public String getReferId() {
-        return referId;
-    }
-
-    public void setReferId(String referId) {
-        this.referId = referId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public Boolean getIsSuccess() {
-        return isSuccess;
-    }
-
-    public void setIsSuccess(Boolean isSuccess) {
-        this.isSuccess = isSuccess;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
     }
 
     public String getTraceId() {

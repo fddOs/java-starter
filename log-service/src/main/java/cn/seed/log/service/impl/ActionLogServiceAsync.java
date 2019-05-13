@@ -18,15 +18,6 @@ public class ActionLogServiceAsync {
     private ActionLogService actionLogService;
 
     @Async
-    public void insertServiceLogAsync(ActionLog actionLog) {
-        try {
-            actionLogService.insertActionLog(actionLog);
-        } catch (Exception e) {
-            LoggerUtils.error(getClass(), new Object[]{actionLog}, e);
-        }
-    }
-
-    @Async
     public void insertServiceLogCommonAsync(ActionLog actionLog) {
         try {
             actionLogService.insertActionLogCommon(actionLog);

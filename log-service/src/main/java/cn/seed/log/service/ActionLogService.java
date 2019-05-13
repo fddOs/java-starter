@@ -13,8 +13,6 @@ public interface ActionLogService {
 
     List<Map<String, String>> selectBySql(String sql);
 
-    int insertActionLog(ActionLog actionLog);
-
     int insertActionLogCommon(ActionLog actionLog);
 
     /**

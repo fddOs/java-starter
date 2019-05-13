@@ -4,6 +4,7 @@ import cn.seed.log.entity.BusinessLog;
 import cn.seed.log.entity.BusinessLogValue;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 业务日志
@@ -41,4 +42,5 @@ public interface BusinessService {
      * @return
      */
     int insertBusinessLogValue(BusinessLogValue record);
+
 }

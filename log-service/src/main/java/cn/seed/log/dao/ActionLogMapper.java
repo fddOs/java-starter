@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ActionLogMapper {
-    int insertActionLog(ActionLog record);
 
     int insertActionLogCommon(ActionLog record);
 

@@ -1,7 +1,10 @@
 package cn.seed.log.dao;
 
 import cn.seed.log.entity.BusinessLog;
+
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface BusinessLogMapper {
@@ -15,9 +18,10 @@ public interface BusinessLogMapper {
 
     int updateByPrimaryKey(BusinessLog record);
 
-    List<BusinessLog> selectByOrderNoSys(@Param("orderNo") String orderNo,@Param("sysName")String sysName);
+    List<BusinessLog> selectByOrderNoSys(@Param("orderNo") String orderNo, @Param("sysName") String sysName);
 
-    List<BusinessLog> selectByOrderNoAction(@Param("orderNo") String orderNo,@Param("actionType")Integer actionType);
+    List<BusinessLog> selectByOrderNoAction(@Param("orderNo") String orderNo, @Param("actionType") Integer actionType);
 
-    List<BusinessLog> selectByOrderNo( String orderNo);
+    List<BusinessLog> selectByOrderNo(String orderNo);
+
 }
