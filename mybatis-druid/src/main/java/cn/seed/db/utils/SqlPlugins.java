@@ -10,6 +10,9 @@ import org.apache.ibatis.plugin.Interceptor;
  * @date 2019-04-16 21:46
  */
 public enum SqlPlugins {
+    /**
+     * 插件
+     */
     INSTANCE;
     private List<Interceptor> interceptorList = new ArrayList<>(5);
 
