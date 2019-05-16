@@ -41,9 +41,9 @@ public class ExceptionWrapper {
      * @author 方典典
      * @time 2019/5/5 10:17
      */
-    public static <T> T executeWrapper(String errorMsg, DoSomethingReturn wrapper) {
+    public static <T> T executeWrapper(String errorMsg, DoSomethingReturn<T> wrapper) {
         try {
-            return (T) wrapper.execute();
+            return wrapper.execute();
         } catch (Exception e) {
             LoggerUtils.error(ExceptionWrapper.class, new Object[]{errorMsg, wrapper}, e);
             throw new ServiceException(ResultCode.FAIL, errorMsg, e);
