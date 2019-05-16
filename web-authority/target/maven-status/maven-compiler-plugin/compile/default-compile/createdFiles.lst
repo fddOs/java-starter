@@ -1,8 +1,8 @@
-cn/seed/authority/service/WebAuthority.class
-cn/seed/authority/config/AuthorityConfiguration.class
-cn/seed/authority/service/impl/WebAuthorityImpl.class
-cn/seed/authority/model/BtnAuthResult.class
-cn/seed/authority/http/api/AuthApi.class
-cn/seed/authority/WebAuthorityApplication.class
-cn/seed/authority/annotation/WebAuthentication.class
-cn/seed/authority/interceptor/AuthenticationInterceptor.class
+cn\seed\authority\model\BtnAuthResult.class
+cn\seed\authority\interceptor\AuthenticationInterceptor.class
+cn\seed\authority\config\AuthorityConfiguration.class
+cn\seed\authority\http\api\AuthApi.class
+cn\seed\authority\WebAuthorityApplication.class
+cn\seed\authority\service\WebAuthority.class
+cn\seed\authority\annotation\WebAuthentication.class
+cn\seed\authority\service\impl\WebAuthorityImpl.class

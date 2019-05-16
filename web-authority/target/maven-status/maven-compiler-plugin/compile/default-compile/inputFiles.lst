@@ -1,8 +1,8 @@
-/Users/lixiao/IdeaProjects/java-starter/web-authority/src/main/java/cn/seed/authority/http/api/AuthApi.java
-/Users/lixiao/IdeaProjects/java-starter/web-authority/src/main/java/cn/seed/authority/interceptor/AuthenticationInterceptor.java
-/Users/lixiao/IdeaProjects/java-starter/web-authority/src/main/java/cn/seed/authority/service/WebAuthority.java
-/Users/lixiao/IdeaProjects/java-starter/web-authority/src/main/java/cn/seed/authority/model/BtnAuthResult.java
-/Users/lixiao/IdeaProjects/java-starter/web-authority/src/main/java/cn/seed/authority/WebAuthorityApplication.java
-/Users/lixiao/IdeaProjects/java-starter/web-authority/src/main/java/cn/seed/authority/config/AuthorityConfiguration.java
-/Users/lixiao/IdeaProjects/java-starter/web-authority/src/main/java/cn/seed/authority/service/impl/WebAuthorityImpl.java
-/Users/lixiao/IdeaProjects/java-starter/web-authority/src/main/java/cn/seed/authority/annotation/WebAuthentication.java
+D:\git\java-starter\web-authority\src\main\java\cn\seed\authority\service\WebAuthority.java
+D:\git\java-starter\web-authority\src\main\java\cn\seed\authority\http\api\AuthApi.java
+D:\git\java-starter\web-authority\src\main\java\cn\seed\authority\annotation\WebAuthentication.java
+D:\git\java-starter\web-authority\src\main\java\cn\seed\authority\model\BtnAuthResult.java
+D:\git\java-starter\web-authority\src\main\java\cn\seed\authority\interceptor\AuthenticationInterceptor.java
+D:\git\java-starter\web-authority\src\main\java\cn\seed\authority\WebAuthorityApplication.java
+D:\git\java-starter\web-authority\src\main\java\cn\seed\authority\service\impl\WebAuthorityImpl.java
+D:\git\java-starter\web-authority\src\main\java\cn\seed\authority\config\AuthorityConfiguration.java

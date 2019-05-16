@@ -30,6 +30,8 @@ public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
 
     private Map<String, String[]> parameterMap;
 
+    private String queryString;
+
     private static final String CHARSE = "UTF-8";
 
 
@@ -152,6 +154,7 @@ public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
         }
         //对请求url的参数进行解密
         String params = aesDecrypt(questSting);
+        this.queryString = params;
         if (!StringUtils.isEmpty(params)) {
             String[] paramList = params.split("&");
             for (String param : paramList) {
@@ -204,5 +207,10 @@ public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
         } else {
             return results;
         }
+    }
+
+    @Override
+    public String getQueryString() {
+        return queryString;
     }
 }
