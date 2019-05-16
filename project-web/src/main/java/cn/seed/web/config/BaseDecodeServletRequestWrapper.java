@@ -153,10 +153,9 @@ public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
             throw new ServiceException(ResultCode.FAIL, "URLDecoder解码失败");
         }
         //对请求url的参数进行解密
-        String params = aesDecrypt(questSting);
-        this.queryString = params;
-        if (!StringUtils.isEmpty(params)) {
-            String[] paramList = params.split("&");
+        queryString = aesDecrypt(questSting);
+        if (!StringUtils.isEmpty(queryString)) {
+            String[] paramList = queryString.split("&");
             for (String param : paramList) {
                 String[] string = param.split("=");
                 if (string.length == 2 && !StringUtils.isEmpty(string[1])) {
