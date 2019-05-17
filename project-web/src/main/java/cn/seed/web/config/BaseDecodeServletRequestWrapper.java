@@ -66,8 +66,8 @@ public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
         }
         String reqBody;
         try {
-            requestBody = StreamUtils.copyToByteArray(request.getInputStream());
-            reqBody = aesDecrypt(new String(requestBody,Charset.forName(CHARSE)));
+            reqBody = aesDecrypt(StreamUtils.copyToString(request.getInputStream(),
+                    Charset.forName(CHARSE)));
         } catch (Exception e) {
             LoggerUtils.error(getClass(), new Object[]{request}, e);
             throw new ServiceException(ResultCode.UNAUTHORIZED, "body参数解密错误");
