@@ -47,8 +47,7 @@ public class DecodeFilter implements Filter {
         } else {
             BaseDecodeServletRequestWrapper decodeRequestWrapper;
             try {
-                decodeRequestWrapper = new BaseDecodeServletRequestWrapper(
-                        (HttpServletRequest) request);
+                decodeRequestWrapper = new BaseDecodeServletRequestWrapper((HttpServletRequest) requestWrapper);
             } catch (Exception e) {
                 String exceptionMsg = "";
                 if (e instanceof ServiceException) {
