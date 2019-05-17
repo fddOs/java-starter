@@ -63,9 +63,6 @@ public class SignFilter implements Filter {
                 String respStr = IOUtils.getResponseBody(((BaseHttpServletResponseWrapper) response).getContent());
                 String resSign = SignUtils.signResponse(respStr);
                 ((HttpServletResponse) response).setHeader("x-seed-sign", resSign);
-                ServletOutputStream out = response.getOutputStream();
-                out.write(respStr.getBytes("UTF-8"));
-                out.flush();
             } catch (Exception e) {
                 LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
                 throw new ServiceException(ResultCode.UNAUTHORIZED, "签名错误");
