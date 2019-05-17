@@ -1,4 +1,4 @@
-package cn.seed.log.elk;
+package cn.seed.common.elk;
 
 import java.util.Map;
 

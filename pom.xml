@@ -12,7 +12,6 @@
     <modules>
         <module>common-core</module>
         <module>log-service</module>
-        <module>log-elk</module>
         <module>mybatis-druid</module>
         <module>project-web</module>
         <module>rpc-feign</module>
@@ -160,11 +159,6 @@
             <dependency>
                 <groupId>cn.seed</groupId>
                 <artifactId>log-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.seed</groupId>
-                <artifactId>log-elk</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

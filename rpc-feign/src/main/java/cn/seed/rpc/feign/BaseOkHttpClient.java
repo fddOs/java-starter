@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import cn.seed.common.utils.*;
-import cn.seed.log.elk.EHILogstashMarker;
-import cn.seed.log.elk.RequestLog;
-import cn.seed.log.elk.ResponseLog;
+import cn.seed.common.elk.EHILogstashMarker;
+import cn.seed.common.elk.RequestLog;
+import cn.seed.common.elk.ResponseLog;
 import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;

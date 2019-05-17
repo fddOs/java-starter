@@ -5,6 +5,7 @@ import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.IOUtils;
 import cn.seed.common.utils.LoggerUtils;
+import cn.seed.common.utils.RequestInfoUtils;
 import cn.seed.common.utils.SignUtils;
 import cn.seed.web.common.ExcludePathHandler;
 import cn.seed.web.common.SignConfig;
@@ -39,15 +40,10 @@ public class SignFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         boolean isSign = Boolean.valueOf(ApolloBaseConfig.getReqSign());
-        if (!isSign || ExcludePathHandler.contain(request, response, ApolloBaseConfig.getSignExcludePath())) {
+        if (RequestInfoUtils.contentTypeIsNotApplicationJson(request) || !isSign || ExcludePathHandler.contain
+                (request, response, ApolloBaseConfig.getSignExcludePath())) {
             chain.doFilter(request, response);
         } else {
-            BaseHttpServletResponseWrapper contentCachingResponseWrapper;
-            if (response instanceof BaseHttpServletResponseWrapper) {
-                contentCachingResponseWrapper = (BaseHttpServletResponseWrapper) response;
-            } else {
-                contentCachingResponseWrapper = new BaseHttpServletResponseWrapper((HttpServletResponse) response);
-            }
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             String requestBody = "";
             if (!GET.name().equals(httpServletRequest.getMethod())) {
@@ -62,9 +58,9 @@ public class SignFilter implements Filter {
             if (!signRequest(httpServletRequest, requestBody, httpServletRequest.getQueryString())) {
                 throw new ServiceException(ResultCode.UNAUTHORIZED, "签名错误");
             }
-            chain.doFilter(request, contentCachingResponseWrapper);
+            chain.doFilter(request, response);
             try {
-                String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
+                String respStr = IOUtils.getResponseBody(((BaseHttpServletResponseWrapper) response).getContent());
                 String resSign = SignUtils.signResponse(respStr);
                 ((HttpServletResponse) response).setHeader("x-seed-sign", resSign);
                 ServletOutputStream out = response.getOutputStream();

@@ -1,5 +1,8 @@
 package cn.seed.common.utils;
 
+import org.springframework.util.StringUtils;
+
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
@@ -10,7 +13,7 @@ import java.util.*;
  * @author:方典典
  * @time:2018/7/9 10:48
  */
-public class HeaderUtils {
+public class RequestInfoUtils {
     /**
      * @Description:header转码 iso8859-1转utf-8
      * @params:[request]
@@ -35,7 +38,7 @@ public class HeaderUtils {
 
     /**
      * @param response
-     * @return java.util.Map<java.lang.String       ,       java.lang.String>
+     * @return java.util.Map<java.lang.String               ,               java.lang.String>
      * @Description:header转码 iso8859-1转utf-8
      * @exception:
      * @author: 方典典
@@ -52,6 +55,19 @@ public class HeaderUtils {
             }
         });
         return headers;
+    }
+
+    /**
+     * 判断request的contentType 不是 application/json
+     *
+     * @param request
+     * @return boolean
+     * @author 方典典
+     * @time 2019/5/17 15:40
+     */
+    public static boolean contentTypeIsNotApplicationJson(ServletRequest request) {
+        return StringUtils.isEmpty(request.getContentType()) || !request.getContentType().contains
+                ("application/json");
     }
 
 }

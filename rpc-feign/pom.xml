@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>cn.seed</groupId>
-            <artifactId>log-elk</artifactId>
+            <artifactId>utils-email</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.seed</groupId>

@@ -43,10 +43,10 @@ public class IOUtils {
                 bodyString = new String(buf, 0, buf.length, "utf-8");
                 return bodyString;
             } catch (Exception e) {
-                return "unknown";
+                return "unknown:获取responseBody失败";
             }
         }
-        return "unknown";
+        return "unknown:获取responseBody失败";
     }
 
 }

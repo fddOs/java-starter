@@ -7,6 +7,7 @@ import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.AESUtils;
 import cn.seed.common.utils.IOUtils;
 import cn.seed.common.utils.LoggerUtils;
+import cn.seed.common.utils.RequestInfoUtils;
 import cn.seed.web.common.ExcludePathHandler;
 import com.alibaba.fastjson.JSON;
 import org.springframework.core.annotation.Order;
@@ -36,29 +37,17 @@ public class DecodeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        if (StringUtils.isEmpty(request.getContentType()) || !request.getContentType().contains
-                ("application/json")) {
-            chain.doFilter(request, response);
-            return;
-        }
+        ServletRequest requestWrapper = new BaseHttpServletRequestWrapper((HttpServletRequest) request);
+        BaseHttpServletResponseWrapper responseWrapper = new BaseHttpServletResponseWrapper(
+                (HttpServletResponse) response);
         boolean isDecode = Boolean.valueOf(ApolloBaseConfig.getReqDecode());
-        if (!isDecode || ExcludePathHandler.contain(request, response, ApolloBaseConfig.getDecodeExcludePath())) {
-            ServletRequest requestWrapper = null;
-            if (request instanceof HttpServletRequest) {
-                requestWrapper = new BaseHttpServletRequestWrapper((HttpServletRequest) request);
-            }
-            if (requestWrapper == null) {
-                chain.doFilter(request, response);
-            } else {
-                chain.doFilter(requestWrapper, response);
-            }
+        if (RequestInfoUtils.contentTypeIsNotApplicationJson(request) || !isDecode || ExcludePathHandler.contain
+                (request, response, ApolloBaseConfig.getDecodeExcludePath())) {
+            chain.doFilter(requestWrapper, responseWrapper);
         } else {
-            BaseHttpServletResponseWrapper
-                contentCachingResponseWrapper = new BaseHttpServletResponseWrapper(
-                    (HttpServletResponse) response);
-            BaseDecodeServletRequestWrapper baseDecodeServletRequestWrapper;
+            BaseDecodeServletRequestWrapper decodeRequestWrapper;
             try {
-                baseDecodeServletRequestWrapper = new BaseDecodeServletRequestWrapper(
+                decodeRequestWrapper = new BaseDecodeServletRequestWrapper(
                         (HttpServletRequest) request);
             } catch (Exception e) {
                 String exceptionMsg = "";
@@ -72,12 +61,8 @@ public class DecodeFilter implements Filter {
                         (ResultCode.BAD_REQUEST, exceptionMsg)));
                 return;
             }
-            if (baseDecodeServletRequestWrapper == null) {
-                chain.doFilter(request, contentCachingResponseWrapper);
-            } else {
-                chain.doFilter(baseDecodeServletRequestWrapper, contentCachingResponseWrapper);
-            }
-            String respStr = IOUtils.getResponseBody(contentCachingResponseWrapper.getContent());
+            chain.doFilter(decodeRequestWrapper, responseWrapper);
+            String respStr = IOUtils.getResponseBody(responseWrapper.getContent());
             responseResult((HttpServletResponse) response, respStr);
         }
 

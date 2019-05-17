@@ -1,4 +1,4 @@
-package cn.seed.log.elk;
+package cn.seed.web.config;
 
 import brave.internal.HexCodec;
 import brave.opentracing.BraveSpanContext;
@@ -10,6 +10,9 @@ import cn.seed.common.core.Result;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ResultGenerator;
 import cn.seed.common.core.ServiceException;
+import cn.seed.common.elk.EHILogstashMarker;
+import cn.seed.common.elk.RequestLog;
+import cn.seed.common.elk.ResponseLog;
 import cn.seed.common.utils.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -24,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -33,6 +37,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -57,20 +62,18 @@ public class LoggingFilter extends OncePerRequestFilter {
             filterChain) throws IOException {
         StopWatch stopWatch = this.createStopWatchIfNecessary(request);
         String requestTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        ContentCachingRequestWrapper wrapperRequest = new ContentCachingRequestWrapper(request);
-        ContentCachingResponseWrapper wrapperResponse = new ContentCachingResponseWrapper(response);
         String requestId = null;
         String errorMsg = "";
         int httpStatus = HttpCodeEnum.CODE_200.getCode();
         Map<String, String> headerMap = getRequestHeaderMap(request);
         try {
-            filterChain.doFilter(wrapperRequest, wrapperResponse);
+            filterChain.doFilter(request, response);
         } catch (Exception e) {
             if (e.getCause() != null) {
                 e = (Exception) e.getCause();
             }
             if (e instanceof ServiceException) {
-                responseResult(wrapperResponse, ResultGenerator.genFailResult(((ServiceException) e).getResultCode(),
+                responseResult(response, ResultGenerator.genFailResult(((ServiceException) e).getResultCode(),
                         e.getMessage()));
                 return;
             }
@@ -78,51 +81,47 @@ public class LoggingFilter extends OncePerRequestFilter {
             LoggerUtils.error(getClass(), errorMsg);
             String exceptionMsg = "程序发生异常，错误代码:0X" + Long.toHexString(System.currentTimeMillis()).toUpperCase()
                     + (new Random().nextInt(900) + 100);
-            wrapperResponse.setStatus(HttpCodeEnum.CODE_516.getCode());
+            response.setStatus(HttpCodeEnum.CODE_516.getCode());
             if (e instanceof ExternalException) {
-                wrapperResponse.setStatus(HttpCodeEnum.CODE_518.getCode());
+                response.setStatus(HttpCodeEnum.CODE_518.getCode());
                 String message = e.getMessage();
                 int i = message.indexOf("---");
                 if (i != -1) {
                     exceptionMsg = message.substring(i + 3);
                 }
             }
-            responseResult(wrapperResponse, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR,
+            responseResult(response, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR,
                     exceptionMsg));
         } finally {
-            boolean isClose = "none".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch());
-            boolean isBool = !"ALL".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch()) && "GET".equalsIgnoreCase
-                    (wrapperRequest.getMethod());
-            if ((isClose || isBool) && StringUtils.isEmpty(errorMsg)) {
-                wrapperResponse.copyBodyToResponse();
-                return;
-            }
-            if (requestId == null) {
-                requestId = UuidUtils.getRandomUUID();
-            }
-            String queryString = request.getQueryString();
-            String requestUrl = request.getRequestURL().toString();
-            if (!StringUtils.isEmpty(queryString)) {
-                requestUrl = requestUrl + "?" + queryString;
-            }
-            Object responseBody = getResponseBody(wrapperResponse);
-            wrapperResponse.copyBodyToResponse();
-            if (!wrapperRequest.isAsyncStarted()) {
-                if (wrapperResponse.isCommitted()) {
-                    httpStatus = wrapperResponse.getStatus();
+            boolean isClose = "none".equalsIgnoreCase(ApolloBaseConfig.getLogSwitch()) || (!"ALL".equalsIgnoreCase
+                    (ApolloBaseConfig.getLogSwitch()) && "GET".equalsIgnoreCase(request.getMethod()));
+            if (!isClose || StringUtils.isEmpty(errorMsg)) {
+                if (requestId == null) {
+                    requestId = UuidUtils.getRandomUUID();
                 }
-                stopWatch.stop();
-                request.removeAttribute(ATTRIBUTE_STOP_WATCH);
+                String queryString = request.getQueryString();
+                String requestUrl = request.getRequestURL().toString();
+                if (!StringUtils.isEmpty(queryString)) {
+                    requestUrl = requestUrl + "?" + queryString;
+                }
+                Object responseBody = getResponseBody(response);
+                if (!request.isAsyncStarted()) {
+                    if (response.isCommitted()) {
+                        httpStatus = response.getStatus();
+                    }
+                    stopWatch.stop();
+                    request.removeAttribute(ATTRIBUTE_STOP_WATCH);
+                }
+                String responseTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                RequestLog requestLog = new RequestLog(requestId, requestTime, true,
+                        ProjectInfoUtils.PROJECT_CONTEXT, requestUrl, getRequestBody(request),
+                        request.getMethod(), headerMap);
+                Map<String, String> responseHeaderMap = RequestInfoUtils.responseHeaderHandler(response);
+                responseHeaderMap.put("response.code", String.valueOf(httpStatus));
+                ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
+                        .getTotalTimeMillis(), responseBody, responseHeaderMap);
+                LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
             }
-            String responseTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            RequestLog requestLog = new RequestLog(requestId, requestTime, true,
-                    ProjectInfoUtils.PROJECT_CONTEXT, requestUrl, getRequestBody(wrapperRequest),
-                    request.getMethod(), headerMap);
-            Map<String, String> responseHeaderMap = HeaderUtils.responseHeaderHandler(response);
-            responseHeaderMap.put("response.code", String.valueOf(httpStatus));
-            ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
-                    .getTotalTimeMillis(), responseBody, responseHeaderMap);
-            LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
         }
     }
 
@@ -130,12 +129,12 @@ public class LoggingFilter extends OncePerRequestFilter {
      * getRequestHeaderMap
      *
      * @param request
-     * @return java.util.Map<java.lang.String               ,               java.lang.String>
+     * @return java.util.Map
      * @author 方典典
      * @time 2019/1/15 17:44
      */
     private Map<String, String> getRequestHeaderMap(HttpServletRequest request) {
-        Map<String, String> headerMap = HeaderUtils.requestHeaderHandler(request);
+        Map<String, String> headerMap = RequestInfoUtils.requestHeaderHandler(request);
         Scope serverSpan = tracer.scopeManager().active();
         if (serverSpan != null) {
             SpanContext spanContext = serverSpan.span().context();
@@ -180,22 +179,19 @@ public class LoggingFilter extends OncePerRequestFilter {
      * @author: 方典典
      * @time:2018/11/6 16:50
      */
-    private Object getRequestBody(ContentCachingRequestWrapper request) {
+    private Object getRequestBody(HttpServletRequest request) {
         if (isBinaryContent(request) || isMultipart(request)) {
             return JsonUtils.parse("{\"content\":\"二进制\"}");
         }
-        byte[] buf = request.getContentAsByteArray();
-        if (buf.length > 0) {
-            String requestString = null;
-            try {
-                requestString = new String(buf, 0, buf.length, "utf-8");
-                return JsonUtils.parse(requestString);
-            } catch (Exception e) {
-                return JsonUtils.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
-                        request.getContentType() + " requestBody:" + requestString + "\"}");
-            }
+        String requestString = "";
+        try {
+            requestString = StreamUtils.copyToString(request.getInputStream(),
+                    Charset.forName("UTF-8"));
+            return JsonUtils.parse(requestString);
+        } catch (Exception e) {
+            return JsonUtils.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
+                    request.getContentType() + " requestBody:" + requestString + "\"}");
         }
-        return new JSONObject();
     }
 
     /**
@@ -206,19 +202,16 @@ public class LoggingFilter extends OncePerRequestFilter {
      * @author: 方典典
      * @time:2018/11/6 16:50
      */
-    private Object getResponseBody(ContentCachingResponseWrapper response) {
-        byte[] buf = response.getContentAsByteArray();
+    private Object getResponseBody(HttpServletResponse response) {
         String bodyString = "";
-        if (buf.length > 0) {
-            try {
-                bodyString = new String(buf, 0, buf.length, "utf-8");
-                return JsonUtils.parse(bodyString);
-            } catch (Exception e) {
-                return JsonUtils.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
-                        response.getContentType() + " responseBody:" + bodyString + "\"}");
-            }
+        try {
+            byte[] buf = ((BaseHttpServletResponseWrapper) response).getContent();
+            bodyString = new String(buf, 0, buf.length, "utf-8");
+            return JsonUtils.parse(bodyString);
+        } catch (Exception e) {
+            return JsonUtils.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
+                    response.getContentType() + " responseBody:" + bodyString + "\"}");
         }
-        return new JSONObject();
     }
 
     /**

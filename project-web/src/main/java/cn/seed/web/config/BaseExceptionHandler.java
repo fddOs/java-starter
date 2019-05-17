@@ -1,4 +1,4 @@
-package cn.seed.log.elk;
+package cn.seed.web.config;
 
 import java.util.List;
 
