@@ -44,6 +44,8 @@ public class DecodeFilter implements Filter {
         if (RequestInfoUtils.contentTypeIsNotApplicationJson(request) || !isDecode || ExcludePathHandler.contain
                 (request, response, ApolloBaseConfig.getDecodeExcludePath())) {
             chain.doFilter(requestWrapper, responseWrapper);
+            responseResult(responseWrapper, IOUtils.getResponseBody(responseWrapper.getContent()),
+                    false);
         } else {
             BaseDecodeServletRequestWrapper decodeRequestWrapper;
             try {
@@ -56,13 +58,13 @@ public class DecodeFilter implements Filter {
                     exceptionMsg = "解密失败";
                 }
                 LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
-                responseResult((HttpServletResponse) response, JSON.toJSONString(ResultGenerator.genFailResult
-                        (ResultCode.BAD_REQUEST, exceptionMsg)));
+                responseResult(responseWrapper, JSON.toJSONString(ResultGenerator.genFailResult
+                        (ResultCode.BAD_REQUEST, exceptionMsg)), true);
                 return;
             }
             chain.doFilter(decodeRequestWrapper, responseWrapper);
             String respStr = IOUtils.getResponseBody(responseWrapper.getContent());
-            responseResult((HttpServletResponse) response, respStr);
+            responseResult(responseWrapper, respStr, true);
         }
 
     }
@@ -81,17 +83,22 @@ public class DecodeFilter implements Filter {
      * @author 方典典
      * @time 2019/3/1 17:49
      */
-    private void responseResult(HttpServletResponse response, String result) {
+    private void responseResult(HttpServletResponse response, String result, boolean isEncrypt) {
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
-        String respStr;
-        try {
-            respStr = AESUtils.aesEncryptString(result);
-        } catch (Exception ex) {
-            respStr = "加密错误";
-            LoggerUtils.error(getClass(), new Object[]{response, result}, ex);
+        String respStr = result;
+        if (isEncrypt) {
+            try {
+                respStr = AESUtils.aesEncryptString(result);
+            } catch (Exception ex) {
+                respStr = "加密错误";
+                LoggerUtils.error(getClass(), new Object[]{response, result}, ex);
+            }
+            response.setHeader("content-type", "text");
+        } else {
+            response.setHeader("content-type", "application/json");
         }
-        response.setHeader("content-type", "text");
+
         try {
             response.setHeader("content-length", String.valueOf(respStr.getBytes("UTF-8").length));
             response.getWriter().write(respStr);
