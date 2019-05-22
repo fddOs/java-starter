@@ -23,17 +23,10 @@ import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 
+import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import okhttp3.Headers;
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 import okio.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +88,10 @@ public class BaseOkHttpClient {
      * @return
      */
     private Request handleRequest(Request request) {
+        String querySplit = "?";
+        if (request.url().querySize() != 0) {
+            querySplit = "&";
+        }
         RequestBody requestBody = request.body();
         RequestBody requestBodyNew;
         /**
@@ -120,13 +117,22 @@ public class BaseOkHttpClient {
         return request.newBuilder().addHeader("Content-MD5", SignUtils.sign(request.url().query(), bodyParams))
                 .addHeader("Connection", "close")
                 .addHeader("Content-Type", "application/json")
-                .addHeader(HEADER_JWT_USER_ID, handleHeader())
-                .url(request.url())
+                .addHeader(HEADER_JWT_USER_ID, getUserCode())
+                .url(HttpUrl.parse(request.url().url().toString() + querySplit + "platform=" + ProjectInfoUtils
+                        .PROJECT_CONTEXT + "&oprNo=" + getUserCode()))
                 .method(request.method(), requestBodyNew).build();
     }
 
 
-    private String handleHeader() {
+    /**
+     * 从request中获取userCode
+     *
+     * @param
+     * @return java.lang.String
+     * @author 方典典
+     * @time 2019/5/22 14:51
+     */
+    private String getUserCode() {
         HttpServletRequest request = null;
         try {
             request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
