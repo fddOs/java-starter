@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import cn.seed.common.utils.*;
-import cn.seed.common.elk.EHILogstashMarker;
+import cn.seed.common.elk.SeedLogstashMarker;
 import cn.seed.common.elk.RequestLog;
 import cn.seed.common.elk.ResponseLog;
 import com.alibaba.fastjson.JSONObject;
@@ -273,7 +273,7 @@ public class BaseOkHttpClient {
         ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, exceptionMsg, totalTime,
                 responseBodyJSON, responseHeaderMap);
         // 发送日志信息
-        LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
+        LOGGER.info(new SeedLogstashMarker(requestLog, responseLog), null);
         return response;
     }
 

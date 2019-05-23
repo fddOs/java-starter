@@ -10,11 +10,11 @@ import java.io.IOException;
  * @author:方典典
  * @time:2018/11/2 10:50
  */
-public class EHILogstashMarker extends LogstashMarker {
+public class SeedLogstashMarker extends LogstashMarker {
     private RequestLog requestLog;
     private ResponseLog responseLog;
 
-    public EHILogstashMarker(RequestLog requestLog, ResponseLog responseLog) {
+    public SeedLogstashMarker(RequestLog requestLog, ResponseLog responseLog) {
         super("ELK");
         this.requestLog = requestLog;
         this.responseLog = responseLog;

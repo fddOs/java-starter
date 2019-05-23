@@ -10,12 +10,11 @@ import cn.seed.common.core.Result;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ResultGenerator;
 import cn.seed.common.core.ServiceException;
-import cn.seed.common.elk.EHILogstashMarker;
+import cn.seed.common.elk.SeedLogstashMarker;
 import cn.seed.common.elk.RequestLog;
 import cn.seed.common.elk.ResponseLog;
 import cn.seed.common.utils.*;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -30,8 +29,6 @@ import org.springframework.util.StopWatch;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -120,7 +117,7 @@ public class LoggingFilter extends OncePerRequestFilter {
                 responseHeaderMap.put("response.code", String.valueOf(httpStatus));
                 ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
                         .getTotalTimeMillis(), responseBody, responseHeaderMap);
-                LOGGER.info(new EHILogstashMarker(requestLog, responseLog), null);
+                LOGGER.info(new SeedLogstashMarker(requestLog, responseLog), null);
             }
         }
     }
