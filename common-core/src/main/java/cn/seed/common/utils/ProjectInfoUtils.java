@@ -150,7 +150,7 @@ public class ProjectInfoUtils {
      * @time 2019/4/29 17:20
      */
     private static String getProjectDBKey() {
-        return (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo.db-key");
+        return (String) ProjectInfoUtils.applicationProperty.getProperty("project.db-key");
     }
 
     /**
