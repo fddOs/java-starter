@@ -79,6 +79,7 @@ public class DecodeFilter implements Filter {
      *
      * @param response
      * @param result
+     * @param isEncrypt
      * @return void
      * @author 方典典
      * @time 2019/3/1 17:49
@@ -95,8 +96,6 @@ public class DecodeFilter implements Filter {
                 LoggerUtils.error(getClass(), new Object[]{response, result}, ex);
             }
             response.setHeader("content-type", "text");
-        } else {
-            response.setHeader("content-type", "application/json");
         }
 
         try {
