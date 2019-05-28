@@ -87,6 +87,7 @@ public class DecodeFilter implements Filter {
     private void responseResult(HttpServletResponse response, String result, boolean isEncrypt) {
         response.setCharacterEncoding("UTF-8");
         response.setStatus(200);
+        response.setHeader("Cache-Control","no-store");
         String respStr = result;
         if (isEncrypt) {
             try {
