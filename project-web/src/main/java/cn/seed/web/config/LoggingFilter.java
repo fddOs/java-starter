@@ -29,6 +29,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -202,7 +203,7 @@ public class LoggingFilter extends OncePerRequestFilter {
     private Object getResponseBody(HttpServletResponse response) {
         String bodyString = "";
         try {
-            byte[] buf = ((BaseHttpServletResponseWrapper) response).getContent();
+            byte[] buf = ((ContentCachingResponseWrapper) response).getContentAsByteArray();
             bodyString = new String(buf, 0, buf.length, "utf-8");
             return JsonUtils.parse(bodyString);
         } catch (Exception e) {

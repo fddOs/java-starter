@@ -13,6 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +61,7 @@ public class SignFilter implements Filter {
             }
             chain.doFilter(request, response);
             try {
-                String respStr = IOUtils.getResponseBody(((BaseHttpServletResponseWrapper) response).getContent());
+                String respStr = IOUtils.getResponseBody(((ContentCachingResponseWrapper) response).getContentAsByteArray());
                 String resSign = SignUtils.signResponse(respStr);
                 ((HttpServletResponse) response).setHeader("x-seed-sign", resSign);
             } catch (Exception e) {
