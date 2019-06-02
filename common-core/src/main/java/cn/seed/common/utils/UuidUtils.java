@@ -1,6 +1,7 @@
 package cn.seed.common.utils;
 
 import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author juncheng
@@ -14,11 +15,7 @@ public class UuidUtils {
      */
     public static String getRandomUUID() {
         String uuid = UUID.randomUUID().toString();
-        return uuid.substring(0, 8)
-                + uuid.substring(9, 13)
-                + uuid.substring(14, 18)
-                + uuid.substring(19, 23)
-                + uuid.substring(24);
+        return  StringUtils.replace(uuid,"-","",-1);
     }
 
     /**

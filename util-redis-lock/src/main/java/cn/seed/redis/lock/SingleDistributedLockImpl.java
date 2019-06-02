@@ -62,13 +62,13 @@ public class SingleDistributedLockImpl implements DistributedLockService {
 
     @Override
     public Boolean tryLock(String lockName) {
-        return tryLock(lockName,DEFAULT_WAIT_TIME,true);
+        return tryLock(lockName,DEFAULT_TIMEOUT,true);
     }
 
-    @Override public Boolean tryLock(String lockName, long waitTime, boolean fairLock) {
+    @Override public Boolean tryLock(String lockName, long timeOut, boolean fairLock) {
         RLock lock = getLock(redisson, lockName, fairLock);
         try {
-            return lock.tryLock(waitTime, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
+            return lock.tryLock(DEFAULT_WAIT_TIME, timeOut, DEFAULT_TIME_UNIT);
         } catch (Exception e) {
             LoggerUtils.error(getClass(), new Object[]{lockName}, e);
         }
