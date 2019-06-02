@@ -70,6 +70,15 @@ public interface DistributedLockService {
     Boolean tryLock(String lockName);
 
     /**
+     * 尝试分布式锁，使用锁默认等待时间、超时 使用公平锁
+     * @param lockName
+     * @return java.lang.Boolean
+     * @author lixiao
+     * @date 2018/12/10 16:56
+     */
+    Boolean tryLock(String lockName, long waitTime,boolean fairLock);
+
+    /**
      * 手动解锁
      * @param lockName
      * @return void
