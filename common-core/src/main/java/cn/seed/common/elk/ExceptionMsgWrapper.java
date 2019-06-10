@@ -1,4 +1,6 @@
-package cn.seed.common.utils;
+package cn.seed.common.elk;
+
+import cn.seed.common.utils.ProjectInfoUtils;
 
 /**
  * @Description:EHIExceptionMsg

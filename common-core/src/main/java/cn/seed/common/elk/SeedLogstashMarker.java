@@ -11,36 +11,44 @@ import java.io.IOException;
  * @time:2018/11/2 10:50
  */
 public class SeedLogstashMarker extends LogstashMarker {
-    private RequestLog requestLog;
-    private ResponseLog responseLog;
+    private ElkMessage elkMessage;
 
     public SeedLogstashMarker(RequestLog requestLog, ResponseLog responseLog) {
         super("ELK");
-        this.requestLog = requestLog;
-        this.responseLog = responseLog;
+        elkMessage = new ElkMessage(requestLog, responseLog);
+    }
+
+    public SeedLogstashMarker(ExceptionMsgWrapper exceptionMsgWrapper) {
+        super("ELK");
+        this.elkMessage = new ElkMessage(exceptionMsgWrapper);
+    }
+
+    public SeedLogstashMarker(Object[] objs) {
+        super("ELK");
+        this.elkMessage = new ElkMessage(objs);
+    }
+
+    public SeedLogstashMarker() {
+        super("ELK");
+        this.elkMessage = new ElkMessage();
+    }
+
+    public SeedLogstashMarker(ElkMessage elkMessage) {
+        super("ELK");
+        this.elkMessage = elkMessage;
     }
 
     @Override
     public void writeTo(JsonGenerator generator) throws IOException {
-        generator.writeFieldName("request");
-        generator.writeObject(requestLog);
-        generator.writeFieldName("response");
-        generator.writeObject(responseLog);
+        generator.writeFieldName("elkMessage");
+        generator.writeObject(elkMessage);
     }
 
-    public RequestLog getRequestLog() {
-        return requestLog;
+    public ElkMessage getElkMessage() {
+        return elkMessage;
     }
 
-    public void setRequestLog(RequestLog requestLog) {
-        this.requestLog = requestLog;
-    }
-
-    public ResponseLog getResponseLog() {
-        return responseLog;
-    }
-
-    public void setResponseLog(ResponseLog responseLog) {
-        this.responseLog = responseLog;
+    public void setElkMessage(ElkMessage elkMessage) {
+        this.elkMessage = elkMessage;
     }
 }

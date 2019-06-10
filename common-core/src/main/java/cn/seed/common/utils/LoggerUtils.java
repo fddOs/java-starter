@@ -1,5 +1,7 @@
 package cn.seed.common.utils;
 
+import cn.seed.common.elk.ExceptionMsgWrapper;
+import cn.seed.common.elk.SeedLogstashMarker;
 import net.logstash.logback.marker.LogstashMarker;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -28,7 +30,7 @@ public class LoggerUtils {
      */
     public static void error(Class<? extends Object> clazz, Object[] objects, Exception e) {
         Logger logger = LoggerFactory.getLogger(clazz);
-        LogstashMarker marker = new ExceptionLogstashMarker(new ExceptionMsgWrapper(clazz
+        LogstashMarker marker = new SeedLogstashMarker(new ExceptionMsgWrapper(clazz
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
                 .getStackTrace(e)));
         logger.error(marker, null);
@@ -47,13 +49,12 @@ public class LoggerUtils {
      */
     public static void errorSummary(Class<? extends Object> clazz, Object[] objects, Exception e) {
         Logger logger = LoggerFactory.getLogger(clazz);
-        LogstashMarker marker = new ExceptionLogstashMarker(new ExceptionMsgWrapper(clazz
+        LogstashMarker marker = new SeedLogstashMarker(new ExceptionMsgWrapper(clazz
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
                 .getStackTrace(e)));
         logger.error(marker, null);
         logger.error(e.getClass().getName());
     }
-
 
     /**
      * Debug 输出
