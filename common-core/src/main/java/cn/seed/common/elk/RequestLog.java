@@ -22,10 +22,6 @@ public class RequestLog {
      */
     private Boolean isReceivedRequest;
     /**
-     * 项目名称
-     */
-    private String projectContext;
-    /**
      * 请求URL
      */
     private String requestUrl;
@@ -41,12 +37,11 @@ public class RequestLog {
     public RequestLog() {
     }
 
-    public RequestLog(String requestId, String requestTime, Boolean isReceivedRequest, String projectContext, String
+    public RequestLog(String requestId, String requestTime, Boolean isReceivedRequest, String
             requestUrl, Object requestBody, String requestMethod, Map<String, String> requestHeader) {
         this.requestId = requestId;
         this.requestTime = requestTime;
         this.isReceivedRequest = isReceivedRequest;
-        this.projectContext = projectContext;
         this.requestMethod = requestMethod;
         this.requestUrl = requestUrl;
         this.requestBody = requestBody;
@@ -75,14 +70,6 @@ public class RequestLog {
 
     public void setIsReceivedRequest(Boolean receivedRequest) {
         isReceivedRequest = receivedRequest;
-    }
-
-    public String getProjectContext() {
-        return projectContext;
-    }
-
-    public void setProjectContext(String projectContext) {
-        this.projectContext = projectContext;
     }
 
     public String getRequestUrl() {

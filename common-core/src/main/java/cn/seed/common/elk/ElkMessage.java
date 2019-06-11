@@ -9,29 +9,30 @@ public class ElkMessage {
     private RequestLog requestLog = new RequestLog();
     private ResponseLog responseLog = new ResponseLog();
     private ExceptionMsgWrapper errorMsg = new ExceptionMsgWrapper();
+    private String projectContext;
     /**
      * 保留字段
      */
     private Object[] objs = new Object[]{};
 
-    public ElkMessage(RequestLog requestLog, ResponseLog responseLog) {
+    public ElkMessage(RequestLog requestLog, ResponseLog responseLog, String projectContext) {
         this.requestLog = requestLog;
         this.responseLog = responseLog;
+        this.projectContext = projectContext;
     }
 
-    public ElkMessage() {
+    public ElkMessage(String projectContext) {
+        this.projectContext = projectContext;
     }
 
-    public ElkMessage(ExceptionMsgWrapper errorMsg) {
+    public ElkMessage(ExceptionMsgWrapper errorMsg, String projectContext) {
         this.errorMsg = errorMsg;
+        this.projectContext = projectContext;
     }
 
-    public ElkMessage(Object[] objs) {
+    public ElkMessage(Object[] objs, String projectContext) {
         this.objs = objs;
-    }
-
-    public ElkMessage(RequestLog requestLog) {
-        this.requestLog = requestLog;
+        this.projectContext = projectContext;
     }
 
     public RequestLog getRequestLog() {
@@ -64,5 +65,13 @@ public class ElkMessage {
 
     public void setObjs(Object[] objs) {
         this.objs = objs;
+    }
+
+    public String getProjectContext() {
+        return projectContext;
+    }
+
+    public void setProjectContext(String projectContext) {
+        this.projectContext = projectContext;
     }
 }

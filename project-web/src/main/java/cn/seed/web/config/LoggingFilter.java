@@ -111,14 +111,13 @@ public class LoggingFilter extends OncePerRequestFilter {
                     request.removeAttribute(ATTRIBUTE_STOP_WATCH);
                 }
                 String responseTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                RequestLog requestLog = new RequestLog(requestId, requestTime, true,
-                        ProjectInfoUtils.PROJECT_CONTEXT, requestUrl, getRequestBody(request),
-                        request.getMethod(), headerMap);
+                RequestLog requestLog = new RequestLog(requestId, requestTime, true, requestUrl, getRequestBody
+                        (request), request.getMethod(), headerMap);
                 Map<String, String> responseHeaderMap = RequestInfoUtils.responseHeaderHandler(response);
                 responseHeaderMap.put("response.code", String.valueOf(httpStatus));
                 ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, errorMsg, stopWatch
                         .getTotalTimeMillis(), responseBody, responseHeaderMap);
-                LOGGER.info(new SeedLogstashMarker(requestLog, responseLog), null);
+                LOGGER.info(new SeedLogstashMarker(requestLog, responseLog, ProjectInfoUtils.PROJECT_CONTEXT), null);
             }
         }
     }

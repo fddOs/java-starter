@@ -266,14 +266,13 @@ public class BaseOkHttpClient {
             responseBody.close();
             responseBody = null;
         }
-        RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, ProjectInfoUtils
-                .PROJECT_CONTEXT, requestUrl, requestBodyJSON, request.method(),
+        RequestLog requestLog = new RequestLog(UuidUtils.getRandomUUID(), requestTime, false, requestUrl,
+                requestBodyJSON, request.method(),
                 requestHeaderMap);
-
         ResponseLog responseLog = new ResponseLog(responseTime, httpStatus, exceptionMsg, totalTime,
                 responseBodyJSON, responseHeaderMap);
         // 发送日志信息
-        LOGGER.info(new SeedLogstashMarker(requestLog, responseLog), null);
+        LOGGER.info(new SeedLogstashMarker(requestLog, responseLog, ProjectInfoUtils.PROJECT_CONTEXT), null);
         return response;
     }
 

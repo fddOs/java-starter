@@ -32,7 +32,7 @@ public class LoggerUtils {
         Logger logger = LoggerFactory.getLogger(clazz);
         LogstashMarker marker = new SeedLogstashMarker(new ExceptionMsgWrapper(clazz
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
-                .getStackTrace(e)));
+                .getStackTrace(e)), ProjectInfoUtils.PROJECT_CONTEXT);
         logger.error(marker, null);
         logger.error(ExceptionUtils.getStackTrace(e));
     }
@@ -51,7 +51,7 @@ public class LoggerUtils {
         Logger logger = LoggerFactory.getLogger(clazz);
         LogstashMarker marker = new SeedLogstashMarker(new ExceptionMsgWrapper(clazz
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
-                .getStackTrace(e)));
+                .getStackTrace(e)), ProjectInfoUtils.PROJECT_CONTEXT);
         logger.error(marker, null);
         logger.error(e.getClass().getName());
     }

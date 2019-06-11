@@ -13,24 +13,24 @@ import java.io.IOException;
 public class SeedLogstashMarker extends LogstashMarker {
     private ElkMessage elkMessage;
 
-    public SeedLogstashMarker(RequestLog requestLog, ResponseLog responseLog) {
+    public SeedLogstashMarker(RequestLog requestLog, ResponseLog responseLog, String projectContext) {
         super("ELK");
-        elkMessage = new ElkMessage(requestLog, responseLog);
+        elkMessage = new ElkMessage(requestLog, responseLog, projectContext);
     }
 
-    public SeedLogstashMarker(ExceptionMsgWrapper exceptionMsgWrapper) {
+    public SeedLogstashMarker(ExceptionMsgWrapper exceptionMsgWrapper, String projectContext) {
         super("ELK");
-        this.elkMessage = new ElkMessage(exceptionMsgWrapper);
+        this.elkMessage = new ElkMessage(exceptionMsgWrapper, projectContext);
     }
 
-    public SeedLogstashMarker(Object[] objs) {
+    public SeedLogstashMarker(Object[] objs, String projectContext) {
         super("ELK");
-        this.elkMessage = new ElkMessage(objs);
+        this.elkMessage = new ElkMessage(objs, projectContext);
     }
 
-    public SeedLogstashMarker() {
+    public SeedLogstashMarker(String projectContext) {
         super("ELK");
-        this.elkMessage = new ElkMessage();
+        this.elkMessage = new ElkMessage(projectContext);
     }
 
     public SeedLogstashMarker(ElkMessage elkMessage) {
