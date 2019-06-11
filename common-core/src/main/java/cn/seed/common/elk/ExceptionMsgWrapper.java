@@ -1,14 +1,11 @@
 package cn.seed.common.elk;
 
-import cn.seed.common.utils.ProjectInfoUtils;
-
 /**
  * @Description:EHIExceptionMsg
  * @author:方典典
  * @time:2019/1/4 11:18
  */
 public class ExceptionMsgWrapper {
-    private String projectContext;
     private String className;
     private String methodName;
     private Object[] objs;
@@ -18,7 +15,6 @@ public class ExceptionMsgWrapper {
     }
 
     public ExceptionMsgWrapper(String className, String methodName, Object[] objs, String exceptionMsg) {
-        this.projectContext = ProjectInfoUtils.PROJECT_CONTEXT;
         this.className = className;
         this.methodName = methodName;
         this.objs = objs;
@@ -57,11 +53,4 @@ public class ExceptionMsgWrapper {
         this.exceptionMsg = exceptionMsg;
     }
 
-    public String getProjectContext() {
-        return projectContext;
-    }
-
-    public void setProjectContext(String projectContext) {
-        this.projectContext = projectContext;
-    }
 }
