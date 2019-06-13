@@ -29,7 +29,11 @@ public class RedissonConfig {
     if (redisInfoService != null) {
       ClusterServersConfig clusterServersConfig = config.useClusterServers()
           // 集群状态扫描间隔时间，单位是毫秒
-          .setScanInterval(500);
+          .setScanInterval(100)
+          .setTimeout(1000)
+          .setPingTimeout(1500)
+          //失败重试次数
+          .setRetryAttempts(1);
       String redisClusterUrl = redisInfoService.redisInfo().getRedisClusterUrl();
       if(StringUtils.isEmpty(redisClusterUrl)){
         return null;
