@@ -17,13 +17,15 @@ public class ProjectInfoUtils {
     public static PropertySource applicationProperty;
     private static final String CLASS_LOADER_NAME = "java.lang.ClassLoader";
     public static final String BASE_PACKAGE;
-    public static final String DEFAULT_BASE_PACKAGE_PREFIX = "cn.ehai";
+    //    public static final String DEFAULT_BASE_PACKAGE_PREFIX = "cn.ehai";
     public static final String PROJECT_CONTEXT;
     public static final String PROJECT_APOLLO_COMMON_NAMESPACE;
     public static final String PROJECT_APOLLO_DB_NAMESPACE;
     public static final String PROJECT_APOLLO_DB_KEY;
     public static final int PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS;
     public static final int PROJECT_FEIGN_READ_TIMEOUT_MILLIS;
+    public static final String PROJECT_AES_KEY;
+    public static final String PROJECT_AES_OFFSET;
 
     static {
         YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
@@ -40,6 +42,8 @@ public class ProjectInfoUtils {
         PROJECT_APOLLO_DB_KEY = getProjectDBKey();
         PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS = getProjectFeignConnectTimeoutMillis();
         PROJECT_FEIGN_READ_TIMEOUT_MILLIS = getProjectFeignReadTimeoutMillis();
+        PROJECT_AES_KEY = getAESKey();
+        PROJECT_AES_OFFSET = getAESOffset();
     }
 
     /**
@@ -53,7 +57,7 @@ public class ProjectInfoUtils {
     private static String getBasePackagePrefix() {
         String basePackagePrefix = (String) applicationProperty.getProperty("project.base-package-prefix");
         if (StringUtils.isEmpty(basePackagePrefix)) {
-            return DEFAULT_BASE_PACKAGE_PREFIX;
+            throw new RuntimeException("缺少配置项：project.base-package-prefix");
         }
         return basePackagePrefix;
     }
@@ -122,7 +126,7 @@ public class ProjectInfoUtils {
         String commonNamespace = (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo" +
                 ".common-namespace");
         if (StringUtils.isEmpty(commonNamespace)) {
-            return "EHI.JavaCommon";
+            throw new RuntimeException("缺少配置项：project.apollo.common-namespace");
         }
         return commonNamespace;
     }
@@ -137,7 +141,7 @@ public class ProjectInfoUtils {
     private static String getProjectDBNamespace() {
         String dbNamespace = (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo.db-namespace");
         if (StringUtils.isEmpty(dbNamespace)) {
-            return "EHI.DBConfig";
+            throw new RuntimeException("缺少配置项：project.apollo.db-namespace");
         }
         return dbNamespace;
     }
@@ -198,6 +202,36 @@ public class ProjectInfoUtils {
             return 20000;
         }
         return (int) readTimeoutMillis;
+    }
+
+    /**
+     * AESKey
+     *
+     * @return String
+     * @author 方典典
+     * @time 2019/4/30 10:17
+     */
+    private static String getAESKey() {
+        Object aesKey = ProjectInfoUtils.applicationProperty.getProperty("project.aes.key");
+        if (StringUtils.isEmpty(aesKey)) {
+            return "7hf^$Hd*g3@#!fd4";
+        }
+        return (String) aesKey;
+    }
+
+    /**
+     * AESOffSet
+     *
+     * @return String
+     * @author 方典典
+     * @time 2019/4/30 10:17
+     */
+    private static String getAESOffset() {
+        Object aesOffset = ProjectInfoUtils.applicationProperty.getProperty("project.aes.offset");
+        if (StringUtils.isEmpty(aesOffset)) {
+            return "a1rg35Dew47f4ffk";
+        }
+        return (String) aesOffset;
     }
 
 }

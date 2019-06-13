@@ -25,8 +25,8 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class AESUtils {
     public static final String ENCRYPT_FLAG = "_encrypt";
-    public static final String IV_STRING = "a1rg35Dew47f4ffk";
-    public static final String KEY = "7hf^$Hd*g3@#!fd4";
+    public static final String IV_STRING = ProjectInfoUtils.PROJECT_AES_OFFSET;
+    public static final String KEY = ProjectInfoUtils.PROJECT_AES_KEY;
     public static final String CHARSET = "UTF-8";
 
     private AESUtils() {
