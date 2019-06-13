@@ -57,7 +57,7 @@ public class ProjectInfoUtils {
     private static String getBasePackagePrefix() {
         String basePackagePrefix = (String) applicationProperty.getProperty("project.base-package-prefix");
         if (StringUtils.isEmpty(basePackagePrefix)) {
-            throw new RuntimeException("缺少配置项：project.base-package-prefix");
+            throw new RuntimeException("application.yml中缺少包名前缀配置项：project.base-package-prefix");
         }
         return basePackagePrefix;
     }
@@ -126,7 +126,7 @@ public class ProjectInfoUtils {
         String commonNamespace = (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo" +
                 ".common-namespace");
         if (StringUtils.isEmpty(commonNamespace)) {
-            throw new RuntimeException("缺少配置项：project.apollo.common-namespace");
+            throw new RuntimeException("application.yml缺少apollo公共配置命名空间配置项：project.apollo.common-namespace");
         }
         return commonNamespace;
     }
@@ -141,7 +141,7 @@ public class ProjectInfoUtils {
     private static String getProjectDBNamespace() {
         String dbNamespace = (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo.db-namespace");
         if (StringUtils.isEmpty(dbNamespace)) {
-            throw new RuntimeException("缺少配置项：project.apollo.db-namespace");
+            throw new RuntimeException("application.yml缺少Apollo数据库配置命名空间配置项：project.apollo.db-namespace");
         }
         return dbNamespace;
     }
