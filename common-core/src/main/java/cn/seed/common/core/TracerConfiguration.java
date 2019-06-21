@@ -1,4 +1,4 @@
-package cn.seed.web.config;
+package cn.seed.common.core;
 
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
