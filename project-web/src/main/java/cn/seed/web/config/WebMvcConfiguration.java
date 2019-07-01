@@ -17,7 +17,11 @@ import org.springframework.web.servlet.config.annotation.*;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Spring MVC 配置
@@ -69,6 +73,13 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new HandlerInterceptorAdapter() {
+            @Override
+            public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+                return !"prod".equalsIgnoreCase(ApolloBaseConfig.getPlatForm());
+            }
+        }).addPathPatterns("/swagger-resources/**").addPathPatterns("/druid/**").addPathPatterns("/api-docs*")
+                .addPathPatterns("/swagger*");
     }
 
     /**

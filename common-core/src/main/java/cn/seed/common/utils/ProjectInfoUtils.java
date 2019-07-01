@@ -17,7 +17,7 @@ public class ProjectInfoUtils {
     public static PropertySource applicationProperty;
     private static final String CLASS_LOADER_NAME = "java.lang.ClassLoader";
     public static final String BASE_PACKAGE;
-    //    public static final String DEFAULT_BASE_PACKAGE_PREFIX = "cn.ehai";
+    public static final String BASE_PACKAGE_PREFIX;
     public static final String PROJECT_CONTEXT;
     public static final String PROJECT_APOLLO_COMMON_NAMESPACE;
     public static final String PROJECT_APOLLO_DB_NAMESPACE;
@@ -36,6 +36,7 @@ public class ProjectInfoUtils {
             throw new RuntimeException(e);
         }
         BASE_PACKAGE = getBasePackage();
+        BASE_PACKAGE_PREFIX = getBasePackagePrefix();
         PROJECT_CONTEXT = getProjectContext();
         PROJECT_APOLLO_COMMON_NAMESPACE = getProjectCommonNamespace();
         PROJECT_APOLLO_DB_NAMESPACE = getProjectDBNamespace();
@@ -71,6 +72,10 @@ public class ProjectInfoUtils {
      * @time:2018/11/9 16:45
      */
     private static String getBasePackage() {
+        String basePackage = (String) applicationProperty.getProperty("project.base-package");
+        if (!StringUtils.isEmpty(basePackage)) {
+            return basePackage;
+        }
         ClassLoader classLoader = ProjectInfoUtils.class.getClassLoader();
         Class loadClass = classLoader.getClass();
         while (!CLASS_LOADER_NAME.equals(loadClass.getName())) {
@@ -86,7 +91,7 @@ public class ProjectInfoUtils {
         }
         for (Package p : packages) {
             if (p.getName().startsWith(getBasePackagePrefix())) {
-                String basePackage = p.getName();
+                basePackage = p.getName();
                 int lastChar = basePackage.indexOf(".", 8);
                 if (lastChar < 0) {
                     return basePackage;

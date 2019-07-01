@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
 import io.jsonwebtoken.*;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -61,12 +62,14 @@ public class JwtTokenAuthentication {
         return false;
     }
 
+
     /**
      * @description 获取token的用户名和工号
      * @param request
      * @author weida
      * @return
      */
+    @Deprecated
     public static String getUserInfoCombination(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         Stream<Cookie> streamCookies = Stream.of(cookies);
@@ -98,6 +101,20 @@ public class JwtTokenAuthentication {
     }
 
     /**
+     * @param request
+     * @return
+     * @description 获取token的用户名和工号
+     * @author weida
+     */
+    public static String getUserName(HttpServletRequest request) {
+        Claims claims = verify(getJWT(request));
+        if (claims == null) {
+            return null;
+        }
+        return (String) claims.get(ConfigCenterWrapper.get("uniqueName", null));
+    }
+
+    /**
      * 解析JWT添加到请求头上
      *
      * @param request
@@ -107,10 +124,10 @@ public class JwtTokenAuthentication {
      */
     public static void setJwtHeader(BaseHeaderReqWrapper request) {
         String userCode = getUserCode(request);
-        LoggerUtils.info(JwtTokenAuthentication.class,"setJwtHeader  "+userCode);
+        LoggerUtils.info(JwtTokenAuthentication.class, "setJwtHeader  " + userCode);
         if (!StringUtils.isEmpty(userCode)) {
             request.putHeader(HEADER_JWT_USER_ID, userCode);
-            request.setAttribute("oprNo",userCode);
+            request.setAttribute("oprNo", userCode);
         }
     }
 
@@ -168,7 +185,9 @@ public class JwtTokenAuthentication {
             return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET))
                     .parseClaimsJws(jwt).getBody();
         } catch (Exception e) {
+            LoggerUtils.error(JwtTokenAuthentication.class, ExceptionUtils.getStackTrace(e));
             return null;
         }
     }
+
 }
