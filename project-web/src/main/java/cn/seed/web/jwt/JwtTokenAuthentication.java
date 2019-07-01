@@ -27,7 +27,7 @@ import org.springframework.util.StringUtils;
  */
 public class JwtTokenAuthentication {
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 1L;
-    private static String SECRET = "AgQGCAoMDfASFAIEBggKDA4QETAdBAYICgwOE52UAgQ=";
+    private static String SECRET = ProjectInfoUtils.PROJECT_JWT_SECRET;
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String HEADER_STRING = "Authorization";
     private static final String SYSTEM_NAME = ProjectInfoUtils.PROJECT_CONTEXT;
@@ -64,10 +64,10 @@ public class JwtTokenAuthentication {
 
 
     /**
-     * @description 获取token的用户名和工号
      * @param request
-     * @author weida
      * @return
+     * @description 获取token的用户名和工号
+     * @author weida
      */
     @Deprecated
     public static String getUserInfoCombination(HttpServletRequest request) {

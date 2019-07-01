@@ -8,6 +8,7 @@ import cn.seed.common.core.ServiceException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +22,7 @@ import cn.seed.common.elk.RequestLog;
 import cn.seed.common.elk.ResponseLog;
 import com.alibaba.fastjson.JSONObject;
 
+import javax.net.ssl.*;
 import javax.servlet.http.HttpServletRequest;
 
 import okhttp3.*;
@@ -78,6 +80,10 @@ public class BaseOkHttpClient {
             }
         }).writeTimeout(ProjectInfoUtils.PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS).pingInterval(1,
                 TimeUnit.SECONDS).retryOnConnectionFailure(false);
+        if (ApolloBaseConfig.getOkHttpSSLEnable()) {
+            builder.sslSocketFactory(createSSLSocketFactory(), new TrustAllCertsManager())
+                    .hostnameVerifier((s, sslSession) -> true);
+        }
         return builder.build();
     }
 
@@ -276,4 +282,25 @@ public class BaseOkHttpClient {
         return response;
     }
 
+
+    /**
+     * 生成SSL
+     *
+     * @return SSLSocketFactory
+     * @author 方典典
+     * @time 2019/7/1 14:55
+     */
+    private SSLSocketFactory createSSLSocketFactory() {
+        SSLSocketFactory ssfFactory = null;
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, new TrustManager[]{new TrustAllCertsManager()}, new SecureRandom());
+            ssfFactory = sc.getSocketFactory();
+        } catch (Exception e) {
+            LoggerUtils.error(getClass(), ExceptionUtils.getStackTrace(e));
+            LoggerUtils.error(getClass(), new Object[]{}, e);
+            throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请求失败，证书无效");
+        }
+        return ssfFactory;
+    }
 }

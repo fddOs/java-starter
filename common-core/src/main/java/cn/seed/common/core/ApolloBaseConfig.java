@@ -84,6 +84,10 @@ public class ApolloBaseConfig {
         return getCommonConfig("redis.optional.url", null);
     }
 
+    public static boolean getOkHttpSSLEnable() {
+        return Boolean.getBoolean(getCommonConfig("okHttpSSLEnable", "false"));
+    }
+
     private ApolloBaseConfig(LoggingSystem loggingSystem) {
         Assert.notNull(loggingSystem, "LoggingSystem must not be null");
         this.loggingSystem = loggingSystem;

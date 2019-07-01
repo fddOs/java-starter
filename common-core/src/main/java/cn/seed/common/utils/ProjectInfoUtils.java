@@ -26,6 +26,7 @@ public class ProjectInfoUtils {
     public static final int PROJECT_FEIGN_READ_TIMEOUT_MILLIS;
     public static final String PROJECT_AES_KEY;
     public static final String PROJECT_AES_OFFSET;
+    public static final String PROJECT_JWT_SECRET;
 
     static {
         YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
@@ -45,6 +46,7 @@ public class ProjectInfoUtils {
         PROJECT_FEIGN_READ_TIMEOUT_MILLIS = getProjectFeignReadTimeoutMillis();
         PROJECT_AES_KEY = getAESKey();
         PROJECT_AES_OFFSET = getAESOffset();
+        PROJECT_JWT_SECRET = getJWTSecret();
     }
 
     /**
@@ -237,6 +239,21 @@ public class ProjectInfoUtils {
             return "a1rg35Dew47f4ffk";
         }
         return (String) aesOffset;
+    }
+
+    /**
+     * 获取JWT密匙
+     *
+     * @return java.lang.String
+     * @author 方典典
+     * @time 2019/7/1 17:51
+     */
+    private static String getJWTSecret() {
+        Object secret = ProjectInfoUtils.applicationProperty.getProperty("project.jwt.secret");
+        if (StringUtils.isEmpty(secret)) {
+            return "AgQGCAoMDfASFAIEBggKDA4QETAdBAYICgwOE52UAgQ=";
+        }
+        return (String) secret;
     }
 
 }
