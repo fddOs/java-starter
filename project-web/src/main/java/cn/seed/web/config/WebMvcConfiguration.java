@@ -78,7 +78,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
             public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
                 return !"prod".equalsIgnoreCase(ApolloBaseConfig.getPlatForm());
             }
-        }).addPathPatterns("/swagger-resources/**").addPathPatterns("/druid/**").addPathPatterns("/api-docs*")
+        }).addPathPatterns("/swagger-resources/**").addPathPatterns("/api-docs*")
                 .addPathPatterns("/swagger*");
     }
 
