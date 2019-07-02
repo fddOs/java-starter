@@ -71,13 +71,13 @@ public class LoggingFilter extends OncePerRequestFilter {
             if (e.getCause() != null) {
                 e = (Exception) e.getCause();
             }
+            errorMsg = ExceptionUtils.getStackTrace(e);
+            LoggerUtils.error(getClass(), errorMsg);
             if (e instanceof ServiceException) {
                 responseResult(response, ResultGenerator.genFailResult(((ServiceException) e).getResultCode(),
                         e.getMessage()));
                 return;
             }
-            errorMsg = ExceptionUtils.getStackTrace(e);
-            LoggerUtils.error(getClass(), errorMsg);
             String exceptionMsg = "程序发生异常，错误代码:0X" + Long.toHexString(System.currentTimeMillis()).toUpperCase()
                     + (new Random().nextInt(900) + 100);
             response.setStatus(HttpCodeEnum.CODE_516.getCode());

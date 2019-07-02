@@ -1,9 +1,6 @@
 package cn.seed.web.jwt;
 
-import cn.seed.common.core.ApolloBaseConfig;
-import cn.seed.common.core.Result;
-import cn.seed.common.core.ResultCode;
-import cn.seed.common.core.ResultGenerator;
+import cn.seed.common.core.*;
 import cn.seed.common.utils.LoggerUtils;
 import cn.seed.web.common.ExcludePathHandler;
 import cn.seed.web.config.BaseHeaderReqWrapper;
@@ -57,9 +54,7 @@ public class JwtFilter implements Filter {
                 if (!StringUtils.isEmpty(loginUrl)) {
                     ((HttpServletResponse) response).sendRedirect(httpServletRequest.getContextPath() + loginUrl);
                 }
-                responseResult((HttpServletResponse) response, ResultGenerator.genFailResult(
-                    ResultCode
-                        .UNAUTHORIZED, "jwt token" + " 验证失败"));
+                throw new ServiceException(ResultCode.UNAUTHORIZED, "用户JWT信息验证失败");
             }
         }
     }
@@ -69,14 +64,4 @@ public class JwtFilter implements Filter {
 
     }
 
-    private void responseResult(HttpServletResponse response, Result result) {
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-type", "application/json;charset=UTF-8");
-        response.setStatus(200);
-        try {
-            response.getOutputStream().write(JSON.toJSONString(result).getBytes("UTF-8"));
-        } catch (IOException ex) {
-            LoggerUtils.error(getClass(), new Object[]{response, result}, ex);
-        }
-    }
 }
