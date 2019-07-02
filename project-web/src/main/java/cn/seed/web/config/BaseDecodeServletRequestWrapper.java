@@ -6,11 +6,11 @@ import cn.seed.common.utils.AESUtils;
 import cn.seed.common.utils.LoggerUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -24,7 +24,7 @@ import static org.springframework.http.HttpMethod.GET;
  * @author lixiao
  * @date 2019-02-12 14:24
  */
-public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
+public class BaseDecodeServletRequestWrapper extends ContentCachingRequestWrapper {
 
     private byte[] requestBody;
 
@@ -209,7 +209,17 @@ public class BaseDecodeServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
+    public Map<String, String[]> getParameterMap() {
+        return parameterMap;
+    }
+
+    @Override
     public String getQueryString() {
         return queryString;
+    }
+
+    @Override
+    public byte[] getContentAsByteArray() {
+        return requestBody;
     }
 }

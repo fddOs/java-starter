@@ -29,6 +29,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.FilterChain;
@@ -182,8 +183,8 @@ public class LoggingFilter extends OncePerRequestFilter {
         }
         String requestString = "";
         try {
-            requestString = StreamUtils.copyToString(request.getInputStream(),
-                    Charset.forName("UTF-8"));
+            byte[] buf = ((ContentCachingRequestWrapper)request).getContentAsByteArray();
+            requestString = new String(buf, 0, buf.length, "utf-8");
             return JsonUtils.parse(requestString);
         } catch (Exception e) {
             return JsonUtils.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +

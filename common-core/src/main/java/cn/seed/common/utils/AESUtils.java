@@ -76,8 +76,8 @@ public class AESUtils {
      */
     public static String aesDecryptString(String content, String key) {
         Decoder decoder = Base64.getDecoder();
-        byte[] encryptedBytes = decoder.decode(content);
         try {
+            byte[] encryptedBytes = decoder.decode(content);
             byte[] keyBytes = key.getBytes(CHARSET);
             byte[] decryptedBytes = aesDecryptBytes(encryptedBytes, keyBytes);
             return new String(decryptedBytes, CHARSET);

@@ -13,6 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.*;
@@ -48,9 +49,11 @@ public class SignFilter implements Filter {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             String requestBody = "";
             if (!GET.name().equals(httpServletRequest.getMethod())) {
+                byte[] buf = ((ContentCachingRequestWrapper)request).getContentAsByteArray();
                 try {
-                    requestBody = StreamUtils.copyToString(request.getInputStream(),
-                            Charset.forName("UTF-8"));
+                    requestBody = new String(buf, 0, buf.length, "utf-8");
+//                    requestBody = StreamUtils.copyToString(request.getInputStream(),
+//                            Charset.forName("UTF-8"));
                 } catch (IOException e) {
                     LoggerUtils.error(getClass(), new Object[]{request}, e);
                     throw new ServiceException(ResultCode.UNAUTHORIZED, "body获取错误");

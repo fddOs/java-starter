@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.*;
@@ -38,7 +39,8 @@ public class DecodeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        ServletRequest requestWrapper = new BaseHttpServletRequestWrapper((HttpServletRequest) request);
+//        ServletRequest requestWrapper = new BaseHttpServletRequestWrapper((HttpServletRequest) request);
+        ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper((HttpServletRequest) request);
 //        BaseHttpServletResponseWrapper responseWrapper = new BaseHttpServletResponseWrapper(
 //                (HttpServletResponse) response);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper((HttpServletResponse)
@@ -53,7 +55,7 @@ public class DecodeFilter implements Filter {
         } else {
             BaseDecodeServletRequestWrapper decodeRequestWrapper;
             try {
-                decodeRequestWrapper = new BaseDecodeServletRequestWrapper((HttpServletRequest) requestWrapper);
+                decodeRequestWrapper = new BaseDecodeServletRequestWrapper((HttpServletRequest) request);
             } catch (Exception e) {
                 String exceptionMsg = "";
                 if (e instanceof ServiceException) {
@@ -64,11 +66,14 @@ public class DecodeFilter implements Filter {
                 LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
                 responseResult(responseWrapper, JSON.toJSONString(ResultGenerator.genFailResult
                         (ResultCode.BAD_REQUEST, exceptionMsg)), true);
+                responseWrapper.copyBodyToResponse();
                 return;
             }
             chain.doFilter(decodeRequestWrapper, responseWrapper);
             String respStr = IOUtils.getResponseBody(responseWrapper.getContentAsByteArray());
+            responseWrapper.resetBuffer();
             responseResult(responseWrapper, respStr, true);
+            responseWrapper.copyBodyToResponse();
         }
 
     }

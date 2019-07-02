@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
@@ -20,6 +22,7 @@ import org.springframework.util.StreamUtils;
  * @author 方典典
  * @time 2019/3/1 16:25
  */
+@Deprecated
 public class BaseHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private byte[] requestBody = null;
 
@@ -86,5 +89,15 @@ public class BaseHttpServletRequestWrapper extends HttpServletRequestWrapper {
             return escapseValues;
         }
         return super.getParameterValues(name);
+    }
+
+    @Override
+    public Enumeration<String> getParameterNames() {
+        return super.getParameterNames();
+    }
+
+    @Override
+    public Map<String, String[]> getParameterMap() {
+        return super.getParameterMap();
     }
 }
