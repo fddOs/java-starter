@@ -38,6 +38,25 @@ public class LoggerUtils {
     }
 
     /**
+     * ELK记录error 控制台打印堆栈信息
+     *
+     * @param clazz
+     * @param objects
+     * @param e
+     * @return void
+     * @author 方典典
+     * @time 2019/4/9 15:12
+     */
+    public static void errorSendELKAndPrintDetailConsole(Class<? extends Object> clazz, Object[] objects, Exception e) {
+        Logger logger = LoggerFactory.getLogger(clazz);
+        LogstashMarker marker = new SeedLogstashMarker(new ExceptionMsgWrapper(clazz
+                .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
+                .getStackTrace(e)), ProjectInfoUtils.PROJECT_CONTEXT);
+        logger.error(marker, null);
+        logger.error(ExceptionUtils.getStackTrace(e));
+    }
+
+    /**
      * ELK记录error 控制台仅打印摘要信息
      *
      * @param clazz
