@@ -1,10 +1,15 @@
 package cn.seed.common.core;
 
 import cn.seed.common.utils.AESUtils;
+import cn.seed.common.utils.ProjectInfoUtils;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import org.springframework.util.StringUtils;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Description:ConfigCenterWrapper
@@ -12,6 +17,24 @@ import org.springframework.util.StringUtils;
  * @time:2019/4/29 16:07
  */
 public class ConfigCenterWrapper {
+    private static final Map<String, String> CONFIG_MAP = new ConcurrentHashMap<>();
+
+    static {
+        SeedConfigChangeListener seedConfigChangeListener = (Set<String> keys) ->
+                keys.forEach(key -> {
+                    String value = getNamespace(null).getProperty(key, "");
+                    try {
+                        value = AESUtils.aesDecryptString(value);
+                    } catch (Exception e) {
+                        //IGNORE
+                    }
+                    CONFIG_MAP.put(key, value);
+                });
+        registerListenerConfig("application", seedConfigChangeListener);
+        registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_COMMON_NAMESPACE, seedConfigChangeListener);
+        registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE, seedConfigChangeListener);
+    }
+
     /**
      * 获取指定的namespace config
      *
@@ -74,7 +97,6 @@ public class ConfigCenterWrapper {
         return aesDecrypt(getNamespace(namespace), key, defaultValue);
     }
 
-
     /**
      * 解密Apollo配置
      *
@@ -89,12 +111,16 @@ public class ConfigCenterWrapper {
         if (StringUtils.isEmpty(key)) {
             throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "请求失败:获取配置key为空，请稍后重试");
         }
-        String str = config.getProperty(key, defaultValue);
+        if (CONFIG_MAP.containsKey(key)) {
+            return CONFIG_MAP.get(key);
+        }
+        String str = config.getProperty(key, AESUtils.aesEncryptString(defaultValue));
         try {
             str = AESUtils.aesDecryptString(str);
         } catch (Exception e) {
             //IGNORE
         }
+        CONFIG_MAP.put(key, str);
         return str;
     }
 }
