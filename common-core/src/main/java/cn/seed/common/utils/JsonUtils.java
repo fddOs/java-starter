@@ -20,7 +20,6 @@ public class JsonUtils {
         try {
             return JSON.parse(text);
         } catch (Exception e) {
-            LoggerUtils.errorSummary(JsonUtils.class, new Object[]{text}, e);
             return text;
         }
     }
