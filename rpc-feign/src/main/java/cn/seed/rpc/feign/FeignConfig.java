@@ -32,7 +32,7 @@ public class FeignConfig {
     @Autowired
     private FeignRequestInterceptor feignRequestInterceptor;
 
-    @Bean
+    @Bean("builder")
     public Feign.Builder create(okhttp3.OkHttpClient okHttpClient, Tracer tracer) {
         TracingClient tracingClient = new TracingClient(new OkHttpClient(okHttpClient), tracer);
         return Feign.builder().requestInterceptor(feignRequestInterceptor)
