@@ -1,6 +1,7 @@
 package cn.seed.common.utils;
 
 import org.springframework.boot.env.YamlPropertySourceLoader;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
@@ -147,7 +148,7 @@ public class ProjectInfoUtils {
      */
     private static String getProjectDBNamespace() {
         String dbNamespace = (String) ProjectInfoUtils.applicationProperty.getProperty("project.apollo.db-namespace");
-        if (StringUtils.isEmpty(dbNamespace)) {
+        if (StringUtils.isEmpty(dbNamespace) && hasDruidConfig()) {
             throw new RuntimeException("application.yml缺少Apollo数据库配置命名空间配置项：project.apollo.db-namespace");
         }
         return dbNamespace;
@@ -256,4 +257,21 @@ public class ProjectInfoUtils {
         return (String) secret;
     }
 
+    /**
+     * 判断是否有druid配置
+     *
+     * @param
+     * @return boolean
+     * @author 方典典
+     * @time 2019/7/19 11:27
+     */
+    private static boolean hasDruidConfig() {
+        String[] configs = ((MapPropertySource) applicationProperty).getPropertyNames();
+        for (String config : configs) {
+            if (config.contains("spring.datasource.druid")) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
