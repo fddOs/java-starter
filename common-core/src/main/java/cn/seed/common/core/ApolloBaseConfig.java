@@ -89,7 +89,7 @@ public class ApolloBaseConfig {
     }
 
     public static String getSignHeader() {
-        return getCommonConfig("signHeader", "x-seed-sign");
+        return getCommonConfig("signHeader", "x-sign");
     }
 
     private ApolloBaseConfig(LoggingSystem loggingSystem) {
