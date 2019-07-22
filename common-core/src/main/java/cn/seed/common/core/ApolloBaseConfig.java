@@ -88,6 +88,10 @@ public class ApolloBaseConfig {
         return Boolean.getBoolean(getCommonConfig("okHttpSSLEnable", "false"));
     }
 
+    public static String getSignHeader() {
+        return getCommonConfig("signHeader", "x-seed-sign");
+    }
+
     private ApolloBaseConfig(LoggingSystem loggingSystem) {
         Assert.notNull(loggingSystem, "LoggingSystem must not be null");
         this.loggingSystem = loggingSystem;

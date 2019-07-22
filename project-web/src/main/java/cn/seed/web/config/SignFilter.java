@@ -8,10 +8,8 @@ import cn.seed.common.utils.LoggerUtils;
 import cn.seed.common.utils.RequestInfoUtils;
 import cn.seed.common.utils.SignUtils;
 import cn.seed.web.common.ExcludePathHandler;
-import cn.seed.web.common.SignConfig;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -20,7 +18,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 import static org.springframework.http.HttpMethod.GET;
 
@@ -66,7 +63,7 @@ public class SignFilter implements Filter {
             try {
                 String respStr = IOUtils.getResponseBody(((ContentCachingResponseWrapper) response).getContentAsByteArray());
                 String resSign = SignUtils.signResponse(respStr);
-                ((HttpServletResponse) response).setHeader("x-seed-sign", resSign);
+                ((HttpServletResponse) response).setHeader(ApolloBaseConfig.getSignHeader(), resSign);
             } catch (Exception e) {
                 LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
                 throw new ServiceException(ResultCode.UNAUTHORIZED, "签名错误");
@@ -84,7 +81,7 @@ public class SignFilter implements Filter {
             return true;
         }
         String sign = SignUtils.sign(query, requestBody);
-        String signHeader = request.getHeader(SignConfig.SIGN_HEADER);
+        String signHeader = request.getHeader(ApolloBaseConfig.getSignHeader());
         if (StringUtils.isEmpty(signHeader) || StringUtils
                 .isEmpty(sign)) {
             return false;

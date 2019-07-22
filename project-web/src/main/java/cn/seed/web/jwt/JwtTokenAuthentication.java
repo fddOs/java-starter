@@ -33,7 +33,6 @@ public class JwtTokenAuthentication {
     private static final String SYSTEM_NAME = ProjectInfoUtils.PROJECT_CONTEXT;
     private static final String JWT_USER_ID = "sub";
     private static final String HEADER_JWT_USER_ID = "jwt-user-id";
-    private static final String JWT_HEADER = "x-seed-sign";
 
     public static String addAuthentication(HttpServletResponse res, String userId) {
         String jwt = Jwts.builder().setSubject(SYSTEM_NAME).claim(JWT_USER_ID, userId)
