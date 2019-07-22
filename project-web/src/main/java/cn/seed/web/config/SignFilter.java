@@ -10,14 +10,15 @@ import cn.seed.common.utils.SignUtils;
 import cn.seed.web.common.ExcludePathHandler;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import static org.springframework.http.HttpMethod.GET;
 
@@ -46,11 +47,9 @@ public class SignFilter implements Filter {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             String requestBody = "";
             if (!GET.name().equals(httpServletRequest.getMethod())) {
-                byte[] buf = ((ContentCachingRequestWrapper)request).getContentAsByteArray();
                 try {
-                    requestBody = new String(buf, 0, buf.length, "utf-8");
-//                    requestBody = StreamUtils.copyToString(request.getInputStream(),
-//                            Charset.forName("UTF-8"));
+                    requestBody = StreamUtils.copyToString(request.getInputStream(),
+                            Charset.forName("UTF-8"));
                 } catch (IOException e) {
                     LoggerUtils.error(getClass(), new Object[]{request}, e);
                     throw new ServiceException(ResultCode.UNAUTHORIZED, "body获取错误");
