@@ -76,7 +76,7 @@ public class ResultList<T> {
         this.pages = pages;
     }
 
-    public static ResultList genResultList(PageInfo pageInfo) {
+    public static <T> ResultList<T> genResultList(PageInfo<T> pageInfo) {
         ResultList resultList = new ResultList<>();
         resultList.setCount(pageInfo.getTotal());
         resultList.setData(pageInfo.getList());
