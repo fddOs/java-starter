@@ -94,9 +94,9 @@ public class BaseOkHttpClient {
      * @return
      */
     private Request handleRequest(Request request) {
-        String querySplit = "?";
+        String urlQuery = "?platform=" + ProjectInfoUtils.PROJECT_CONTEXT + "&oprNo=" + getUserCode();
         if (request.url().querySize() != 0) {
-            querySplit = "&";
+            urlQuery = "&platform=" + ProjectInfoUtils.PROJECT_CONTEXT + "&oprNo=" + getUserCode();
         }
         RequestBody requestBody = request.body();
         RequestBody requestBodyNew;
@@ -120,13 +120,12 @@ public class BaseOkHttpClient {
         /**
          * 处理请求的url
          */
-        return request.newBuilder().addHeader("Content-MD5", SignUtils.sign(request.url().query(), bodyParams))
-                .addHeader("Connection", "close")
-                .addHeader("Content-Type", "application/json")
-                .addHeader(HEADER_JWT_USER_ID, getUserCode())
-                .url(HttpUrl.parse(request.url().url().toString() + querySplit + "platform=" + ProjectInfoUtils
-                        .PROJECT_CONTEXT + "&oprNo=" + getUserCode()))
-                .method(request.method(), requestBodyNew).build();
+
+        return request.newBuilder().addHeader("Content-MD5", SignUtils.sign(((null == request.url().query()) ? "" :
+                request.url().query()) + urlQuery.replaceFirst("\\?", ""), bodyParams)).addHeader("Connection",
+                "close").addHeader("Content-Type", "application/json").addHeader(HEADER_JWT_USER_ID, getUserCode())
+                .url(HttpUrl.parse(request.url().url().toString() + urlQuery)).method(request.method(),
+                        requestBodyNew).build();
     }
 
 
