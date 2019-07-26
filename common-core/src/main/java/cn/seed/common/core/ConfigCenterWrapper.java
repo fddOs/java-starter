@@ -20,9 +20,9 @@ public class ConfigCenterWrapper {
     private static final Map<String, String> CONFIG_MAP = new ConcurrentHashMap<>();
 
     static {
-        SeedConfigChangeListener seedConfigChangeListener = (Set<String> keys) ->
+        SeedConfigChangeListener seedConfigChangeListener = (String namespace, Set<String> keys) ->
                 keys.forEach(key -> {
-                    String value = getNamespace(null).getProperty(key, null);
+                    String value = getNamespace(namespace).getProperty(key, null);
                     try {
                         value = AESUtils.aesDecryptString(value);
                     } catch (Exception e) {
@@ -62,7 +62,7 @@ public class ConfigCenterWrapper {
      */
     public static void registerListenerConfig(String namespace, SeedConfigChangeListener seedConfigChangeListener) {
         getNamespace(namespace).addChangeListener((ConfigChangeEvent changeEvent) -> {
-            seedConfigChangeListener.onChange(changeEvent.changedKeys());
+            seedConfigChangeListener.onChange(namespace, changeEvent.changedKeys());
         });
     }
 

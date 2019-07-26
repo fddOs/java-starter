@@ -52,7 +52,7 @@ public class ApolloDBConfig {
     @PostConstruct
     private void dbConfigChangeListen() {
         ConfigCenterWrapper.registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE,
-                (Set<String> keys) -> {
+                (String namespace, Set<String> keys) -> {
                     if (keys.contains(ProjectInfoUtils.PROJECT_APOLLO_DB_KEY)) {
                         DruidConfiguration druidConfiguration = SpringContext.getApplicationContext().getBean
                                 (DruidConfiguration.class);
