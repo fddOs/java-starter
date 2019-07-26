@@ -92,6 +92,14 @@ public class ApolloBaseConfig {
         return getCommonConfig("signHeader", "x-sign");
     }
 
+    public static String getSignBodyKey() {
+        return getCommonConfig("signBodyKey", "payload");
+    }
+
+    public static String getSignSecret() {
+        return getCommonConfig("signSecret", "3c6fa384648ffd5cf229ddf5ac82c480");
+    }
+
     private ApolloBaseConfig(LoggingSystem loggingSystem) {
         Assert.notNull(loggingSystem, "LoggingSystem must not be null");
         this.loggingSystem = loggingSystem;

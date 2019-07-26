@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.seed.common.core.ApolloBaseConfig;
 import org.springframework.util.StringUtils;
 
 /**
@@ -17,9 +18,9 @@ import org.springframework.util.StringUtils;
  */
 public class SignUtils {
 
-    public static final String BODY_KEY = "payload";
+    public static final String BODY_KEY = ApolloBaseConfig.getSignBodyKey();
 
-    public static final String SECRET = "3c6fa384648ffd5cf229ddf5ac82c480";
+    public static final String SECRET = ApolloBaseConfig.getSignSecret();
 
     /**
      * MD5加密String参数
