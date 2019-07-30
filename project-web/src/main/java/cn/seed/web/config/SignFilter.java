@@ -60,7 +60,8 @@ public class SignFilter implements Filter {
             }
             chain.doFilter(request, response);
             try {
-                String respStr = IOUtils.getResponseBody(((ContentCachingResponseWrapper) response).getContentAsByteArray());
+                String respStr = IOUtils.getResponseBody(((ContentCachingResponseWrapper) response)
+                        .getContentAsByteArray());
                 String resSign = SignUtils.signResponse(respStr);
                 ((HttpServletResponse) response).setHeader(ApolloBaseConfig.getSignHeader(), resSign);
             } catch (Exception e) {

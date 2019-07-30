@@ -22,7 +22,7 @@ public class ConfigCenterWrapper {
     static {
         SeedConfigChangeListener seedConfigChangeListener = (String namespace, Set<String> keys) ->
                 keys.forEach(key -> {
-                    String value = getNamespace(namespace).getProperty(key, null);
+                    String value = getNamespace(namespace).getProperty(key, "");
                     try {
                         value = AESUtils.aesDecryptString(value);
                     } catch (Exception e) {
