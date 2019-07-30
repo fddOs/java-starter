@@ -56,7 +56,7 @@ public class SignFilter implements Filter {
                 }
             }
             if (!signRequest(httpServletRequest, requestBody, httpServletRequest.getQueryString())) {
-                throw new ServiceException(ResultCode.UNAUTHORIZED, "签名错误");
+                throw new ServiceException(ResultCode.UNAUTHORIZED, "签名不匹配");
             }
             chain.doFilter(request, response);
             try {
