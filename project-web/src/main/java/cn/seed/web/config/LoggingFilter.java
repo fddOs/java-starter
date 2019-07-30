@@ -29,7 +29,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.ContentCachingRequestWrapper;
+import cn.seed.web.config.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.FilterChain;

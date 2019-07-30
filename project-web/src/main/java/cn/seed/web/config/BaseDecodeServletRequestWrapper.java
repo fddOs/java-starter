@@ -6,7 +6,7 @@ import cn.seed.common.utils.AESUtils;
 import cn.seed.common.utils.LoggerUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.ContentCachingRequestWrapper;
+import cn.seed.web.config.ContentCachingRequestWrapper;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;

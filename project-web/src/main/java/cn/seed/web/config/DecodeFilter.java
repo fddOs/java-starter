@@ -13,7 +13,7 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.ContentCachingRequestWrapper;
+import cn.seed.web.config.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.*;
