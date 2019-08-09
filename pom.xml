@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.seed</groupId>
     <artifactId>java-starter</artifactId>
-    <version>0.7.4-SNAPSHOT</version>
+    <version>0.7.5</version>
     <packaging>pom</packaging>
 
     <name>java-starter</name>
