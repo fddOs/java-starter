@@ -20,7 +20,7 @@ public @interface WebAuthentication {
      *
      * 系统编码
      */
-    String systemCode();
+    String systemCode() default "";
 
     /**
      *
