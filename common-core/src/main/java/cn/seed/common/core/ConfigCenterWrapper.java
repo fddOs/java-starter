@@ -120,6 +120,9 @@ public class ConfigCenterWrapper {
         } catch (Exception e) {
             //IGNORE
         }
+        if (str == null) {
+            throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "Apollo配置[" + key + "]不能为null");
+        }
         CONFIG_MAP.put(key, str);
         return str;
     }

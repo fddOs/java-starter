@@ -110,7 +110,7 @@ public class JwtTokenAuthentication {
         if (claims == null) {
             return null;
         }
-        return (String) claims.get(ConfigCenterWrapper.get("uniqueName", null));
+        return (String) claims.get(ConfigCenterWrapper.get("uniqueName", ""));
     }
 
     /**
