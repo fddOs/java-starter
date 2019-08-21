@@ -5,6 +5,7 @@ import cn.seed.authority.service.WebAuthority;
 import cn.seed.common.core.Result;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
+import cn.seed.common.utils.ProjectInfoUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
@@ -53,7 +54,11 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                 if (StringUtils.isEmpty(userCode)) {
                     throw new ServiceException(ResultCode.BAD_REQUEST, "未获取到登录用户信息，请求失败");
                 }
+                // 获取系统编码，如果没有配置，那就取全局配置
                 String systemCode = webAuthentication.systemCode();
+                if (StringUtils.isEmpty(systemCode)) {
+                    systemCode = ProjectInfoUtils.SYSTEM_CODE;
+                }
                 String[] moduleIds = webAuthentication.moduleIds();
 
                 for (String moduleId : moduleIds) {
