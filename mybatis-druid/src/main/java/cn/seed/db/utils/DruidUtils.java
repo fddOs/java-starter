@@ -31,12 +31,11 @@ public class DruidUtils {
         dataSource.setUrl(dbInfo.getUrl());
         dataSource.setUsername(dbInfo.getUserName());
         dataSource.setPassword(dbInfo.getPassword());
-        dataSource.configFromPropety(System.getProperties());
-        try {
-            dataSource.init();
-        } catch (SQLException e) {
-            throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "初始化数据库异常！", e);
-        }
+//        try {
+//            dataSource.init();
+//        } catch (Exception e) {
+//            throw new ServiceException(ResultCode.INTERNAL_SERVER_ERROR, "初始化数据库异常！", e);
+//        }
         return dataSource;
     }
 
