@@ -32,10 +32,19 @@ public class JwtTokenAuthentication {
     private static final String HEADER_STRING = "Authorization";
     private static final String SYSTEM_NAME = ProjectInfoUtils.PROJECT_CONTEXT;
     private static final String JWT_USER_ID = "sub";
+    private static final String JWT_USER_NAME = "sub-name";
     private static final String HEADER_JWT_USER_ID = "jwt-user-id";
 
     public static String addAuthentication(HttpServletResponse res, String userId) {
         String jwt = Jwts.builder().setSubject(SYSTEM_NAME).claim(JWT_USER_ID, userId)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET).compact();
+        res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + jwt);
+        return jwt;
+    }
+
+    public static String addAuthentication(HttpServletResponse res, String userId, String userName) {
+        String jwt = Jwts.builder().setSubject(SYSTEM_NAME).claim(JWT_USER_ID, userId).claim(JWT_USER_NAME, userName)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS256, SECRET).compact();
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + jwt);
@@ -142,6 +151,22 @@ public class JwtTokenAuthentication {
         Claims claims = verify(getJWT(request));
         if (claims != null) {
             return claims.get(JWT_USER_ID).toString();
+        }
+        return null;
+    }
+
+    /**
+     * 获取用户名称
+     * (
+     *      此方法获取的名称为
+     *          addAuthentication(HttpServletResponse res, String userId, String userName)
+     *      操作后保存的名称
+     * )
+     */
+    public static String getJwtUserName(HttpServletRequest request) {
+        Claims claims = verify(getJWT(request));
+        if (claims != null) {
+            return claims.get(JWT_USER_NAME).toString();
         }
         return null;
     }
