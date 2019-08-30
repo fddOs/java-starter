@@ -182,6 +182,11 @@
                 <version>3.8.0</version>
             </dependency>
             <dependency>
+                <groupId>io.github.openfeign.form</groupId>
+                <artifactId>feign-form-spring</artifactId>
+                <version>3.8.0</version>
+            </dependency>
+            <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-core</artifactId>
                 <version>9.5.1</version>
