@@ -94,9 +94,9 @@ public class BaseOkHttpClient {
      * @return
      */
     private Request handleRequest(Request request) {
-        String urlQuery = "?platform=" + ProjectInfoUtils.PROJECT_CONTEXT + "&oprNo=" + getUserCode();
+        String urlQuery = "?platform=" + ProjectInfoUtils.PROJECT_CONTEXT + "&oprUserNo=" + getUserCode();
         if (request.url().querySize() != 0) {
-            urlQuery = "&platform=" + ProjectInfoUtils.PROJECT_CONTEXT + "&oprNo=" + getUserCode();
+            urlQuery = "&platform=" + ProjectInfoUtils.PROJECT_CONTEXT + "&oprUserNo=" + getUserCode();
         }
         RequestBody requestBody = request.body();
         RequestBody requestBodyNew;
