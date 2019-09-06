@@ -183,10 +183,11 @@ public class LoggingFilter extends OncePerRequestFilter {
         }
         String requestString = "";
         try {
-            byte[] buf = ((ContentCachingRequestWrapper)request).getContentAsByteArray();
+            byte[] buf = ((ContentCachingRequestWrapper) request).getContentAsByteArray();
             requestString = new String(buf, 0, buf.length, "utf-8");
             return JsonUtils.parse(requestString);
         } catch (Exception e) {
+            LoggerUtils.error(getClass(), "获取RequestBody失败", e);
             return JsonUtils.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
                     request.getContentType() + " requestBody:" + requestString + "\"}");
         }
