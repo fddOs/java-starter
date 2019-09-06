@@ -149,10 +149,11 @@ public class JwtTokenAuthentication {
      */
     public static String getUserCode(HttpServletRequest request) {
         Claims claims = verify(getJWT(request));
-        if (claims != null) {
-            return claims.get(JWT_USER_ID).toString();
+        if (claims == null) {
+            return null;
         }
-        return null;
+        Object userCode = claims.get(JWT_USER_ID);
+        return userCode == null ? "" : userCode.toString();
     }
 
     /**
@@ -165,10 +166,11 @@ public class JwtTokenAuthentication {
      */
     public static String getJwtUserName(HttpServletRequest request) {
         Claims claims = verify(getJWT(request));
-        if (claims != null) {
-            return claims.get(JWT_USER_NAME).toString();
+        if (claims == null) {
+            return null;
         }
-        return null;
+        Object userName = claims.get(JWT_USER_NAME);
+        return userName == null? "" : userName.toString();
     }
 
     /**
