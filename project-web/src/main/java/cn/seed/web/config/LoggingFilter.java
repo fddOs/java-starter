@@ -208,6 +208,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             bodyString = new String(buf, 0, buf.length, "utf-8");
             return JsonUtils.parse(bodyString);
         } catch (Exception e) {
+            LoggerUtils.error(getClass(), "获取responseBody失败", e);
             return JsonUtils.parse("{\"unknown\":\"ExceptionName:" + e.getClass().getName() + " ContentType:" +
                     response.getContentType() + " responseBody:" + bodyString + "\"}");
         }
