@@ -1,5 +1,7 @@
 package cn.seed.common.core;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 服务（业务）异常如“ 账号或密码错误 ”，该异常只做INFO级别的日志记录 @see WebMvcConfigurer
  */
@@ -16,7 +18,7 @@ public class ServiceException extends RuntimeException {
 	public ServiceException() {
 	}
 
-	public ServiceException(ResultCode code, String message) {
+	public ServiceException(@NotNull ResultCode code, String message) {
 		super(message);
 		this.resultCode = code.getCode();
 	}
