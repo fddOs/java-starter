@@ -32,6 +32,23 @@ import static java.lang.annotation.ElementType.*;
  *        // 使用后
  *        User user = xxx.getUserByUserId(5);
  * }</pre>
+ * <p>
+ * Note: 使用此功能, 会有个地方需要关注下, 以前 json 是映射整个 {@link cn.seed.common.core.Result}
+ * 现在可以映射内部的 {@link cn.seed.common.core.Result#result}, 所以有可能会产生一个情况
+ * 当后台返回如下的格式的数据时, 内部的 result 是 null 或者是一个 "", 那么这时候是否允许为空会是一个问题
+ * {
+ * errorCode : 0,
+ * message : "ok",
+ * result : null
+ * }
+ * <p>
+ * 所以注解中添加了一个参数 {@link RemoveShell#allowEmpty()} 来控制是否允许为空
+ * <p>
+ * 如下代码就可允许 User 返回 null, 否则你将得到一个异常 {@link cn.seed.rpc.feign.RemoveShellException}
+ * <pre>{@code
+ *      @RemoveShell(allowEmpty = true)
+ *      User getUserByUserId(@NotNull String userId);
+ * }</pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {METHOD})
@@ -42,11 +59,6 @@ public @interface RemoveShell {
      * response 中就可以判断这个名称可以判断到是否有这个注解
      */
     String HEADER_NAME = "removeShell";
-
-    /**
-     * 表示接口的返回值是否允许是 null 的值
-     */
-    String HEADER_VALUE_ALLOW_EMPTY = "allowEmpty";
 
     /**
      * 是否允许

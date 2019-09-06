@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * 用于在 {@link feign.Request} 中生成一个名称为 {@link RemoveShell#HEADER_NAME} 的 header
  * 用于标记这个请求的 response 是需要脱壳的
  *
- * @see RemoveShell
+ * @see cn.seed.rpc.annotation.RemoveShell
  * @see cn.seed.rpc.feign.decoder.RemoveShellDecoder
  * @see cn.seed.rpc.feign.RemoveShellException
  */
