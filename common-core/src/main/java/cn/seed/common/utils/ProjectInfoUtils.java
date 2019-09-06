@@ -28,6 +28,10 @@ public class ProjectInfoUtils {
     public static final String PROJECT_AES_KEY;
     public static final String PROJECT_AES_OFFSET;
     public static final String PROJECT_JWT_SECRET;
+    /**
+     * 系统编码（权限验证中使用）
+     */
+    public static final String SYSTEM_CODE;
 
     static {
         YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
@@ -48,6 +52,7 @@ public class ProjectInfoUtils {
         PROJECT_AES_KEY = getAESKey();
         PROJECT_AES_OFFSET = getAESOffset();
         PROJECT_JWT_SECRET = getJWTSecret();
+        SYSTEM_CODE = getSystemCode();
     }
 
     /**
@@ -273,5 +278,17 @@ public class ProjectInfoUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * 获取系统编码
+     */
+    private static String getSystemCode() {
+        Object systemCode = ProjectInfoUtils.applicationProperty.getProperty("project.system-code");
+        if (StringUtils.isEmpty(systemCode)){
+            LoggerUtils.info(ProjectInfoUtils.class, "application.yml没有默认的系统编码配置项：systemCode");
+            return "";
+        }
+        return (String) systemCode;
     }
 }

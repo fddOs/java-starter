@@ -4,7 +4,7 @@
     <parent>
         <groupId>cn.seed</groupId>
         <artifactId>java-starter</artifactId>
-        <version>0.7.5</version>
+        <version>0.7.6-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -55,6 +55,10 @@
         <dependency>
             <groupId>io.github.openfeign.form</groupId>
             <artifactId>feign-form</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form-spring</artifactId>
         </dependency>
     </dependencies>
 </project>
