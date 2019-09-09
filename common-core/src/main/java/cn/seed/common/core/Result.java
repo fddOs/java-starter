@@ -20,7 +20,6 @@ public class Result<T> {
     private T result;
 
     public Result() {
-
     }
 
     public Result<T> setErrorCode(ResultCode resultCode) {
@@ -54,9 +53,27 @@ public class Result<T> {
         return this;
     }
 
-
     @Override
     public String toString() {
         return JSON.toJSONString(this);
     }
+
+    /**
+     * 检查是否成功, 如果失败将会抛出一个异常 {@link ServiceException}
+     */
+    public void checkSuccess() {
+        if (!isSuccess()) {
+            throw new ServiceException(ResultCode.HTTP_FAIL, message);
+        }
+    }
+
+    /**
+     * 业务是否成功
+     *
+     * @return 返回业务是否成功返回
+     */
+    public boolean isSuccess() {
+        return errorCode == 0;
+    }
+
 }

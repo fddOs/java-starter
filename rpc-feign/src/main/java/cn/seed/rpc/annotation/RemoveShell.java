@@ -41,6 +41,8 @@ import static java.lang.annotation.ElementType.METHOD;
  * 使用此功能, 会有个地方需要关注下, 以前 json 是映射整个 {@link cn.seed.common.core.Result}
  * 现在可以映射内部的 {@link Result#getResult()}, 所以有可能会产生一个情况
  * 当后台返回如下的格式的数据时, 内部的 result 是 null 或者是一个 "", 那么这时候是否允许为空会是一个问题
+ * 比如查询某个时间段的最近的一个订单, 可能会有一个订单也可能没有,
+ * 这时候返回的数据就有可能 {@link Result#getResult()} 是 {@code null}
  * <pre>
  * {
  *      errorCode : 0,
@@ -55,6 +57,19 @@ import static java.lang.annotation.ElementType.METHOD;
  *      &#64;RemoveShell(allowEmpty = true)
  *      User getUserByUserId(@NotNull String userId);
  * </pre>
+ * <p>
+ * 当查询一个数据没是真的没有 {@link Result#getResult()}, 比如取消订单接口,
+ * 它永远都不会有 {@link Result#getResult()}, json 返回值如下：
+ * <pre>
+ * {
+ *      errorCode : 0,
+ *      message : "ok",
+ *      result : null
+ * }
+ * </pre>
+ * 那么这种情况你可以直接使用 {@link cn.seed.common.core.Result} 对象来接受 {@code Json},
+ * 紧接着你可以使用 {@link Result#checkSuccess()} 来检查是否业务上是成功的, 否则抛出异常
+ * 或者你也可以使用 {@link Result#isSuccess()} 判断是否业务上成功, 自行处理业务成功与失败
  *
  * @author xiaojinzi
  * @since 0.7.6
