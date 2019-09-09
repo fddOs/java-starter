@@ -1,5 +1,7 @@
 package cn.seed.rpc.annotation;
 
+import cn.seed.common.core.Result;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -21,7 +23,7 @@ import static java.lang.annotation.ElementType.*;
  * <p>
  * 使用了此注解可以有两个好处：
  * 1. 在接口声明的时候, 不需要每次都写那个固定的 {@link cn.seed.common.core.Result},
- * 你可以让返回值是你原本的对象 {@link cn.seed.common.core.Result#result}
+ * 你可以让返回值是你原本的对象 {@link Result#getResult()}
  * 2. 在使用上, 你可以对比以下两段代码
  * <pre>{@code
  *        // 使用前
@@ -34,7 +36,7 @@ import static java.lang.annotation.ElementType.*;
  * }</pre>
  * <p>
  * Note: 使用此功能, 会有个地方需要关注下, 以前 json 是映射整个 {@link cn.seed.common.core.Result}
- * 现在可以映射内部的 {@link cn.seed.common.core.Result#result}, 所以有可能会产生一个情况
+ * 现在可以映射内部的 {@link Result#getResult()}, 所以有可能会产生一个情况
  * 当后台返回如下的格式的数据时, 内部的 result 是 null 或者是一个 "", 那么这时候是否允许为空会是一个问题
  * {
  * errorCode : 0,
@@ -61,9 +63,14 @@ public @interface RemoveShell {
     String HEADER_NAME = "removeShell";
 
     /**
-     * 是否允许
+     * 我们 Java 组规定最外层返回的 Json 格式符合
+     * {@link cn.seed.common.core.Result} 对象的格式.
+     * 但是脱壳的时候, 难免会有 {@link Result#getResult()} 为空的时候,
+     * 比如一个查询接口, 如果没有查询到是业务上的一种正确的行为,
+     * 那么{@link Result#getResult()} 可能就是 null 的, 但是脱壳的时候,
+     * 默认 {@link Result#getResult()} 是不能够为空的, 所以增加此字段来区分这两种场景
      *
-     * @return
+     * @return 是否允许 {@link Result#getResult()} 为空
      */
     boolean allowEmpty() default false;
 
