@@ -20,6 +20,35 @@
         <module>web-authority</module>
     </modules>
 
+    <!--各个环境-->
+    <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <env>local</env>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>mobile-group</id>
+                    <name>mobile-group</name>
+                    <url>http://192.168.9.230:8081/repository/mobile-group/</url>
+                </repository>
+            </repositories>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prd</id>
+            <properties>
+                <env>prd</env>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -348,4 +377,5 @@
             <url>http://192.168.9.230:8081/repository/java-releases/</url>
         </repository>
     </distributionManagement>
+
 </project>
