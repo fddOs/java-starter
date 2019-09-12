@@ -31,7 +31,7 @@ public class ProjectInfoUtils {
     /**
      * 系统编码（权限验证中使用）
      */
-    public static final String SYSTEM_CODE;
+//    public static final String SYSTEM_CODE;
 
     static {
         YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
@@ -52,7 +52,7 @@ public class ProjectInfoUtils {
         PROJECT_AES_KEY = getAESKey();
         PROJECT_AES_OFFSET = getAESOffset();
         PROJECT_JWT_SECRET = getJWTSecret();
-        SYSTEM_CODE = getSystemCode();
+//        SYSTEM_CODE = getSystemCode();
     }
 
     /**

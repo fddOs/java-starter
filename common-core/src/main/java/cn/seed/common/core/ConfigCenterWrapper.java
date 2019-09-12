@@ -7,6 +7,7 @@ import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,10 +71,10 @@ public class ConfigCenterWrapper {
      * 根据key获取application内的配置
      *
      * @param key
-     * @param defaultValue
+     * @param defaultValue 不能为null
      * @return
      */
-    public static String get(String key, String defaultValue) {
+    public static String get(String key, @NotNull String defaultValue) {
         return aesDecrypt(getNamespace(null), key, defaultValue);
     }
 
@@ -81,19 +82,28 @@ public class ConfigCenterWrapper {
         return aesDecrypt(getNamespace(null), key, "");
     }
 
+    /**
+     * 这个方法应该被禁用 默认值不允许为null
+     *
+     * @param key
+     * @return java.lang.String
+     * @author 方典典
+     * @time 2019/9/11 9:30
+     */
+    @Deprecated
     public static String getDefaultNull(String key) {
         return aesDecrypt(getNamespace(null), key, null);
     }
 
     /**
-     * 根据key获取指定namespace内的配置
+     * 根据key获取指定namespace内的配置 默认值不能位为null
      *
      * @param namespace
      * @param key
      * @param defaultValue
      * @return
      */
-    public static String get(String namespace, String key, String defaultValue) {
+    public static String get(String namespace, String key, @NotNull String defaultValue) {
         return aesDecrypt(getNamespace(namespace), key, defaultValue);
     }
 

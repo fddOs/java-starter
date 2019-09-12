@@ -2,10 +2,10 @@ package cn.seed.authority.interceptor;
 
 import cn.seed.authority.annotation.WebAuthentication;
 import cn.seed.authority.service.WebAuthority;
+import cn.seed.common.core.ApolloBaseConfig;
 import cn.seed.common.core.Result;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
-import cn.seed.common.utils.ProjectInfoUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                 // 获取系统编码，如果没有配置，那就取全局配置
                 String systemCode = webAuthentication.systemCode();
                 if (StringUtils.isEmpty(systemCode)) {
-                    systemCode = ProjectInfoUtils.SYSTEM_CODE;
+                    systemCode = ApolloBaseConfig.getSystemCode();
                 }
                 String[] moduleIds = webAuthentication.moduleIds();
 

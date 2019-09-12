@@ -94,7 +94,7 @@ public class JwtTokenAuthentication {
                 String name = (String) Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET))
                         .parseClaimsJws(token.getValue())
                         .getBody()
-                        .get(ConfigCenterWrapper.get("uniqueName", null));
+                        .get(ConfigCenterWrapper.getDefaultEmpty("uniqueName"));
                 if (name == null) {
                     throw new ServiceException(ResultCode.UNAUTHORIZED, "用户姓名获取失败，请重新登录");
                 }

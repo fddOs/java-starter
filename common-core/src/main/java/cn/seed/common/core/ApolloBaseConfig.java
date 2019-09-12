@@ -69,7 +69,7 @@ public class ApolloBaseConfig {
     }
 
     public static String getAuthUrl() {
-        return getCommonConfig("authUrl", null);
+        return getCommonConfig("authUrl", "");
     }
 
     public static String getWebCrossDomain() {
@@ -81,7 +81,7 @@ public class ApolloBaseConfig {
     }
 
     public static String getRedisOptionalUrl() {
-        return getCommonConfig("redis.optional.url", null);
+        return getCommonConfig("redis.optional.url", "");
     }
 
     public static boolean getOkHttpSSLEnable() {
@@ -100,6 +100,10 @@ public class ApolloBaseConfig {
         return getCommonConfig("signSecret", "3c6fa384648ffd5cf229ddf5ac82c480");
     }
 
+    public static String getSystemCode() {
+        return getCommonConfig("systemCode", "");
+    }
+
     private ApolloBaseConfig(LoggingSystem loggingSystem) {
         Assert.notNull(loggingSystem, "LoggingSystem must not be null");
         this.loggingSystem = loggingSystem;
@@ -116,7 +120,7 @@ public class ApolloBaseConfig {
     @PostConstruct
     private void initLogLevel() {
         String strLevel = getCommonConfig("logLevel", "info");
-        String logName = getCommonConfig("logName", null);
+        String logName = getCommonConfig("logName", "");
         LogLevel level = LogLevel.valueOf(strLevel.toUpperCase());
         loggingSystem.setLogLevel(logName, level);
         LoggerUtils.isDebug = LoggerFactory.getLogger(LoggerUtils.class).isDebugEnabled();
