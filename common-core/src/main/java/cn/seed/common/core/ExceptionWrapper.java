@@ -32,49 +32,6 @@ public class ExceptionWrapper {
         T execute();
     }
 
-    @Deprecated
-    public interface DoSomethingReturn<T> {
-        /**
-         * doSomethingReturn
-         *
-         * @return T
-         * @author 方典典
-         * @time 2019/5/5 10:13
-         */
-        T execute();
-    }
-
-    @Deprecated
-    public interface DoSomething {
-        /**
-         * doSomething
-         *
-         * @return void
-         * @author 方典典
-         * @time 2019/5/5 10:13
-         */
-        void execute();
-    }
-
-    /**
-     * 执行带返回值的目标方法 在异常时抛出指定的异常信息
-     *
-     * @param errorMsg
-     * @param wrapper
-     * @return T
-     * @author 方典典
-     * @time 2019/5/5 10:17
-     */
-    @Deprecated
-    public static <T> T executeWrapper(String errorMsg, DoSomethingReturn<T> wrapper) {
-        try {
-            return wrapper.execute();
-        } catch (Exception e) {
-            LoggerUtils.error(ExceptionWrapper.class, new Object[]{errorMsg, wrapper}, e);
-            throw new ServiceException(ResultCode.FAIL, errorMsg, e);
-        }
-    }
-
     /**
      * 执行带返回值的目标方法 在异常时抛出指定的异常信息
      *
@@ -87,25 +44,6 @@ public class ExceptionWrapper {
     public static <T> T executeWrapper(String errorMsg, Supplier<T> wrapper) {
         try {
             return wrapper.execute();
-        } catch (Exception e) {
-            LoggerUtils.error(ExceptionWrapper.class, new Object[]{errorMsg, wrapper}, e);
-            throw new ServiceException(ResultCode.FAIL, errorMsg, e);
-        }
-    }
-
-    /**
-     * 执行无返回值的目标方法 在异常时抛出指定的异常信息
-     *
-     * @param errorMsg
-     * @param wrapper
-     * @return void
-     * @author 方典典
-     * @time 2019/5/5 16:16
-     */
-    @Deprecated
-    public static void executeWrapper(String errorMsg, DoSomething wrapper) {
-        try {
-            wrapper.execute();
         } catch (Exception e) {
             LoggerUtils.error(ExceptionWrapper.class, new Object[]{errorMsg, wrapper}, e);
             throw new ServiceException(ResultCode.FAIL, errorMsg, e);
