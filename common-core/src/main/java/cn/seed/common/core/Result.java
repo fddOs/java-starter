@@ -3,6 +3,10 @@ package cn.seed.common.core;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.catalina.User;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 /**
  * @author xianglong.chen
@@ -62,8 +66,17 @@ public class Result<T> {
      * 检查是否成功, 如果失败将会抛出一个异常 {@link ServiceException}
      */
     public void checkSuccess() {
+        checkSuccess(message);
+    }
+
+    /**
+     * 检查是否成功, 如果失败将会抛出一个异常 {@link ServiceException}
+     *
+     * @param msg 自定义错误信息
+     */
+    public void checkSuccess(@Null String msg) {
         if (!isSuccess()) {
-            throw new ServiceException(ResultCode.HTTP_FAIL, message);
+            throw new ServiceException(errorCode, msg);
         }
     }
 

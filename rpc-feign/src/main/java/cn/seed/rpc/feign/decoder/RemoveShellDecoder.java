@@ -55,7 +55,7 @@ public class RemoveShellDecoder implements Decoder {
             Integer code = jb.getInteger("code");
             // 如果两个都是没有, 说明数据结构不符合逻辑, 直接抛出异常
             if (errorCode == null && code == null) {
-                throw new RemoveShellException(ResultCode.HTTP_FAIL, "返回的 json 数据结构不满足 @RemoveShell 注解的脱壳要求");
+                throw new RemoveShellException(ResultCode.REMOVE_SHELL_ERROR, "返回的 json 数据结构不满足 @RemoveShell 注解的脱壳要求");
             }
             // 错误信息, 可能为空
             String message = jb.getString("message");
@@ -78,7 +78,7 @@ public class RemoveShellDecoder implements Decoder {
                 if (isAllowEmpty) {
                     return null;
                 } else {
-                    throw new RemoveShellException(ResultCode.HTTP_FAIL, "Json 中的 result 不允许为空, 如果允许返回空, 请使用 @RemoveShell(allowEmpty = true)");
+                    throw new RemoveShellException(ResultCode.REMOVE_SHELL_ERROR, "Json 中的 result 不允许为空, 如果允许返回空, 请使用 @RemoveShell(allowEmpty = true)");
                 }
             }
 
@@ -90,7 +90,7 @@ public class RemoveShellDecoder implements Decoder {
             // 脱壳完成
             return nextDecoder.decode(nextResponse, type);
         } catch (Exception e) {
-            throw new RemoveShellException(ResultCode.HTTP_FAIL, "Response 脱壳失败", e);
+            throw new RemoveShellException(ResultCode.REMOVE_SHELL_ERROR, "Response 脱壳失败", e);
         }
 
     }
