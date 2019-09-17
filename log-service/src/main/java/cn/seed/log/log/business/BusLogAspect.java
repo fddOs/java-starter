@@ -34,6 +34,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Component
 public class BusLogAspect {
     private static final String HEADER_JWT_USER_ID = "jwt-user-id";
+    private static final String URL_USER_ID = "oprUserNo";
 
     @Autowired
     private Tracer tracer;
@@ -88,7 +89,7 @@ public class BusLogAspect {
                 if(request!=null){
                     oprNo = request.getHeader(HEADER_JWT_USER_ID);
                     if(StringUtils.isEmpty(oprNo)){
-                        oprNo = request.getParameter("oprNo");
+                        oprNo = request.getParameter(URL_USER_ID);
                     }
                 }
                 oprNo= OprNoUtils.handlerOprNo(oprNo);
