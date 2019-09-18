@@ -75,8 +75,8 @@ public class BusLogAspect {
         BusinessLog businessLog =  method.getAnnotation(BusinessLog.class);
         int actionType = businessLog.actionType();
         //获取操作人
-        String oprNo = (String) methodParams(arguments,params,businessLog.oprNo(),businessLog
-            .oprNoNum());
+        String oprNo = String.valueOf(methodParams(arguments,params,businessLog.oprNo(),businessLog
+                .oprNoNum()));
         if(StringUtils.isEmpty(oprNo)){
             HttpServletRequest request = null;
             try {
@@ -175,7 +175,7 @@ public class BusLogAspect {
         }
         //如果当前index的参数名称和指定的参数名称相等，则直接返回参数的值
         if(choiceParam.equalsIgnoreCase(params[index])){
-            return arguments[index];
+            return arguments[index]==null?"":arguments[index];
         }else{
             //如果不相等、则获取参数对象里面是否有指定的参数模型
             Object result = null;
