@@ -1,6 +1,8 @@
 package cn.seed.rpc.feign;
 
 import cn.seed.common.utils.ProjectInfoUtils;
+import cn.seed.rpc.contract.RevemoShellContract;
+import cn.seed.rpc.feign.decoder.RemoveShellDecoder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +31,7 @@ import java.util.TimeZone;
  **/
 @Configuration
 public class FeignConfig {
+
     @Autowired
     private FeignRequestInterceptor feignRequestInterceptor;
 
@@ -40,9 +43,10 @@ public class FeignConfig {
                 .errorDecoder(new ErrorExceptionDecoder())
                 .encoder(new FormEncoder(new JacksonEncoder(new ObjectMapper().setSerializationInclusion(JsonInclude.Include
                         .NON_NULL).configure(SerializationFeature.INDENT_OUTPUT, false))))
-                .decoder(new JacksonDecoder(createObjectMapper()))
+                .decoder(new RemoveShellDecoder(new JacksonDecoder(createObjectMapper())))
                 .logger(new Slf4jLogger())
                 .logLevel(feign.Logger.Level.FULL)
+                .contract(new RevemoShellContract())
                 .options(new Options(ProjectInfoUtils.PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS, ProjectInfoUtils
                         .PROJECT_FEIGN_READ_TIMEOUT_MILLIS));
     }
