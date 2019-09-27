@@ -18,6 +18,8 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 
 import static org.springframework.http.HttpMethod.GET;
@@ -79,6 +81,14 @@ public class SignFilter implements Filter {
     private boolean signRequest(HttpServletRequest request, String requestBody, String query) {
         if (StringUtils.isEmpty(requestBody) && StringUtils.isEmpty(query)) {
             return true;
+        }
+        // 解码URL参数
+        if (!StringUtils.isEmpty(query)) {
+            try {
+                query = URLDecoder.decode(query, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                LoggerUtils.errorSendELKAndPrintDetailConsole(getClass(), new Object[]{request, query}, e);
+            }
         }
         String sign = SignUtils.sign(query, requestBody);
         String signHeader = request.getHeader(ApolloBaseConfig.getSignHeader());
