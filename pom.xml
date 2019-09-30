@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.seed</groupId>
     <artifactId>java-starter</artifactId>
-    <version>0.7.6.2</version>
+    <version>0.7.7-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>java-starter</name>
@@ -129,9 +129,9 @@
                 <version>1.2.58</version>
             </dependency>
             <dependency>
-                <groupId>com.ctrip.framework.apollo</groupId>
+                <groupId>cn.seed</groupId>
                 <artifactId>apollo-client</artifactId>
-                <version>0.9.1.2</version>
+                <version>0.0.2</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
@@ -153,6 +153,20 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
                 <version>2.6.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-aop</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.springfox</groupId>
@@ -241,6 +255,16 @@
                 <version>0.31.3</version>
             </dependency>
             <dependency>
+                <groupId>io.zipkin.zipkin2</groupId>
+                <artifactId>zipkin</artifactId>
+                <version>2.10.4</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.reporter2</groupId>
+                <artifactId>zipkin-reporter</artifactId>
+                <version>2.7.7</version>
+            </dependency>
+            <dependency>
                 <groupId>io.github.openfeign.opentracing</groupId>
                 <artifactId>feign-opentracing</artifactId>
                 <version>0.1.0</version>
@@ -249,6 +273,12 @@
                 <groupId>io.opentracing.contrib</groupId>
                 <artifactId>opentracing-spring-web-starter</artifactId>
                 <version>0.3.3</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>spring-boot-autoconfigure</artifactId>
+                        <groupId>org.springframework.boot</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>net.logstash.logback</groupId>
@@ -264,6 +294,13 @@
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
                 <version>3.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Edgware.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -292,12 +329,17 @@
             <artifactId>fastjson</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ctrip.framework.apollo</groupId>
+            <groupId>cn.seed</groupId>
             <artifactId>apollo-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-context -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-context</artifactId>
         </dependency>
     </dependencies>
     <!-- 配置远程仓库 -->

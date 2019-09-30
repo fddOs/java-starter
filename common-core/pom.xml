@@ -4,7 +4,7 @@
     <parent>
         <groupId>cn.seed</groupId>
         <artifactId>java-starter</artifactId>
-        <version>0.7.6.2</version>
+        <version>0.7.7-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -25,6 +25,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
             <groupId>net.logstash.logback</groupId>

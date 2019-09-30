@@ -47,7 +47,7 @@ public class LoggerUtils {
      * @author 方典典
      * @time 2019/4/9 15:12
      */
-    public static void errorSendELKAndPrintDetailConsole(Class<? extends Object> clazz, Object[] objects, Exception e) {
+    public static void errorSendELKAndPrintDetailConsole(Class<? extends Object> clazz, Object[] objects, Throwable e) {
         Logger logger = LoggerFactory.getLogger(clazz);
         LogstashMarker marker = new SeedLogstashMarker(new ExceptionMsgWrapper(clazz
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
