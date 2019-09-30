@@ -104,6 +104,39 @@ public class ApolloBaseConfig {
         return getCommonConfig("systemCode", "");
     }
 
+    public static String getThreadRejectedExecutionHandler() {
+        return getCommonConfig("threadRejectedExecutionHandler", "java.util.concurrent.ThreadPoolExecutor" +
+                ".CallerRunsPolicy");
+    }
+
+    public static Integer getThreadAwaitTerminationSeconds() {
+        return Integer.valueOf(getCommonConfig("threadAwaitTerminationSeconds", "60"));
+    }
+
+    public static Integer getThreadCorePoolSize() {
+        return Integer.valueOf(getCommonConfig("threadCorePoolSize", "10"));
+    }
+
+    public static Integer getThreadMaxPoolSize() {
+        return Integer.valueOf(getCommonConfig("threadMaxPoolSize", "20"));
+    }
+
+    public static Integer getThreadKeepAliveSeconds() {
+        return Integer.valueOf(getCommonConfig("threadKeepAliveSeconds", "60"));
+    }
+
+    public static Integer getThreadQueueCapacity() {
+        return Integer.valueOf(getCommonConfig("threadQueueCapacity", "200"));
+    }
+
+    public static String getThreadNamePrefix() {
+        return getCommonConfig("threadNamePrefix", "taskExecutor-");
+    }
+
+    public static Boolean getThreadWaitForTasksToCompleteOnShutdown() {
+        return Boolean.valueOf(getCommonConfig("threadWaitForTasksToCompleteOnShutdown", "true"));
+    }
+
     private ApolloBaseConfig(LoggingSystem loggingSystem) {
         Assert.notNull(loggingSystem, "LoggingSystem must not be null");
         this.loggingSystem = loggingSystem;

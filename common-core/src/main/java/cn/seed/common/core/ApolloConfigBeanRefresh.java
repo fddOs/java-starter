@@ -2,7 +2,9 @@ package cn.seed.common.core;
 
 import cn.seed.common.utils.ProjectInfoUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,8 @@ import static cn.seed.common.core.ConfigCenterWrapper.registerListenerConfig;
 public class ApolloConfigBeanRefresh implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
+    @Autowired
+    private RefreshScope refreshScope;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -42,6 +46,7 @@ public class ApolloConfigBeanRefresh implements ApplicationContextAware {
     private void publicApolloConfigChange(Set<String> configKeys) {
         //更新配置
         this.applicationContext.publishEvent(new EnvironmentChangeEvent(configKeys));
+        refreshScope.refreshAll();
     }
 
 }
