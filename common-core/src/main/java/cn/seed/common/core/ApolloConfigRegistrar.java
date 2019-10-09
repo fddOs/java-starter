@@ -12,6 +12,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesProcessor;
 import com.ctrip.framework.apollo.spring.util.BeanRegistrationUtil;
 import com.google.common.collect.Lists;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -19,8 +20,14 @@ import com.google.common.collect.Lists;
 public class ApolloConfigRegistrar implements ImportBeanDefinitionRegistrar {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        String[] namespaces = new String[]{ConfigConsts.NAMESPACE_APPLICATION, ProjectInfoUtils
-                .PROJECT_APOLLO_COMMON_NAMESPACE, ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE};
+        String[] namespaces;
+        if (StringUtils.isEmpty(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE)) {
+            namespaces = new String[]{ConfigConsts.NAMESPACE_APPLICATION, ProjectInfoUtils
+                    .PROJECT_APOLLO_COMMON_NAMESPACE};
+        } else {
+            namespaces = new String[]{ConfigConsts.NAMESPACE_APPLICATION, ProjectInfoUtils
+                    .PROJECT_APOLLO_COMMON_NAMESPACE, ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE};
+        }
         int order = Ordered.LOWEST_PRECEDENCE;
         PropertySourcesProcessor.addNamespaces(Lists.newArrayList(namespaces), order);
 

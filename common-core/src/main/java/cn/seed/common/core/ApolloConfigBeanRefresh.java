@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.util.StringUtils;
 
 import java.util.Set;
 
@@ -40,7 +41,9 @@ public class ApolloConfigBeanRefresh implements ApplicationContextAware {
                 publicApolloConfigChange(keys);
         registerListenerConfig(ConfigConsts.NAMESPACE_APPLICATION, seedConfigChangeListener);
         registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_COMMON_NAMESPACE, seedConfigChangeListener);
-        registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE, seedConfigChangeListener);
+        if(!StringUtils.isEmpty(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE)){
+            registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE, seedConfigChangeListener);
+        }
     }
 
     private void publicApolloConfigChange(Set<String> configKeys) {
