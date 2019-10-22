@@ -39,7 +39,8 @@ public class DecodeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-//        ServletRequest requestWrapper = new BaseHttpServletRequestWrapper((HttpServletRequest) request);
+        response.setCharacterEncoding("UTF-8");
+        //        ServletRequest requestWrapper = new BaseHttpServletRequestWrapper((HttpServletRequest) request);
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper((HttpServletRequest) request);
 //        BaseHttpServletResponseWrapper responseWrapper = new BaseHttpServletResponseWrapper(
 //                (HttpServletResponse) response);

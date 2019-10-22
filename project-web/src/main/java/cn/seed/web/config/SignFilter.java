@@ -66,6 +66,7 @@ public class SignFilter implements Filter {
                         .getContentAsByteArray());
                 String resSign = SignUtils.signResponse(respStr);
                 ((HttpServletResponse) response).setHeader(ApolloBaseConfig.getSignHeader(), resSign);
+                ((HttpServletResponse) response).setHeader("x-seed-sign", resSign);
             } catch (Exception e) {
                 LoggerUtils.error(getClass(), new Object[]{request, response, chain}, e);
                 throw new ServiceException(ResultCode.UNAUTHORIZED, "签名错误");
@@ -92,6 +93,7 @@ public class SignFilter implements Filter {
         }
         String sign = SignUtils.sign(query, requestBody);
         String signHeader = request.getHeader(ApolloBaseConfig.getSignHeader());
+        signHeader = StringUtils.isEmpty(signHeader) ? request.getHeader("x-seed-sign") : signHeader;
         if (StringUtils.isEmpty(signHeader) || StringUtils
                 .isEmpty(sign)) {
             return false;

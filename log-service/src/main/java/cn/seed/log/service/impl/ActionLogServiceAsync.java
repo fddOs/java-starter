@@ -17,7 +17,7 @@ public class ActionLogServiceAsync {
     @Autowired
     private ActionLogService actionLogService;
 
-    @Async
+    @Async("serviceLogThreadPool")
     public void insertServiceLogCommonAsync(ActionLog actionLog) {
         try {
             actionLogService.insertActionLogCommon(actionLog);
