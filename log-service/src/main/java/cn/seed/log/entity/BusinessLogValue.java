@@ -55,21 +55,17 @@ public class BusinessLogValue {
      */
     @ApiModelProperty("被动更新时间")
     private Date gmtModified;
-    @ApiModelProperty("日志记录时间")
-    private String actionDatetime;
     @ApiModelProperty("操作人登录帐号")
     private String oprNo;
 
     public BusinessLogValue() {
     }
 
-    public BusinessLogValue(String traceId, String oprTableName, String originalValue, String newValue, String
-            actionDatetime, String oprNo) {
+    public BusinessLogValue(String traceId, String oprTableName, String originalValue, String newValue, String oprNo) {
         this.traceId = traceId;
         this.oprTableName = oprTableName;
         this.originalValue = originalValue;
         this.newValue = newValue;
-        this.actionDatetime = actionDatetime;
         this.oprNo = oprNo;
     }
 
@@ -127,14 +123,6 @@ public class BusinessLogValue {
 
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
-    }
-
-    public String getActionDatetime() {
-        return actionDatetime;
-    }
-
-    public void setActionDatetime(String actionDatetime) {
-        this.actionDatetime = actionDatetime;
     }
 
     public String getOprNo() {
