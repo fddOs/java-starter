@@ -26,17 +26,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
-import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import cn.seed.web.config.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -194,14 +191,20 @@ public class LoggingFilter extends OncePerRequestFilter {
     }
 
     /**
+     * 获取响应Body
+     *
      * @param response
      * @return com.alibaba.fastjson.JSON
-     * @Description:获取响应Body
      * @exception:
      * @author: 方典典
      * @time:2018/11/6 16:50
      */
     private Object getResponseBody(HttpServletResponse response) {
+        String contentType = response.getContentType();
+        boolean isText = "text".equalsIgnoreCase(contentType);
+        if (contentType == null || !(contentType.startsWith("application/json") || isText)) {
+            return "response 的 contentType为: " + contentType + "内容省略";
+        }
         String bodyString = "";
         try {
             byte[] buf = ((ContentCachingResponseWrapper) response).getContentAsByteArray();
@@ -253,8 +256,10 @@ public class LoggingFilter extends OncePerRequestFilter {
      * @time:2018/11/6 16:51
      */
     private void responseResult(HttpServletResponse response, Result result) throws IOException {
+        String contentType = "application/json;charset=UTF-8";
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-type", "application/json;charset=UTF-8");
+        response.setHeader("Content-type", contentType);
+        response.setContentType(contentType);
         response.getWriter().write(JSON.toJSONString(result));
     }
 

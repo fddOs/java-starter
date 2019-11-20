@@ -53,8 +53,9 @@ public class JwtFilter implements Filter {
             } else {
                 if (!StringUtils.isEmpty(loginUrl)) {
                     ((HttpServletResponse) response).sendRedirect(httpServletRequest.getContextPath() + loginUrl);
+                }else{
+                    throw new ServiceException(ResultCode.UNAUTHORIZED, "用户JWT信息验证失败");
                 }
-                throw new ServiceException(ResultCode.UNAUTHORIZED, "用户JWT信息验证失败");
             }
         }
     }
