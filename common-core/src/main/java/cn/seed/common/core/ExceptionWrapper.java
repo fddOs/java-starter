@@ -3,15 +3,27 @@ package cn.seed.common.core;
 import cn.seed.common.utils.LoggerUtils;
 
 /**
- * @Description:ExceptionWrapper
+ * 封装异常处理
+ *
  * @author:方典典
  * @time:2019/5/5 9:14
  */
 public class ExceptionWrapper {
 
-    public interface Consumer<T> {
+    public interface Consumer {
         /**
          * doSomething
+         *
+         * @return void
+         * @author 方典典
+         * @time 2019/9/12 10:17
+         */
+        void execute();
+    }
+
+    public interface Function {
+        /**
+         * doSomething in finally
          *
          * @return void
          * @author 方典典
@@ -51,7 +63,28 @@ public class ExceptionWrapper {
     }
 
     /**
-     * 执行无返回值的目标方法 在异常时抛出指定的异常信息
+     * 执行带返回值的目标方法 在异常时抛出指定的异常信息 并可实现finally中的操作
+     *
+     * @param errorMsg
+     * @param wrapper
+     * @param function
+     * @return T
+     * @author 方典典
+     * @time 2019/11/27 1 0:15
+     */
+    public static <T> T executeWrapper(String errorMsg, Supplier<T> wrapper, Function function) {
+        try {
+            return wrapper.execute();
+        } catch (Exception e) {
+            LoggerUtils.error(ExceptionWrapper.class, new Object[]{errorMsg, wrapper}, e);
+            throw new ServiceException(ResultCode.FAIL, errorMsg, e);
+        } finally {
+            function.execute();
+        }
+    }
+
+    /**
+     * 执行无返回值的目标方法 在异常时抛出指定的异常信息 并可实现finally中的操作
      *
      * @param errorMsg
      * @param wrapper
@@ -65,6 +98,27 @@ public class ExceptionWrapper {
         } catch (Exception e) {
             LoggerUtils.error(ExceptionWrapper.class, new Object[]{errorMsg, wrapper}, e);
             throw new ServiceException(ResultCode.FAIL, errorMsg, e);
+        }
+    }
+
+    /**
+     * 执行无返回值的目标方法 在异常时抛出指定的异常信息
+     *
+     * @param errorMsg
+     * @param wrapper
+     * @param function
+     * @return void
+     * @author 方典典
+     * @time 2019/11/27 10:29
+     */
+    public static void executeWrapper(String errorMsg, Consumer wrapper, Function function) {
+        try {
+            wrapper.execute();
+        } catch (Exception e) {
+            LoggerUtils.error(ExceptionWrapper.class, new Object[]{errorMsg, wrapper}, e);
+            throw new ServiceException(ResultCode.FAIL, errorMsg, e);
+        } finally {
+            function.execute();
         }
     }
 
