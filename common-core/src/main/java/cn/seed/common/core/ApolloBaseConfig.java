@@ -137,6 +137,10 @@ public class ApolloBaseConfig {
         return Boolean.valueOf(getCommonConfig("threadWaitForTasksToCompleteOnShutdown", "true"));
     }
 
+    public static Boolean getEnableFunctionAuthVerify() {
+        return Boolean.valueOf(getCommonConfig("enableFunctionAuthVerify", "false"));
+    }
+
     private ApolloBaseConfig(LoggingSystem loggingSystem) {
         Assert.notNull(loggingSystem, "LoggingSystem must not be null");
         this.loggingSystem = loggingSystem;
