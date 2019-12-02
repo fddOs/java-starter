@@ -2,7 +2,7 @@ package cn.seed.authority.interceptor;
 
 import cn.seed.authority.annotation.FunctionAuthVerify;
 import cn.seed.authority.annotation.WebAuthentication;
-import cn.seed.authority.service.WebAuthority;
+import cn.seed.authority.service.AuthService;
 import cn.seed.common.core.ApolloBaseConfig;
 import cn.seed.common.core.Result;
 import cn.seed.common.core.ResultCode;
@@ -24,11 +24,11 @@ import java.util.Objects;
  */
 public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
-    private WebAuthority webAuthority;
+    private AuthService authService;
 
-    public AuthenticationInterceptor(WebAuthority webAuthority) {
-        Objects.requireNonNull(webAuthority);
-        this.webAuthority = webAuthority;
+    public AuthenticationInterceptor(AuthService authService) {
+        Objects.requireNonNull(authService);
+        this.authService = authService;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                     systemCode = ApolloBaseConfig.getSystemCode();
                 }
                 for (String moduleId : moduleIds) {
-                    Result<Boolean> booleanResult = webAuthority.verifyAuth(userCode, systemCode, moduleId);
+                    Result<Boolean> booleanResult = authService.verifyAuth(userCode, systemCode, moduleId);
                     if (booleanResult == null || booleanResult.getErrorCode() != 0 || !booleanResult.getResult()) {
                         throw new ServiceException(ResultCode.UNAUTHORIZED, "操作失败：没有权限");
                     }

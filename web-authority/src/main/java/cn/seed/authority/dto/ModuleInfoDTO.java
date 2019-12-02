@@ -1,16 +1,28 @@
-package cn.seed.authority.model;
+package cn.seed.authority.dto;
 
-public class BtnAuthResult {
+import java.io.Serializable;
+
+/**
+ * 权限系统模块信息封装类
+ *
+ * @author 方典典
+ * @time 2019/11/29 17:01
+ */
+public class ModuleInfoDTO implements Serializable {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
     private String levelId;
     private String moduleId;
     private String moduleInfo;
     private String moduleMethod;
     private String moduleName;
-    private int moduleOrderBy;
+    private String moduleOrderBy;
     private String moduleSelectValue;
     private String moduleShow;
-    private String moduleTypeCode;
     private String moduleUrl;
     private String parentId;
     private String systemCode;
@@ -55,11 +67,11 @@ public class BtnAuthResult {
         this.moduleName = moduleName;
     }
 
-    public int getModuleOrderBy() {
+    public String getModuleOrderBy() {
         return moduleOrderBy;
     }
 
-    public void setModuleOrderBy(int moduleOrderBy) {
+    public void setModuleOrderBy(String moduleOrderBy) {
         this.moduleOrderBy = moduleOrderBy;
     }
 
@@ -77,14 +89,6 @@ public class BtnAuthResult {
 
     public void setModuleShow(String moduleShow) {
         this.moduleShow = moduleShow;
-    }
-
-    public String getModuleTypeCode() {
-        return moduleTypeCode;
-    }
-
-    public void setModuleTypeCode(String moduleTypeCode) {
-        this.moduleTypeCode = moduleTypeCode;
     }
 
     public String getModuleUrl() {
@@ -109,5 +113,22 @@ public class BtnAuthResult {
 
     public void setSystemCode(String systemCode) {
         this.systemCode = systemCode;
+    }
+
+    @Override
+    public String toString() {
+        return "ModuleInfoDTO{" +
+                "levelId='" + levelId + '\'' +
+                ", moduleId='" + moduleId + '\'' +
+                ", moduleInfo='" + moduleInfo + '\'' +
+                ", moduleMethod='" + moduleMethod + '\'' +
+                ", moduleName='" + moduleName + '\'' +
+                ", moduleOrderBy='" + moduleOrderBy + '\'' +
+                ", moduleSelectValue='" + moduleSelectValue + '\'' +
+                ", moduleShow='" + moduleShow + '\'' +
+                ", moduleUrl='" + moduleUrl + '\'' +
+                ", parentId='" + parentId + '\'' +
+                ", systemCode='" + systemCode + '\'' +
+                '}';
     }
 }

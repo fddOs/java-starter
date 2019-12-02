@@ -1,15 +1,14 @@
 package cn.seed.authority.config;
 
 import cn.seed.authority.interceptor.AuthenticationInterceptor;
-import cn.seed.authority.service.WebAuthority;
+import cn.seed.authority.service.AuthService;
 import cn.seed.common.core.ApolloBaseConfig;
 import cn.seed.common.core.ConfigCenterWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import java.util.Objects;
 
 /**
  * @author xianglong.chen
@@ -19,19 +18,15 @@ import java.util.Objects;
 @DependsOn(value = "apolloBaseConfig")
 public class AuthorityConfiguration extends WebMvcConfigurerAdapter {
 
-    private WebAuthority webAuthority;
-
-    public AuthorityConfiguration(WebAuthority webAuthority) {
-        Objects.requireNonNull(webAuthority);
-        this.webAuthority = webAuthority;
-    }
+    @Autowired
+    private AuthService authService;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         boolean enableFunctionAuthVerify = ApolloBaseConfig.getEnableFunctionAuthVerify();
         String userEHiAuthority = ConfigCenterWrapper.get("userEHiAuthority", "false");
         if (enableFunctionAuthVerify||"true".equals(userEHiAuthority)) {
-            registry.addInterceptor(new AuthenticationInterceptor(webAuthority));
+            registry.addInterceptor(new AuthenticationInterceptor(authService));
         }
     }
 
