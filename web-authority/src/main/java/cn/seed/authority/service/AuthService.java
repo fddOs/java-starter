@@ -6,6 +6,7 @@ import cn.seed.authority.dto.UserDataDTO;
 import cn.seed.common.core.Result;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * 权限API 接口
@@ -92,6 +93,112 @@ public interface AuthService {
      * @author 方典典
      * @date 2019/11/22 10:27
      */
-    Result<List<UserDataDTO>> getUserDataAuthTree(String userCode, String systemCode, Integer groupId, String
+    Result<List<UserDataDTO>> getUserDataAuth(String userCode, String systemCode, Integer groupId, String
             isContainResignUser);
+
+    /**
+     * 用户数据权限处理
+     *
+     * @param userCode
+     * @param groupId
+     * @param systemCode
+     * @param isContainResignUser
+     * @param wrapper
+     * @return java.util.List<cn.seed.authority.dto.UserDataDTO>
+     * @author 方典典
+     * @time 2019/12/3 9:35
+     */
+    <T extends UserDataDTO> List<T> userDateAuthHandler(String userCode, Integer groupId, String systemCode, String
+            isContainResignUser, Supplier<List<T>> wrapper);
+
+    /**
+     * 用户数据权限处理
+     *
+     * @param userCode
+     * @param systemCode
+     * @param isContainResignUser
+     * @param wrapper
+     * @return java.util.List<cn.seed.authority.dto.UserDataDTO>
+     * @author 方典典
+     * @time 2019/12/3 9:35
+     */
+    <T extends UserDataDTO> List<T> userDateAuthHandler(String userCode, String systemCode, String
+            isContainResignUser, Supplier<List<T>> wrapper);
+
+    /**
+     * 用户数据权限处理
+     *
+     * @param userCode
+     * @param isContainResignUser
+     * @param wrapper
+     * @return java.util.List<cn.seed.authority.dto.UserDataDTO>
+     * @author 方典典
+     * @time 2019/12/3 9:35
+     */
+    <T extends UserDataDTO> List<T> userDateAuthHandler(String userCode, String isContainResignUser,
+                                                        Supplier<List<T>> wrapper);
+
+    /**
+     * 用户数据权限处理 systemCode为本系统
+     *
+     * @param userCode
+     * @param groupId
+     * @param isContainResignUser
+     * @param wrapper
+     * @return java.util.List<cn.seed.authority.dto.UserDataDTO>
+     * @author 方典典
+     * @time 2019/12/3 9:35
+     */
+    <T extends UserDataDTO> List<T> userDateAuthHandler(String userCode, Integer groupId, String
+            isContainResignUser, Supplier<List<T>> wrapper);
+
+    /**
+     * 用户数据权限处理
+     *
+     * @param userCode
+     * @param groupId
+     * @param systemCode
+     * @param wrapper
+     * @return java.util.List<cn.seed.authority.dto.UserDataDTO>
+     * @author 方典典
+     * @time 2019/12/3 9:35
+     */
+    <T extends GroupDataDTO> List<T> groupDateAuthHandler(String userCode, Integer groupId, String systemCode,
+                                                          Supplier<List<T>> wrapper);
+
+    /**
+     * 组织数据权限处理
+     *
+     * @param userCode
+     * @param systemCode
+     * @param wrapper
+     * @return java.util.List<cn.seed.authority.dto.UserDataDTO>
+     * @author 方典典
+     * @time 2019/12/3 9:35
+     */
+    <T extends GroupDataDTO> List<T> groupDateAuthHandler(String userCode, String systemCode, Supplier<List<T>>
+            wrapper);
+
+    /**
+     * 组织数据权限处理
+     *
+     * @param userCode
+     * @param wrapper
+     * @return java.util.List<cn.seed.authority.dto.UserDataDTO>
+     * @author 方典典
+     * @time 2019/12/3 9:35
+     */
+    <T extends GroupDataDTO> List<T> groupDateAuthHandler(String userCode, Supplier<List<T>> wrapper);
+
+    /**
+     * 组织数据权限处理 systemCode为本系统
+     *
+     * @param userCode
+     * @param groupId
+     * @param wrapper
+     * @return java.util.List<cn.seed.authority.dto.UserDataDTO>
+     * @author 方典典
+     * @time 2019/12/3 9:35
+     */
+    <T extends GroupDataDTO> List<T> groupDateAuthHandler(String userCode, Integer groupId, Supplier<List<T>> wrapper);
 }
