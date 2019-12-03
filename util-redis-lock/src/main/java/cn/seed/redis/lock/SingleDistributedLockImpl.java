@@ -3,11 +3,9 @@ package cn.seed.redis.lock;
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.LoggerUtils;
+import java.util.concurrent.TimeUnit;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +21,24 @@ public class SingleDistributedLockImpl implements DistributedLockService {
 
     @Override
     public <T> T lock(DistributedLockCallback<T> callback, long leaseTime, TimeUnit timeUnit, boolean fairLock) {
-        RLock lock = getLock(redisson, callback.getLockName(), fairLock);
+        //是否获取到锁
+        boolean isLock = false;
+        //是否redis发生异常
+        boolean isRedisException = false;
+        RLock lock =getLock(redisson, callback.getLockName(), fairLock);
         try {
-            lock.lock(leaseTime, timeUnit);
+
+            if(lock!=null){
+                lock.lock(leaseTime, timeUnit);
+            }
+        }catch (Exception e){
+            LoggerUtils.error(SingleDistributedLockImpl.class,new Object[]{"Redis lock 异常"},e);
+        }
+        try {
             return callback.process();
-        } finally {
+        } catch (Exception e){
+            throw new ServiceException(ResultCode.FAIL,"执行方法异常",e);
+        }finally {
             if (lock != null && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
@@ -41,23 +52,34 @@ public class SingleDistributedLockImpl implements DistributedLockService {
 
     @Override
     public <T> T tryLock(DistributedLockCallback<T> callback,
-                         long waitTime,
-                         long leaseTime,
-                         TimeUnit timeUnit,
-                         boolean fairLock) {
+        long waitTime,
+        long leaseTime,
+        TimeUnit timeUnit,
+        boolean fairLock) {
+        //是否获取到锁
+        boolean isLock = false;
+        //是否redis发生异常
+        boolean isRedisException = false;
+
         RLock lock = getLock(redisson, callback.getLockName(), fairLock);
         try {
-            if (lock.tryLock(waitTime, leaseTime, timeUnit)) {
+            isLock= (lock != null&&lock.tryLock(waitTime, leaseTime, timeUnit));
+        }catch (Exception e){
+            isRedisException =true;
+        }
+        try {
+            // 如果获取redis锁异常 或者 成功获取锁，直接执行目标方法
+            if(isLock||isRedisException){
                 return callback.process();
             }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        }catch (Exception e) {
+            throw new ServiceException(ResultCode.FAIL,"执行方法异常",e);
         } finally {
             if (lock != null && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
-        throw new ServiceException(ResultCode.REDIS_ERROR, "redis请求锁失败");
+        return null;
     }
 
     @Override
@@ -68,9 +90,11 @@ public class SingleDistributedLockImpl implements DistributedLockService {
     @Override public Boolean tryLock(String lockName, long timeOut, boolean fairLock) {
         RLock lock = getLock(redisson, lockName, fairLock);
         try {
-            return lock.tryLock(DEFAULT_WAIT_TIME, timeOut, DEFAULT_TIME_UNIT);
+            if(lock!=null){
+                return lock.tryLock(DEFAULT_WAIT_TIME, timeOut, DEFAULT_TIME_UNIT);
+            }
         } catch (Exception e) {
-            LoggerUtils.error(getClass(), new Object[]{lockName}, e);
+            LoggerUtils.error(getClass(), new Object[]{lockName+"redis 异常"}, e);
         }
         return true;
     }
@@ -84,11 +108,15 @@ public class SingleDistributedLockImpl implements DistributedLockService {
     }
 
     private static RLock getLock(RedissonClient redisson, String lockName, boolean fairLock) {
-        RLock lock;
-        if (fairLock) {
-            lock = redisson.getFairLock(lockName);
-        } else {
-            lock = redisson.getLock(lockName);
+        RLock lock = null;
+        try{
+            if (fairLock) {
+                lock = redisson.getFairLock(lockName);
+            } else {
+                lock = redisson.getLock(lockName);
+            }
+        }catch (Exception e){
+            LoggerUtils.error(SingleDistributedLockImpl.class, new Object[]{lockName+"redis 异常"}, e);
         }
         return lock;
     }
