@@ -14,6 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
 @Documented
+@Deprecated
 public @interface ServiceAnnotation {
 	/**
 	 * @Description:业务类型

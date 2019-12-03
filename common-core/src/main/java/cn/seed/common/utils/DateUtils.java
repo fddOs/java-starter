@@ -20,7 +20,8 @@ public class DateUtils {
      */
     public static Date getCurrentFirstTime() {
         return Date.from(LocalDateTime.parse(LocalDateTime.now().atZone(ZoneId.systemDefault()).format
-                (DateTimeFormatter.ofPattern("yyyy-MM-dd 00:00:00"))).atZone(ZoneId.systemDefault()).toInstant());
+                (DateTimeFormatter.ofPattern("yyyy-MM-dd 00:00:00")), DateTimeFormatter.ofPattern("yyyy-MM-dd " +
+                "HH:mm:ss")).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     /**
@@ -32,6 +33,7 @@ public class DateUtils {
      */
     public static Date getCurrentLastTime() {
         return Date.from(LocalDateTime.parse(LocalDateTime.now().atZone(ZoneId.systemDefault()).format
-                (DateTimeFormatter.ofPattern("yyyy-MM-dd 23:59:59"))).atZone(ZoneId.systemDefault()).toInstant());
+                (DateTimeFormatter.ofPattern("yyyy-MM-dd 23:59:59")), DateTimeFormatter.ofPattern("yyyy-MM-dd " +
+                "HH:mm:ss")).atZone(ZoneId.systemDefault()).toInstant());
     }
 }

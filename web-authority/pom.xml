@@ -17,8 +17,8 @@
             <artifactId>rpc-feign</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
+            <groupId>cn.seed</groupId>
+            <artifactId>project-web</artifactId>
         </dependency>
     </dependencies>
 

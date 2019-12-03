@@ -31,7 +31,7 @@ public class BusinessLogAsync {
      * @author lixiao
      * @date 2019-02-18 14:45
      */
-    @Async
+    @Async("serviceLogThreadPool")
     public void handleLogUpdateData(String oprTableName,String traceId){
 
         try {

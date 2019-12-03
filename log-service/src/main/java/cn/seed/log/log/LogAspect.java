@@ -192,8 +192,7 @@ public class LogAspect {
                 //记录business_log_value
                 BusinessLogValue
                         businessLogValue = new BusinessLogValue(requestTraceId(), actionLog.getOprTableName(),
-                        actionLog.getOriginalValue(),
-                        actionLog.getNewValue(), actionLog.getActionDatetime(), actionLog.getOprNo());
+                        actionLog.getOriginalValue(), actionLog.getNewValue(), actionLog.getOprNo());
                 businessService.insertBusinessLogValue(businessLogValue);
             } else {
                 actionLogServiceAsync.insertServiceLogCommonAsync(actionLog);
@@ -202,8 +201,7 @@ public class LogAspect {
         if ("business".equalsIgnoreCase(ApolloBaseConfig.getServiceCommonLogLevel())) {
             //记录business_log_value
             BusinessLogValue businessLogValue = new BusinessLogValue(requestTraceId(), actionLog.getOprTableName(),
-                    actionLog.getOriginalValue(),
-                    actionLog.getNewValue(), actionLog.getActionDatetime(), actionLog.getOprNo());
+                    actionLog.getOriginalValue(), actionLog.getNewValue(), actionLog.getOprNo());
             businessService.insertBusinessLogValue(businessLogValue);
         }
     }

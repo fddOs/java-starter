@@ -10,16 +10,18 @@ import cn.seed.common.utils.LoggerUtils;
 import cn.seed.common.utils.RequestInfoUtils;
 import cn.seed.web.common.ExcludePathHandler;
 import com.alibaba.fastjson.JSON;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-import cn.seed.web.config.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
-
-import javax.servlet.*;
+import java.io.IOException;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 /**
  * 解密过滤器
@@ -39,7 +41,8 @@ public class DecodeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-//        ServletRequest requestWrapper = new BaseHttpServletRequestWrapper((HttpServletRequest) request);
+        response.setCharacterEncoding("UTF-8");
+        //        ServletRequest requestWrapper = new BaseHttpServletRequestWrapper((HttpServletRequest) request);
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper((HttpServletRequest) request);
 //        BaseHttpServletResponseWrapper responseWrapper = new BaseHttpServletResponseWrapper(
 //                (HttpServletResponse) response);

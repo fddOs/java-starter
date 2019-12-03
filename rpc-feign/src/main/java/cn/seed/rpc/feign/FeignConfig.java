@@ -11,6 +11,7 @@ import feign.Feign;
 import feign.Request.Options;
 import feign.Retryer;
 import feign.form.FormEncoder;
+import feign.form.spring.SpringFormEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.okhttp.OkHttpClient;
@@ -20,6 +21,7 @@ import io.opentracing.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -35,20 +37,31 @@ public class FeignConfig {
     @Autowired
     private FeignRequestInterceptor feignRequestInterceptor;
 
-    @Bean("builder")
-    public Feign.Builder create(okhttp3.OkHttpClient okHttpClient, Tracer tracer) {
+    @Bean("feignBuilder")
+    @Scope("prototype")
+    public Feign.Builder createBaseFeignBuilder(okhttp3.OkHttpClient okHttpClient, Tracer tracer) {
         TracingClient tracingClient = new TracingClient(new OkHttpClient(okHttpClient), tracer);
         return Feign.builder().requestInterceptor(feignRequestInterceptor)
                 .client(tracingClient).retryer(Retryer.NEVER_RETRY)
                 .errorDecoder(new ErrorExceptionDecoder())
-                .encoder(new FormEncoder(new JacksonEncoder(new ObjectMapper().setSerializationInclusion(JsonInclude.Include
-                        .NON_NULL).configure(SerializationFeature.INDENT_OUTPUT, false))))
-                .decoder(new RemoveShellDecoder(new JacksonDecoder(createObjectMapper())))
                 .logger(new Slf4jLogger())
                 .logLevel(feign.Logger.Level.FULL)
                 .contract(new RevemoShellContract())
                 .options(new Options(ProjectInfoUtils.PROJECT_FEIGN_CONNECT_TIMEOUT_MILLIS, ProjectInfoUtils
                         .PROJECT_FEIGN_READ_TIMEOUT_MILLIS));
+    }
+
+    @Bean("builder")
+    public Feign.Builder createJacksonEncoderFeignBuilder(Feign.Builder feignBuilder) {
+        return feignBuilder.encoder(new FormEncoder(new JacksonEncoder(new ObjectMapper().setSerializationInclusion
+                (JsonInclude.Include.NON_NULL).configure(SerializationFeature.INDENT_OUTPUT, false)))).decoder(new
+                RemoveShellDecoder(new JacksonDecoder(createObjectMapper())));
+    }
+
+    @Bean("fileSPEBuilder")
+    public Feign.Builder createSpringFormEncoderFeignBuilder(Feign.Builder feignBuilder) {
+        return feignBuilder.encoder(new SpringFormEncoder()).decoder(new RemoveShellDecoder(new JacksonDecoder
+                (createObjectMapper())));
     }
 
     /**

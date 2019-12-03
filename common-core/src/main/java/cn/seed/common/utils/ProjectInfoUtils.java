@@ -28,6 +28,7 @@ public class ProjectInfoUtils {
     public static final String PROJECT_AES_KEY;
     public static final String PROJECT_AES_OFFSET;
     public static final String PROJECT_JWT_SECRET;
+
     /**
      * 系统编码（权限验证中使用）
      */
@@ -38,6 +39,12 @@ public class ProjectInfoUtils {
         try {
             applicationProperty = yamlPropertySourceLoader.load("application.yml", new
                     PathMatchingResourcePatternResolver().getResource("classpath:application.yml"), null);
+            Object profile = applicationProperty.getProperty("spring.profiles.active");
+            if (!StringUtils.isEmpty(profile)) {
+                String fileName = "application-" + profile.toString() + ".yml";
+                applicationProperty = yamlPropertySourceLoader.load(fileName, new
+                        PathMatchingResourcePatternResolver().getResource("classpath:" + fileName), null);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -285,7 +292,7 @@ public class ProjectInfoUtils {
      */
     private static String getSystemCode() {
         Object systemCode = ProjectInfoUtils.applicationProperty.getProperty("project.system-code");
-        if (StringUtils.isEmpty(systemCode)){
+        if (StringUtils.isEmpty(systemCode)) {
             LoggerUtils.info(ProjectInfoUtils.class, "application.yml没有默认的系统编码配置项：systemCode");
             return "";
         }
