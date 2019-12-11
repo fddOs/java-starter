@@ -1,5 +1,7 @@
 package cn.seed.redis.config;
 
+import cn.seed.common.core.ResultCode;
+import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.LoggerUtils;
 import cn.seed.common.utils.ProjectInfoUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,9 +28,8 @@ public class RedissonConfig {
     @Bean(destroyMethod = "shutdown")
     @RefreshScope
     RedissonClient redissonClient() {
-
         if(StringUtils.isEmpty(redisParams.getRedisUrl())){
-            throw new RuntimeException("redis 配置错误");
+            throw new ServiceException(ResultCode.FAIL,"redis 配置错误");
         }
         Config config = new Config();
         ClusterServersConfig clusterServersConfig = config.useClusterServers()
@@ -57,7 +58,7 @@ public class RedissonConfig {
         }catch (Exception e){
             String errorMsg = ProjectInfoUtils.BASE_PACKAGE+"redis 连接失败"+redisParams.getRedisUrl();
             LoggerUtils.error(RedissonConfig.class,new Object[]{errorMsg },e);
-            throw new RuntimeException(errorMsg);
+            throw new ServiceException(ResultCode.FAIL,errorMsg);
         }
         return redissonClient;
     }
