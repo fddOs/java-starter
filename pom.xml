@@ -18,6 +18,7 @@
         <module>util-redis-lock</module>
         <module>utils-email</module>
         <module>web-authority</module>
+        <module>utils-redis</module>
     </modules>
 
     <!--各个环境-->
