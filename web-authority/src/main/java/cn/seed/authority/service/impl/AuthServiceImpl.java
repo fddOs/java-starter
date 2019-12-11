@@ -73,6 +73,41 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public Result<Boolean> verifyAuth(String userCode, String moduleId) {
+        return verifyAuth(userCode, ApolloBaseConfig.getSystemCode(), moduleId);
+    }
+
+    @Override
+    public Result<List<ModuleInfoDTO>> btnAuth(String userCode, String moduleId) {
+        return btnAuth(userCode, ApolloBaseConfig.getSystemCode(), moduleId);
+    }
+
+    @Override
+    public Result<List<ModuleInfoDTO>> getFunAuth(String userCode) {
+        return getFunAuth(userCode, ApolloBaseConfig.getSystemCode());
+    }
+
+    @Override
+    public Result<List<GroupDataDTO>> getGroupDataAuthTree(String userCode) {
+        return getGroupDataAuthTree(userCode, ApolloBaseConfig.getSystemCode());
+    }
+
+    @Override
+    public Result<List<UserDataDTO>> getUserDataAuthTree(String userCode, String isContainResignUser) {
+        return getUserDataAuthTree(userCode, ApolloBaseConfig.getSystemCode(), isContainResignUser);
+    }
+
+    @Override
+    public Result<List<GroupDataDTO>> getGroupDataAuth(String userCode, Integer groupId) {
+        return getGroupDataAuth(userCode, groupId, ApolloBaseConfig.getSystemCode());
+    }
+
+    @Override
+    public Result<List<UserDataDTO>> getUserDataAuth(String userCode, Integer groupId, String isContainResignUser) {
+        return getUserDataAuth(userCode, ApolloBaseConfig.getSystemCode(), groupId, isContainResignUser);
+    }
+
+    @Override
     public <T extends UserDataDTO> List<T> userDateAuthHandler(String userCode, Integer groupId, String systemCode,
                                                                String isContainResignUser, Supplier<List<T>> wrapper) {
         Result<List<UserDataDTO>> result = getUserDataAuth(userCode, systemCode, groupId, isContainResignUser);

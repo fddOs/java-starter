@@ -97,6 +97,80 @@ public interface AuthService {
             isContainResignUser);
 
     /**
+     * 验证本系统权限
+     *
+     * @param userCode
+     * @param moduleId
+     * @return
+     */
+    Result<Boolean> verifyAuth(String userCode, String moduleId);
+
+    /**
+     * 根据用户工号，模块ID，获取本系统该页面的所有按钮
+     *
+     * @param userCode
+     * @param moduleId
+     * @return
+     */
+    Result<List<ModuleInfoDTO>> btnAuth(String userCode, String moduleId);
+
+    /**
+     * 根据用户工号，获取本系统用户功能权限
+     *
+     * @param userCode
+     * @return cn.seed.common.core.Result
+     * @author 方典典
+     * @time 2019/11/29 17:00
+     */
+    Result<List<ModuleInfoDTO>> getFunAuth(String userCode);
+
+    /**
+     * 根据用户工号，数据类型，返回层级，是否包含离职员工获取本系统组织架构数据权限
+     *
+     * @param userCode
+     * @return
+     * @author 方典典
+     * @date 2019/11/22 10:27
+     */
+    Result<List<GroupDataDTO>> getGroupDataAuthTree(String userCode);
+
+    /**
+     * 根据用户工号，数据类型，返回层级，是否包含离职员工获取本系统人员信息数据权限
+     *
+     * @param userCode
+     * @param isContainResignUser
+     * @return
+     * @author 方典典
+     * @date 2019/11/22 10:27
+     */
+    Result<List<UserDataDTO>> getUserDataAuthTree(String userCode, String isContainResignUser);
+
+    /**
+     * 根据用户工号，groupID，数据类型，是否包含离职员工，获取本系统该群组下所有末级节点上的组织架构信息
+     *
+     * @param userCode
+     * @param groupId
+     * @return
+     * @author 方典典
+     * @date 2019/11/22 10:27
+     */
+    Result<List<GroupDataDTO>> getGroupDataAuth(String userCode, Integer groupId);
+
+    /**
+     * 根据用户工号，groupID，数据类型，是否包含离职员工，获取本系统该群组下所有末级节点上的人员信息
+     *
+     * @param userCode
+     * @param groupId
+     * @param isContainResignUser
+     * @return
+     * @author 方典典
+     * @date 2019/11/22 10:27
+     */
+    Result<List<UserDataDTO>> getUserDataAuth(String userCode, Integer groupId, String
+            isContainResignUser);
+
+
+    /**
      * 用户数据权限处理
      *
      * @param userCode

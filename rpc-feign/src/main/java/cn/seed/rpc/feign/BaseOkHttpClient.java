@@ -142,7 +142,7 @@ public class BaseOkHttpClient {
         try {
             request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         } catch (IllegalStateException e) {
-            LOGGER.warn("当 Feign 使用子线程调用时，Request 中的信息将无法传递到底层接口");
+            // IGNORE
         }
         if (request == null) {
             return "";

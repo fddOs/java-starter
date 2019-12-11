@@ -28,7 +28,7 @@ public class LoggerUtils {
      * @author 方典典
      * @time 2019/2/14 18:24
      */
-    public static void error(Class<? extends Object> clazz, Object[] objects, Exception e) {
+    public static void error(Class<? extends Object> clazz, Object[] objects, Throwable e) {
         Logger logger = LoggerFactory.getLogger(clazz);
         LogstashMarker marker = new SeedLogstashMarker(new ExceptionMsgWrapper(clazz
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
@@ -66,7 +66,7 @@ public class LoggerUtils {
      * @author 方典典
      * @time 2019/4/9 15:12
      */
-    public static void errorSummary(Class<? extends Object> clazz, Object[] objects, Exception e) {
+    public static void errorSummary(Class<? extends Object> clazz, Object[] objects, Throwable e) {
         Logger logger = LoggerFactory.getLogger(clazz);
         LogstashMarker marker = new SeedLogstashMarker(new ExceptionMsgWrapper(clazz
                 .getName(), Thread.currentThread().getStackTrace()[2].getMethodName(), objects, ExceptionUtils
