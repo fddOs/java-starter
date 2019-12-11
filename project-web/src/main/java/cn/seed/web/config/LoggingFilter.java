@@ -69,7 +69,6 @@ public class LoggingFilter extends OncePerRequestFilter {
                 e = (Exception) e.getCause();
             }
             errorMsg = ExceptionUtils.getStackTrace(e);
-            LoggerUtils.error(getClass(), errorMsg);
             if (e instanceof ServiceException) {
                 responseResult(response, ResultGenerator.genFailResult(((ServiceException) e).getResultCode(),
                         e.getMessage()));
@@ -86,6 +85,8 @@ public class LoggingFilter extends OncePerRequestFilter {
                     exceptionMsg = message.substring(i + 3);
                 }
             }
+            errorMsg = exceptionMsg + "\n"+ errorMsg ;
+            LoggerUtils.error(getClass(), errorMsg);
             responseResult(response, ResultGenerator.genFailResult(ResultCode.INTERNAL_SERVER_ERROR,
                     exceptionMsg));
         } finally {
