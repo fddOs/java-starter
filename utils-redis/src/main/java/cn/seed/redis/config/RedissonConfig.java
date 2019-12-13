@@ -27,7 +27,8 @@ public class RedissonConfig {
 
     @Bean(destroyMethod = "shutdown")
     @RefreshScope
-    RedissonClient redissonClient() {
+    public RedissonClient redissonClient() {
+        System.err.println("准备实例化RedissonClient");
         if(StringUtils.isEmpty(redisParams.getRedisUrl())){
             throw new ServiceException(ResultCode.FAIL,"redis 配置错误");
         }
