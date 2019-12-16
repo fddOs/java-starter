@@ -1,5 +1,7 @@
 package cn.seed.redis.lock;
 
+import cn.seed.common.core.ResultCode;
+import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.LoggerUtils;
 import java.util.concurrent.TimeUnit;
 import org.redisson.api.RLock;
@@ -31,11 +33,15 @@ public class SingleDistributedLockImpl implements DistributedLockService {
             }
         }catch (Exception e){
             LoggerUtils.error(SingleDistributedLockImpl.class,new Object[]{"Redis lock 异常"},e);
+        }finally {
+            if (lock != null && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
         try {
             return callback.process();
         } catch (Exception e){
-            throw new RuntimeException("执行方法异常",e);
+            throw new ServiceException(ResultCode.FAIL,e.getMessage(),e);
         }finally {
             if (lock != null && lock.isHeldByCurrentThread()) {
                 lock.unlock();
@@ -71,13 +77,13 @@ public class SingleDistributedLockImpl implements DistributedLockService {
                 return callback.process();
             }
         }catch (Exception e) {
-            throw new RuntimeException("执行方法异常",e);
+            throw new ServiceException(ResultCode.FAIL,e.getMessage(),e);
         } finally {
             if (lock != null && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
-        return null;
+        throw new ServiceException(ResultCode.FAIL,"获取Redis锁失败");
     }
 
     @Override

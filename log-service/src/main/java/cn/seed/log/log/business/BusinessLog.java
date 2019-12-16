@@ -73,37 +73,37 @@ public @interface BusinessLog {
     String extend() default "";
 
     /**
-     *  操作人取值参数在方法参数里面的位置 默认为0
+     *  操作人取值参数在方法参数里面的位置 默认为-1
      * @param
      * @return int
      * @author lixiao
      * @date 2019-02-13 17:16
      */
-    int oprNoNum() default 0;
+    int oprNoNum() default -1;
 
     /**
-     *  关联单号取值参数在方法参数里面的位置 默认为0
+     *  关联单号取值参数在方法参数里面的位置 默认为-1
      * @param
      * @return int
      * @author lixiao
      * @date 2019-02-13 17:16
      */
-    int referNoNum() default 0;
+    int referNoNum() default -1;
     /**
-     *  用户id取值参数在方法参数里面的位置 默认为0
+     *  用户id取值参数在方法参数里面的位置 默认为-1
      * @param
      * @return int
      * @author lixiao
      * @date 2019-02-13 17:16
      */
-    int userIdNum() default 0;
+    int userIdNum() default -1;
     /**
-     *  扩展字段取值参数在方法参数里面的位置 默认为0
+     *  扩展字段取值参数在方法参数里面的位置 默认为-1
      * @param
      * @return int
      * @author lixiao
      * @date 2019-02-13 17:16
      */
-    int extendNum() default 0;
+    int extendNum() default -1;
 
 }

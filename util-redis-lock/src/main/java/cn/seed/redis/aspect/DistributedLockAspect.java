@@ -1,5 +1,7 @@
 package cn.seed.redis.aspect;
 
+import cn.seed.common.core.ResultCode;
+import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.LoggerUtils;
 import cn.seed.redis.annotation.DistributedLock;
 import cn.seed.redis.lock.DistributedLockCallback;
@@ -201,7 +203,7 @@ public class DistributedLockAspect {
         try {
             return pjp.proceed();
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            throw new ServiceException(ResultCode.FAIL,"",e);
         }
     }
 
