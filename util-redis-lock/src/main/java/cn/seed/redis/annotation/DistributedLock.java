@@ -14,7 +14,7 @@ public @interface DistributedLock {
     String lockName() default "";
 
     /**
-     * lockName后缀
+     * lockName前缀
      */
     String lockNamePre() default "yd";
     /**
