@@ -33,11 +33,15 @@ public class SingleDistributedLockImpl implements DistributedLockService {
             }
         }catch (Exception e){
             LoggerUtils.error(SingleDistributedLockImpl.class,new Object[]{"Redis lock 异常"},e);
+        }finally {
+            if (lock != null && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
         try {
             return callback.process();
         } catch (Exception e){
-            throw new ServiceException(ResultCode.FAIL,"执行方法异常",e);
+            throw new ServiceException(ResultCode.FAIL,e.getMessage(),e);
         }finally {
             if (lock != null && lock.isHeldByCurrentThread()) {
                 lock.unlock();
@@ -73,13 +77,13 @@ public class SingleDistributedLockImpl implements DistributedLockService {
                 return callback.process();
             }
         }catch (Exception e) {
-            throw new ServiceException(ResultCode.FAIL,"执行方法异常",e);
+            throw new ServiceException(ResultCode.FAIL,e.getMessage(),e);
         } finally {
             if (lock != null && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
-        return null;
+        throw new ServiceException(ResultCode.FAIL,"获取Redis锁失败");
     }
 
     @Override

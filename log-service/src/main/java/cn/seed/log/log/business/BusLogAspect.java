@@ -166,13 +166,21 @@ public class BusLogAspect {
      * @date 2019-02-14 15:51
      */
     private Object methodParams(Object[] arguments,String[] params,String choiceParam,int index){
-        //如果注解上未指定要换取的参数名称 返回""
-        if(StringUtils.isEmpty(choiceParam)){
+
+        if(index>=params.length){
             return "";
         }
-        //index默认为0
-        if(index<0||index>params.length){
-            index=0;
+        //如果未指定choiceParam 和index 则默认取index 为0的参数
+        if(StringUtils.isEmpty(choiceParam)&&index >-1){
+            return arguments[index];
+        }
+
+        if(!StringUtils.isEmpty(choiceParam)&&index==-1){
+            for (int i = 0; i < params.length; i++) {
+                if(params[i].equals(choiceParam)){
+                    return arguments[i];
+                }
+            }
         }
         //如果当前index的参数名称和指定的参数名称相等，则直接返回参数的值
         if(choiceParam.equalsIgnoreCase(params[index])){

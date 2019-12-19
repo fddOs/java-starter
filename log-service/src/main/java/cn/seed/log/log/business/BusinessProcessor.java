@@ -31,7 +31,7 @@ public class BusinessProcessor implements BeanPostProcessor {
                 continue;
             }
             String[] strings = businessLog.oprTableName().split(",");
-            if(strings!=null&&strings.length>0){
+            if(strings.length>0){
                 BusinessTableUtils.addBusiTables(strings);
             }
         }

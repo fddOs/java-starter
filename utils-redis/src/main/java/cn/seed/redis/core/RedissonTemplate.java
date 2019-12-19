@@ -15,33 +15,48 @@ import org.springframework.util.Assert;
  * @date 2019-12-09 16:57
  */
 @Component
-public class RedissonTemplate<K,V> {
+public class RedissonTemplate<K,V> implements RedissonOperations<K,V> {
 
     @Autowired RedissonClient redissonClient;
 
-    //@Autowired RedisTemplate<String,String> redisTemplate;
+    private RedissonValueOperations<K,V> valueOps;
 
 
-
+    @Override
    public <T>  T execute( RedissonCallBack<T> action,boolean pipeline){
        Assert.notNull(redissonClient, "redisson not initialized; call afterPropertiesSet() before using it");
        Assert.notNull(action, "Callback object must not be null");
        //if(pipeline){
-       //    redissonClient.createBatch(createBatchOptions());
-       //}
+       //    redissonClient.createBatch(createBatchOptions()
+       //}redisTemplate
        return action.doInRedis(redissonClient);
 
    }
 
+    @Override public <T> T execute(RedissonCallBack<T> action) {
+        return execute(action,false);
+    }
 
+    @Override public Boolean deleteKey(String key) {
+        return execute(connection->connection.getKeys().delete(key))==1;
+    }
 
+    @Override public long deleteKey(String... key) {
+        return execute(connection->connection.getKeys().delete(key));
+    }
 
+    @Override public Boolean hasKey(String key) {
+        return execute(connection->connection.getKeys().countExists(key))==1;
+    }
 
+    @Override public RedissonValueOperations<K, V> opsForValue() {
+        if(valueOps==null){
+            valueOps = new DefaultValueOperations<>(this);
+        }
+        return valueOps;
+    }
 
-
-
-
-   @Bean
+    @Bean
     BatchOptions createBatchOptions(){
        return BatchOptions.defaults()
            // 指定执行模式
