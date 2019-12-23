@@ -1,4 +1,4 @@
-package cn.seed.redis.lock;
+package cn.seed.redis.lock.core;
 
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
@@ -32,7 +32,7 @@ public class SingleDistributedLockImpl implements DistributedLockService {
                 lock.lock(leaseTime, timeUnit);
             }
         }catch (Exception e){
-            LoggerUtils.error(SingleDistributedLockImpl.class,new Object[]{"Redis lock 异常"},e);
+            LoggerUtils.error(SingleDistributedLockImpl.class,new Object[]{"Redis core 异常"},e);
         }finally {
             if (lock != null && lock.isHeldByCurrentThread()) {
                 lock.unlock();

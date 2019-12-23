@@ -15,7 +15,6 @@
         <module>mybatis-druid</module>
         <module>project-web</module>
         <module>rpc-feign</module>
-        <module>util-redis-lock</module>
         <module>utils-email</module>
         <module>web-authority</module>
         <module>utils-redis</module>

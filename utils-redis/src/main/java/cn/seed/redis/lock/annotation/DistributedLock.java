@@ -1,6 +1,10 @@
-package cn.seed.redis.annotation;
+package cn.seed.redis.lock.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 @Target({ElementType.METHOD})
@@ -20,7 +24,7 @@ public @interface DistributedLock {
     /**
      * lockName后缀
      */
-    String lockNamePost() default "lock";
+    String lockNamePost() default "core";
 
     /**
      * 获得锁名时拼接前后缀用到的分隔符

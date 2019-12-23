@@ -1,4 +1,4 @@
-package cn.seed.redis.lock;
+package cn.seed.redis.lock.core;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +37,8 @@ public interface DistributedLockService {
      * @param <T>
      * @return
      */
-    <T> T lock(DistributedLockCallback<T> callback, long leaseTime, TimeUnit timeUnit, boolean fairLock);
+    <T> T lock(DistributedLockCallback<T> callback, long leaseTime, TimeUnit timeUnit,
+        boolean fairLock);
 
     /**
      * 尝试分布式锁，使用锁默认等待时间、超时时间。
@@ -58,7 +59,8 @@ public interface DistributedLockService {
      * @param <T>
      * @return
      */
-    <T> T tryLock(DistributedLockCallback<T> callback, long waitTime, long leaseTime, TimeUnit timeUnit, boolean fairLock);
+    <T> T tryLock(DistributedLockCallback<T> callback, long waitTime, long leaseTime,
+        TimeUnit timeUnit, boolean fairLock);
 
     /**
      * 尝试分布式锁，使用锁默认等待时间、超时 使用公平锁
@@ -76,7 +78,7 @@ public interface DistributedLockService {
      * @author lixiao
      * @date 2018/12/10 16:56
      */
-    Boolean tryLock(String lockName, long waitTime,boolean fairLock);
+    Boolean tryLock(String lockName, long waitTime, boolean fairLock);
 
     /**
      * 手动解锁

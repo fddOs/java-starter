@@ -1,4 +1,4 @@
-package cn.seed.redis.lock;
+package cn.seed.redis.lock.core;
 
 /**
  *  分布式锁回调接口

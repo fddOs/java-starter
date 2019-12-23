@@ -1,11 +1,14 @@
-package cn.seed.redis.aspect;
+package cn.seed.redis.lock.aspect;
 
 import cn.seed.common.core.ResultCode;
 import cn.seed.common.core.ServiceException;
 import cn.seed.common.utils.LoggerUtils;
-import cn.seed.redis.annotation.DistributedLock;
-import cn.seed.redis.lock.DistributedLockCallback;
-import cn.seed.redis.lock.DistributedLockService;
+import cn.seed.redis.lock.annotation.DistributedLock;
+import cn.seed.redis.lock.core.DistributedLockCallback;
+import cn.seed.redis.lock.core.DistributedLockService;
+import java.lang.reflect.Method;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -15,10 +18,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Method;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 注解切面
@@ -32,7 +31,7 @@ public class DistributedLockAspect {
     @Autowired
     private DistributedLockService lockTemplate;
 
-    @Pointcut("@annotation(cn.seed.redis.annotation.DistributedLock)")
+    @Pointcut("@annotation(cn.seed.redis.lock.annotation.DistributedLock)")
     public void DistributedLockAspect() {}
 
     @Around(value = "DistributedLockAspect()")
