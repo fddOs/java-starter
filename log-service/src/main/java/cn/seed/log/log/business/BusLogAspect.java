@@ -170,11 +170,11 @@ public class BusLogAspect {
         if(index>=params.length){
             return "";
         }
-        //如果未指定choiceParam 和index 则默认取index 为0的参数
+        //如果未指定choiceParam则取index的参数
         if(StringUtils.isEmpty(choiceParam)&&index >-1){
             return arguments[index];
         }
-
+        //choiceParam 不为空 index 为空则取名称为choiceParam的参数
         if(!StringUtils.isEmpty(choiceParam)&&index==-1){
             for (int i = 0; i < params.length; i++) {
                 if(params[i].equals(choiceParam)){
