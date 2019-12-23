@@ -8,6 +8,10 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Description:工具类
@@ -28,6 +32,7 @@ public class ProjectInfoUtils {
     public static final String PROJECT_AES_KEY;
     public static final String PROJECT_AES_OFFSET;
     public static final String PROJECT_JWT_SECRET;
+    public static final Map<String,List<String>> APOLLO_REFRESH_SCOPE_MAP = new HashMap<>();
 
     /**
      * 系统编码（权限验证中使用）

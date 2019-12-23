@@ -1,5 +1,6 @@
 package cn.seed.common.core;
 
+import cn.seed.common.utils.LoggerUtils;
 import cn.seed.common.utils.ProjectInfoUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.util.StringUtils;
 import java.util.Set;
 
 import static cn.seed.common.core.ConfigCenterWrapper.registerListenerConfig;
+import static cn.seed.common.utils.ProjectInfoUtils.APOLLO_REFRESH_SCOPE_MAP;
 
 /**
  * Apollo配置Bean自动刷新
@@ -41,7 +43,7 @@ public class ApolloConfigBeanRefresh implements ApplicationContextAware {
                 publicApolloConfigChange(keys);
         registerListenerConfig(ConfigConsts.NAMESPACE_APPLICATION, seedConfigChangeListener);
         registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_COMMON_NAMESPACE, seedConfigChangeListener);
-        if(!StringUtils.isEmpty(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE)){
+        if (!StringUtils.isEmpty(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE)) {
             registerListenerConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_NAMESPACE, seedConfigChangeListener);
         }
     }
@@ -49,7 +51,16 @@ public class ApolloConfigBeanRefresh implements ApplicationContextAware {
     private void publicApolloConfigChange(Set<String> configKeys) {
         //更新配置
         this.applicationContext.publishEvent(new EnvironmentChangeEvent(configKeys));
-        refreshScope.refreshAll();
+        APOLLO_REFRESH_SCOPE_MAP.forEach((k, v) -> {
+            if (configKeys.stream().anyMatch(param -> v.contains(param))) {
+                if (refreshScope.refresh(k)) {
+                    // 销毁成功
+                    applicationContext.getBean(k);
+                } else {
+                    LoggerUtils.info(getClass(), String.format("配置项[%s]更新，Bean[%s]刷新失败", v, k));
+                }
+            }
+        });
     }
 
 }
