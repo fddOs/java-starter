@@ -53,10 +53,10 @@ public class ApolloConfigBeanRefresh implements ApplicationContextAware {
         this.applicationContext.publishEvent(new EnvironmentChangeEvent(configKeys));
         APOLLO_REFRESH_SCOPE_MAP.forEach((k, v) -> {
             if (configKeys.stream().anyMatch(param -> v.contains(param))) {
-                if (refreshScope.refresh(k)) {
-                    // 销毁成功
-                    applicationContext.getBean(k);
-                } else {
+                if (!applicationContext.containsBean(k)) {
+                    return;
+                }
+                if (!refreshScope.refresh(k)) {
                     LoggerUtils.info(getClass(), String.format("配置项[%s]更新，Bean[%s]刷新失败", v, k));
                 }
             }
