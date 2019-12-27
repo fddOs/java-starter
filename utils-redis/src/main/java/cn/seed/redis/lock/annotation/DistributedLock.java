@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public @interface DistributedLock {
     /**
      * 锁的名称。
-     * 如果lockName可以确定，直接设置该属性。
+     * 如果lockName可以确定，直接设置该属性。设置之后不会在动态获取lock名称
      */
     String lockName() default "";
 
