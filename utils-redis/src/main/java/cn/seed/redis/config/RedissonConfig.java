@@ -1,5 +1,6 @@
 package cn.seed.redis.config;
 
+import cn.seed.common.core.ApolloRefreshScope;
 import cn.seed.common.core.SpringContext;
 import cn.seed.common.utils.LoggerUtils;
 import cn.seed.common.utils.ProjectInfoUtils;
@@ -9,7 +10,6 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,7 +25,7 @@ public class RedissonConfig {
     @Autowired RedisParams redisParams;
 
     @Bean(destroyMethod = "shutdown")
-    @RefreshScope
+    @ApolloRefreshScope(paramClasses = RedisParams.class)
     RedissonClient redissonClient() {
         SpringContext.getApplicationContext().getBean(RedissonClient.class);
         if(StringUtils.isEmpty(redisParams.getRedisUrl())){
