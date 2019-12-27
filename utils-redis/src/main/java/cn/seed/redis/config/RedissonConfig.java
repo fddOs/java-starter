@@ -32,13 +32,12 @@ public class RedissonConfig {
             throw new RuntimeException("redis 配置错误");
         }
         Config config = new Config();
-        //config.useSingleServer().setAddress("redis://"+redisParams.getRedisUrl());
         ClusterServersConfig clusterServersConfig = config.useClusterServers()
             // 集群状态扫描间隔时间，单位是毫秒
             .setScanInterval(1000)
-            .setTimeout(2000)
+            .setTimeout(1000)
             //失败重试次数
-            .setRetryAttempts(1);
+            .setRetryAttempts(1).setMasterConnectionMinimumIdleSize(10).setSlaveConnectionMinimumIdleSize(10);
         String redisClusterUrl = redisParams.getRedisUrl();
         String[] serverArray = redisClusterUrl.split(",");
         for (String ipPort : serverArray) {
@@ -47,8 +46,8 @@ public class RedissonConfig {
             }
         }
 
-        if(!StringUtils.isEmpty(RedisParams.getRedisPassword())){
-            clusterServersConfig.setPassword(RedisParams.getRedisPassword());
+        if(!StringUtils.isEmpty(redisParams.getRedisPassword())){
+            clusterServersConfig.setPassword(redisParams.getRedisPassword());
         }
         RedissonClient redissonClient=null;
         try{
