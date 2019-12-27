@@ -117,7 +117,7 @@ public class JwtTokenAuthentication {
     public static String getUserName(HttpServletRequest request) {
         Claims claims = verify(getJWT(request));
         if (claims == null) {
-            return null;
+            return "";
         }
         return (String) claims.get(ConfigCenterWrapper.get("uniqueName", ""));
     }
@@ -149,7 +149,7 @@ public class JwtTokenAuthentication {
     public static String getUserCode(HttpServletRequest request) {
         Claims claims = verify(getJWT(request));
         if (claims == null) {
-            return null;
+            return "";
         }
         Object userCode = claims.get(JWT_USER_ID);
         return userCode == null ? "" : userCode.toString();
@@ -166,7 +166,7 @@ public class JwtTokenAuthentication {
     public static String getJwtUserName(HttpServletRequest request) {
         Claims claims = verify(getJWT(request));
         if (claims == null) {
-            return null;
+            return "";
         }
         Object userName = claims.get(JWT_USER_NAME);
         return userName == null? "" : userName.toString();
