@@ -76,8 +76,8 @@ public class DistributedLockAspect {
                     }else{
                         lockName = String.valueOf(getParam(arg, param));
                     }
-                } else if (annotation.argNum() > 0) {
-                    lockName = args[annotation.argNum() - 1].toString();
+                } else if (annotation.argNum() >= 0 && annotation.argNum()<args.length) {
+                    lockName = args[annotation.argNum()].toString();
                 }
             }
         }
@@ -117,10 +117,7 @@ public class DistributedLockAspect {
              isType = arg instanceof String||arg instanceof Integer ||arg instanceof Byte
                  ||arg instanceof Short ||arg instanceof Long||arg instanceof Character||
                  ((Class)arg.getClass().getField("TYPE").get(null)).isPrimitive();
-         } catch (IllegalAccessException e) {
-             LoggerUtils.error(DistributedLockAspect.class, ExceptionUtils.getStackTrace(e));
-             isType = false;
-         } catch (NoSuchFieldException e) {
+         } catch (Exception e) {
              LoggerUtils.error(DistributedLockAspect.class, ExceptionUtils.getStackTrace(e));
              isType = false;
          }
