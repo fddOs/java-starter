@@ -67,7 +67,7 @@ public class ApolloDBConfig {
         return initDBInfo(getDBConfig(ProjectInfoUtils.PROJECT_APOLLO_DB_KEY));
     }
 
-    private DBInfo initDBInfo(String jdbcUrl) {
+    private DBInfo initDBInfo(String jdbcUrl) {//?useTimezone=true&serverTimezone=GMT%2B8
         String separator = "\\|";
         String user = "user";
         String pass = "password";
@@ -97,6 +97,7 @@ public class ApolloDBConfig {
         }
         jdbcUrl = jdbcUrl.replace(password, "*");
         jdbcUrl = jdbcUrl.replace("|", "&");
+        jdbcUrl += "&useTimezone=true&serverTimezone=GMT%2B8";
         return new DBInfo(jdbcUrl, userName, password);
     }
 

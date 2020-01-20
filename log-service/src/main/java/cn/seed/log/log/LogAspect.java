@@ -19,7 +19,8 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.util.JdbcConstants;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mysql.jdbc.JDBC4PreparedStatement;
+import com.mysql.cj.*;
+import com.mysql.cj.jdbc.ClientPreparedStatement;
 import io.opentracing.Scope;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -45,6 +46,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import static cn.seed.common.utils.AESUtils.ENCRYPT_FLAG;
 
 /**
  * @Description:业务日志记录
@@ -73,9 +76,19 @@ public class LogAspect {
      */
     public String getSelectSQL(Map<String, Object> map) {
         Map<String, String> items = (Map<String, String>) map.get("items");
-        StringBuffer sql = new StringBuffer("select ");
-        String column = StringUtils.arrayToDelimitedString(items.keySet().toArray(), ",");
-        sql.append(column);
+        StringBuilder sql = new StringBuilder("select ");
+        StringBuilder columns = new StringBuilder();
+        items.keySet().forEach(column -> {
+            if (column.endsWith(ENCRYPT_FLAG)) {
+                columns.append("CAST(AES_DECRYPT(UNHEX(" + column + "),\"" + AESUtils.KEY + "\") AS CHAR) AS " +
+                        column);
+            } else {
+                columns.append(column);
+            }
+            columns.append(",");
+        });
+//        String column = StringUtils.arrayToDelimitedString(items.keySet().toArray(), ",");
+        sql.append(columns.deleteCharAt(columns.lastIndexOf(",")));
         sql.append(" from ");
         sql.append(StringUtils.arrayToDelimitedString(((List<String>) map.get("tables")).toArray(), ","));
         sql.append(" where ");
@@ -249,17 +262,31 @@ public class LogAspect {
         // 获取JDBC4PreparedStatement
         Field statementField = statement.getClass().getDeclaredField("statement");
         statementField.setAccessible(true);
-        JDBC4PreparedStatement jdbc4PreparedStatement = (JDBC4PreparedStatement) statementField.get(statement);
-        jdbc4PreparedStatement.clearParameters();
+        ClientPreparedStatement clientPreparedStatement = (ClientPreparedStatement) statementField.get(statement);
+        clientPreparedStatement.clearParameters();
+        Query query = clientPreparedStatement.getQuery();
+        Class<AbstractPreparedQuery> abstractPreparedQuery = (Class<AbstractPreparedQuery>) clientPreparedStatement
+                .getQuery().getClass().getSuperclass();
+        Field parseInfoField = abstractPreparedQuery.getDeclaredField("parseInfo");
+        Field queryBindingsField = abstractPreparedQuery.getDeclaredField("queryBindings");
+        parseInfoField.setAccessible(true);
+        queryBindingsField.setAccessible(true);
+        ParseInfo parseInfo = (ParseInfo) parseInfoField.get(query);
+        ClientPreparedQueryBindings bindings = (ClientPreparedQueryBindings) queryBindingsField.get(query);
+        bindings.setBindValues(new ClientPreparedQueryBindValue[]{});
+        Field staticSqlField = parseInfo.getClass().getDeclaredField("staticSql");
+        staticSqlField.setAccessible(true);
+        staticSqlField.set(parseInfo, new byte[][]{sql.getBytes("UTF-8"), new byte[]{}});
+        parseInfoField.set(query, parseInfo);
         // 获取PreparedStatement
-        Class<PreparedStatement> preparedStatementClass = (Class<PreparedStatement>) jdbc4PreparedStatement.getClass
-                ().getSuperclass().getSuperclass();
-        Field parameterValuesField = preparedStatementClass.getDeclaredField("parameterValues");
-        parameterValuesField.setAccessible(true);
-        parameterValuesField.set(jdbc4PreparedStatement, new byte[][]{});
-        Field staticSqlStringsField = preparedStatementClass.getDeclaredField("staticSqlStrings");
-        staticSqlStringsField.setAccessible(true);
-        staticSqlStringsField.set(jdbc4PreparedStatement, new byte[][]{sql.getBytes(), new byte[]{}});
+//        Class<PreparedStatement> preparedStatementClass = (Class<PreparedStatement>) clientPreparedStatement.getClass
+//                ().getSuperclass().getSuperclass();
+//        Field parameterValuesField = preparedStatementClass.getDeclaredField("parameterValues");
+//        parameterValuesField.setAccessible(true);
+//        parameterValuesField.set(jdbc4PreparedStatement, new byte[][]{});
+//        Field staticSqlStringsField = preparedStatementClass.getDeclaredField("staticSqlStrings");
+//        staticSqlStringsField.setAccessible(true);
+//        staticSqlStringsField.set(jdbc4PreparedStatement, new byte[][]{sql.getBytes(), new byte[]{}});
         return statement;
     }
 

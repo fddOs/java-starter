@@ -5,6 +5,7 @@ import cn.seed.common.core.ServiceException;
 import cn.seed.db.config.DBInfo;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.sql.SQLException;
 import java.util.List;

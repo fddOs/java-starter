@@ -8,10 +8,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description:工具类
@@ -32,7 +29,7 @@ public class ProjectInfoUtils {
     public static final String PROJECT_AES_KEY;
     public static final String PROJECT_AES_OFFSET;
     public static final String PROJECT_JWT_SECRET;
-    public static final Map<String,List<String>> APOLLO_REFRESH_SCOPE_MAP = new HashMap<>();
+    public static final Map<String, List<String>> APOLLO_REFRESH_SCOPE_MAP = new HashMap<>();
 
     /**
      * 系统编码（权限验证中使用）
@@ -42,13 +39,19 @@ public class ProjectInfoUtils {
     static {
         YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
         try {
-            applicationProperty = yamlPropertySourceLoader.load("application.yml", new
-                    PathMatchingResourcePatternResolver().getResource("classpath:application.yml"), null);
+            List<PropertySource<?>> propertySourceList = yamlPropertySourceLoader.load("application.yml", new
+                    PathMatchingResourcePatternResolver().getResource("classpath:application.yml"));
+            if (Objects.nonNull(propertySourceList) && !propertySourceList.isEmpty()) {
+                applicationProperty = propertySourceList.get(0);
+            }
             Object profile = applicationProperty.getProperty("spring.profiles.active");
             if (!StringUtils.isEmpty(profile)) {
                 String fileName = "application-" + profile.toString() + ".yml";
-                applicationProperty = yamlPropertySourceLoader.load(fileName, new
-                        PathMatchingResourcePatternResolver().getResource("classpath:" + fileName), null);
+                propertySourceList = yamlPropertySourceLoader.load(fileName, new
+                        PathMatchingResourcePatternResolver().getResource("classpath:" + fileName));
+                if (Objects.nonNull(propertySourceList) && !propertySourceList.isEmpty()) {
+                    applicationProperty = propertySourceList.get(0);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

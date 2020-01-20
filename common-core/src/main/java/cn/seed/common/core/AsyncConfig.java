@@ -5,7 +5,6 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
@@ -21,7 +20,6 @@ import static cn.seed.common.core.ApolloBaseConfig.*;
  * @return
  * @time 2019/9/20 15:58
  */
-@Component
 @ConfigurationProperties
 public class AsyncConfig implements AsyncConfigurer {
 

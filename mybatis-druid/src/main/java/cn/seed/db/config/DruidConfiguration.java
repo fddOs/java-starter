@@ -5,14 +5,19 @@ import cn.seed.db.utils.DruidUtils;
 import cn.seed.db.utils.SqlSessionFactoryUtils;
 import com.alibaba.druid.pool.DruidDataSource;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import javax.sql.DataSource;
 
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -31,11 +36,10 @@ public class DruidConfiguration {
 
     private DruidDataSource dataSource;
 
-    @Bean("masterDataSource")
+    @Bean(name = "masterDataSource", initMethod = "init")
     @Primary
     public DataSource masterDataSource(@Qualifier("masterDB") DBInfo dbInfo) {
-        dataSource = DruidUtils.getDataSource(dbInfo);
-        return dataSource;
+        return DruidUtils.getDataSource(dbInfo);
     }
 
     @Bean(name = "masterTransactionManager")

@@ -1,13 +1,11 @@
 package cn.seed.common.utils;
 
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.metadata.BaseRowModel;
-import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
+import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,8 +26,8 @@ public class ExcelUtils {
      * @author: 方典典
      * @time:2018/10/30 11:06
      */
-    public static <T extends BaseRowModel> OutputStream exportDefaultSheet(OutputStream out, ExcelTypeEnum type,
-                                                                           List<T> data, Class c) {
+    public static <T> OutputStream exportDefaultSheet(OutputStream out, ExcelTypeEnum type,
+                                                      List<T> data, Class c) {
         return exportSheet(out, type, data, c, 1, "sheet");
     }
 
@@ -46,12 +44,12 @@ public class ExcelUtils {
      * @author 方典典
      * @time 2019/5/8 16:04
      */
-    public static <T extends BaseRowModel> OutputStream exportSheet(OutputStream out, ExcelTypeEnum type, List<T>
+    public static <T> OutputStream exportSheet(OutputStream out, ExcelTypeEnum type, List<T>
             data, Class c, int sheetNum, String sheetName) {
-        ExcelWriter writer = new ExcelWriter(out, type);
+        ExcelWriterBuilder excelWriterBuilder = new ExcelWriterBuilder();
+        ExcelWriter writer = excelWriterBuilder.build();
         //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
-        Sheet sheet1 = new Sheet(sheetNum, 0, c, sheetName, new ArrayList<>());
-        writer.write(data, sheet1);
+        writer.write(data, excelWriterBuilder.sheet(sheetNum, sheetName).build());
         writer.finish();
         try {
             out.close();

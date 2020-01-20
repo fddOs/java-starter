@@ -1,7 +1,6 @@
 package cn.seed.redis.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * redis 参数配置
@@ -9,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
  * @author lixiao
  * @date 2019-12-09 13:43
  */
-@Configuration
 @ConfigurationProperties
 public class RedisParams {
 
